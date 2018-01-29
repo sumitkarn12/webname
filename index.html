@@ -41,13 +41,8 @@
 <body>
 	<div id="fb-root"></div>
 
-	<div id="auth" class="page">
-		<div class="w3-top w3-theme w3-padding-16 w3-container w3-card-4">
-			<div class="w3-xlarge">web<span class="w3-text-gray">name</span></div>
-		</div>
-		<div class="w3-container w3-padding-16" style="height: 100vh; display: flex; justify-content: center; align-items: center;">
-			<button class="login-btn w3-button w3-round w3-card w3-theme w3-xlarge">Login with Facebook</button>
-		</div>
+	<div id="auth" class="page w3-card">
+		<button class="login-btn w3-button w3-round w3-card w3-theme w3-xlarge">Login with Facebook</button>
 	</div>
 	<div id="creator" class="page w3-card">
 		<div class="section">
@@ -65,10 +60,10 @@
 					<div class="w3-small bio"></div>
 				</div>
 				<div class="fav-btns w3-container w3-padding-16">
-					<button class="w3-xlarge w3-animate-zoom w3-theme w3-button w3-circle w3-card"><i class="fab fa-facebook-square"></i></button>
-					<button class="w3-xlarge w3-animate-zoom w3-theme w3-button w3-circle w3-card"><i class="fab fa-twitter-square"></i></button>
-					<button class="w3-xlarge w3-animate-zoom w3-theme w3-button w3-circle w3-card"><i class="fab fa-youtube-square"></i></button>
-					<button class="w3-xlarge w3-animate-zoom w3-theme w3-button w3-circle w3-card"><i class="fab fa-instagram"></i></button>
+					<button class="facebook-fav-btn w3-xlarge w3-animate-zoom w3-theme w3-button w3-circle w3-card"><i class="fab fa-facebook-square"></i></button>
+					<button class="twitter-fav-btn w3-xlarge w3-animate-zoom w3-theme w3-button w3-circle w3-card"><i class="fab fa-twitter-square"></i></button>
+					<button class="youtube-fav-btn w3-xlarge w3-animate-zoom w3-theme w3-button w3-circle w3-card"><i class="fab fa-youtube-square"></i></button>
+					<button class="instagram-fav-btn w3-xlarge w3-animate-zoom w3-theme w3-button w3-circle w3-card"><i class="fab fa-instagram"></i></button>
 				</div>
 				<div class="link-cards w3-row"></div>
 				<div class="w3-padding w3-center">
@@ -105,7 +100,7 @@
 					<div class="w3-display-container">
 						<img src="https://avatars.io/<%= caption %>/<%= username %>" class="w3-image w3-card" alt="" />
 						<div class="w3-display-topright">
-							<button class="w3-button w3-theme remove" data-url="<%= url %>">&times;</button>
+							<button class="w3-button w3-theme w3-xlarge remove" data-url="<%= url %>"><i class="fas fa-times"></i></button>
 						</div>
 					</div>
 					<div class="info w3-padding">
@@ -117,8 +112,16 @@
 		</script>
 	</div>
 	<div class="page" id="my-spinner"></div>
-	<div class="w3-bottom w3-theme w3-center" style="z-index: -1;">
-		<p>Like this? <a href="#">Click here</a> to create yours.</p>
+	<div class="w3-bottom w3-theme w3-row" style="z-index: -1;">
+		<div class="w3-padding w3-center w3-col s12">
+			<a href="#">Like this? Click here to create yours.</a>
+		</div>
+		<div class="w3-padding w3-center w3-col s6">
+			<a href="/privacypolicy.html">Privacy Policy</a>
+		</div>
+		<div class="w3-padding w3-center w3-col s6">
+			<a href="/terms-and-conditions.html">Terms and Conditions</a>
+		</div>
 	</div>
 	<script src="/app.js"></script>
 </body>

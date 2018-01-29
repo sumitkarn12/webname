@@ -1,6 +1,3 @@
-body {
-	padding-bottom: 52px;
-}
 img {
 	opacity: 1;
 	transition: opacity 1s;
@@ -10,6 +7,14 @@ img[data-src] {
 }
 .page {
 	display: none;
+	margin-bottom: 76px;
+	background: #fff;
+}
+#auth {
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 #creator, #creator .contents {
 	position: relative;

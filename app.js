@@ -7,6 +7,17 @@ var creator = null;
 Parse.initialize( "1e3bc14f-0975-4cb6-9872-bff78542f22b" );
 Parse.serverURL = "https://parse.buddy.com/parse";
 
+var opts = {
+	lines: 13, // The number of lines to draw
+	length: 38, // The length of each line
+	width: 10, // The line thickness
+	radius: 45, // The radius of the inner circle
+	position: 'absolute' // Element positioning
+};
+const spin = new Spinner( opts ).spin();
+$("#my-spinner").html( spin.el );
+$("#my-spinner").show();
+
 window.fbAsyncInit = function() {
 	Parse.FacebookUtils.init({
 		appId 	: "1778142652491392",	// Facebook App ID
@@ -20,7 +31,7 @@ window.fbAsyncInit = function() {
 	if( auth == null )
 		auth = new Auth();
 	auth.checkLogin().then( response => {
-		if( response.status == "connected" ) {
+		if( response.status == "connected" && Parse.User.current() != null ) {
 			creator = new Creator();
 			creator.render();
 		} else {
@@ -28,17 +39,6 @@ window.fbAsyncInit = function() {
 		}
 	});
 };
-
-var opts = {
-	lines: 13, // The number of lines to draw
-	length: 38, // The length of each line
-	width: 10, // The line thickness
-	radius: 45, // The radius of the inner circle
-	position: 'absolute' // Element positioning
-};
-const spin = new Spinner( opts ).spin();
-$("#my-spinner").html( spin.el );
-$("#my-spinner").show();
 
 const Auth = Backbone.View.extend({
 	el: "#auth",
@@ -51,8 +51,10 @@ const Auth = Backbone.View.extend({
 	openLogin: function( ev ) {
 		ev.preventDefault();
 		let self = this;
+		$("#my-spinner").show();
 		Parse.FacebookUtils.logIn("email,public_profile", {
 			success: function(user) {
+				$("#my-spinner").hide();
 				toastr.info("Logged in with Facebook");
 				self.getProfile().then( res => {
 					if( creator == null )
@@ -61,7 +63,9 @@ const Auth = Backbone.View.extend({
 				});
 			},
 			error: function(user, error) {
+				$("#my-spinner").hide();
 				console.log("User cancelled the Facebook login or did not fully authorize.");
+				toastr.error("User cancelled the Facebook login or did not fully authorize.");
 			}
 		});
 	},
@@ -74,7 +78,6 @@ const Auth = Backbone.View.extend({
 	},
 	checkLogin: function() {
 		return new Promise(( resolve )=>{
-			console.log( "Getting Login Status" );
 			FB.getLoginStatus( resolve );
 		});
 	},
@@ -100,6 +103,8 @@ const Creator = Backbone.View.extend({
 				name: "Excited user",
 				picture: "https://avatars.io/facebook",
 				cover: "https://placeimg.com/851/316/any"
+			}).then(()=>{
+				self.populateLinkCard();
 			});
 		}
 		return this;
@@ -165,7 +170,7 @@ const Creator = Backbone.View.extend({
 					resolve()
 				}, 500);
 			});
-			cover.classList.add("w3-image" );
+			cover.classList.add( "w3-image" );
 			self.$el.find(".section .cover").html( cover );
 			let dp = this.lazyLoad( data.picture, ()=>{});
 			dp.classList.add("w3-image","w3-card-4","w3-circle", "w3-border", "w3-theme", "profile-picture");
@@ -189,21 +194,6 @@ const Creator = Backbone.View.extend({
 			callback( ev );
 		};
 		return im;
-	},
-	populateFavBtn: async function() {
-		var self = this;
-		for( const btn of btns ) {
-			await self.addFavBtn( btn );
-		}
-	},
-	addFavBtn: function( b ) {
-		var self = this;
-		return new Promise((res)=>{
-			setTimeout(()=>{
-				self.$el.find('.fav-btns').append( b );
-				res();
-			}, 100);
-		});
 	},
 	populateLinkCard: async function() {
 		var self = this;
