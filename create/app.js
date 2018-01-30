@@ -336,3 +336,9 @@ const Creator = Backbone.View.extend({
 	}
 });
 
+
+$( window ).on('resize', function(event) {
+	event.preventDefault();
+	$(".page").css("margin-bottom", $(".w3-bottom").height())
+});
+$(".page").css("margin-bottom", $(".w3-bottom").height())

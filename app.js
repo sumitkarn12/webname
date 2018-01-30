@@ -1,5 +1,3 @@
-toastr.options.closeButton = true;
-toastr.options.positionClass = "toast-bottom-center";
 
 var auth = null;
 var content = null;
@@ -32,7 +30,7 @@ const Content = Backbone.View.extend({
 				await self.populateLinkCard( r.get("links") );
 			});
 		}).catch(err=>{
-			toastr.error("User not found");
+			$.sticky("User not found");
 			$(".page").hide();
 			$("#main").show();
 		});
@@ -142,3 +140,9 @@ if( path != "" ) {
 	content = new Content();
 	content.render();
 }
+
+$( window ).on('resize', function(event) {
+	event.preventDefault();
+	$(".page").css("margin-bottom", $(".w3-bottom").height())
+});
+$(".page").css("margin-bottom", $(".w3-bottom").height())
