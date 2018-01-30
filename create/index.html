@@ -24,8 +24,9 @@
 	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue.css">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
-	<link rel="stylesheet" href="/style.css">
+	<link rel="stylesheet" href="/create/style.css">
 	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+	<link rel="stylesheet" href="/sticky.css">
 
 	<script defer src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
 	<script defer src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.11&appId=1778142652491392&autoLogAppEvents=1"></script>
@@ -37,6 +38,7 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 	<script src="/spin.js"></script>
+	<script src="/sticky.js"></script>
 </head>
 <body>
 	<div id="fb-root"></div>
@@ -134,7 +136,7 @@
 					<div class="w3-display-container">
 						<img data-src="" src="<%= image_url %>" class="w3-image w3-card" alt="" />
 						<div class="w3-display-topright">
-							<button class="w3-button w3-theme w3-xlarge remove" data-url="<%= page_url %>"><i class="fas fa-times"></i></button>
+							<button class="w3-button w3-theme remove" data-url="<%= page_url %>">&times;</button>
 						</div>
 					</div>
 					<div class="info w3-padding">
@@ -157,6 +159,6 @@
 			<a href="/terms-and-conditions.html">Terms and Conditions</a>
 		</div>
 	</div>
-	<script src="/app.js"></script>
+	<script src="/create/app.js"></script>
 </body>
 </html>

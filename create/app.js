@@ -1,5 +1,3 @@
-toastr.options.closeButton = true;
-toastr.options.positionClass = "toast-bottom-center";
 
 var auth = null;
 var creator = null;
@@ -16,7 +14,6 @@ var opts = {
 };
 const spin = new Spinner( opts ).spin();
 $("#my-spinner").html( spin.el );
-$("#my-spinner").show();
 
 window.fbAsyncInit = function() {
 	Parse.FacebookUtils.init({
@@ -26,10 +23,9 @@ window.fbAsyncInit = function() {
 		xfbml 	: true,				// initialize Facebook social plugins on the page
 		version 	: "v2.11"				// point to the latest Facebook Graph API version
 	});
-	console.log( "Facebook SDK loaded" );
-	var self = this;
 	if( auth == null )
 		auth = new Auth();
+	$("#my-spinner").show();
 	auth.checkLogin().then( response => {
 		if( response.status == "connected" && Parse.User.current() != null ) {
 			creator = new Creator();
@@ -55,16 +51,14 @@ const Auth = Backbone.View.extend({
 		Parse.FacebookUtils.logIn("email,public_profile", {
 			success: function(user) {
 				$("#my-spinner").hide();
-				self.getProfile().then( res => {
-					if( creator == null )
-						creator = new Creator();
-					creator.render();
-				});
+				if( creator == null )
+					creator = new Creator();
+				creator.render();
 			},
 			error: function(user, error) {
 				$("#my-spinner").hide();
 				console.log("User cancelled the Facebook login or did not fully authorize.");
-				toastr.error("User cancelled the Facebook login or did not fully authorize.");
+				$.sticky("User cancelled the Facebook login or did not fully authorize.");
 			}
 		});
 	},
@@ -92,20 +86,26 @@ const Creator = Backbone.View.extend({
 	initialize: function() {
 		var self = this;
 		this.cardTemplate = _.template(this.$el.find("#link-card-template").html());
-		let user = Parse.User.current().get("profile");
-		if( user != null ) {
-			this.prepareInfo( user ).then(()=>{
-				self.populateLinkCard();
+		setTimeout(()=>{
+			$("#my-spinner").show();
+			Parse.User.current().fetch().then(( u )=>{
+				if( u.get( "profile" ) != null ) {
+					self.prepareInfo( u.get( "profile" ) );
+					self.populateLinkCard();
+				} else {
+					self.prepareInfo({
+						name: "Excited user",
+						picture: "https://avatars.io/facebook",
+						cover: "https://placeimg.com/851/316/any"
+					});
+				}
+				$("#my-spinner").hide();
+			}, ()=>{
+				$.sticky("Something went wrong");
+				$("#my-spinner").hide();
+				auth.render();
 			});
-		} else {
-			this.prepareInfo({
-				name: "Excited user",
-				picture: "https://avatars.io/facebook",
-				cover: "https://placeimg.com/851/316/any"
-			}).then(()=>{
-				self.populateLinkCard();
-			});
-		}
+		}, 100);
 		return this;
 	},
 	render: function() {
@@ -126,8 +126,41 @@ const Creator = Backbone.View.extend({
 		"click .copy-username": "copyUsername",
 		"click .fav-btns button": "openFavBtnModal",
 		"submit #username-modal form": "changeUsername",
-		"submit #fav-btn-modal form": "addFavBtn",
-		"click .link-card": "openLink"
+		"submit #fav-btn-modal form": "addFavBtn"
+	},
+	prepareInfo: function( data ) {
+		var self = this;
+		let cover = self.lazyLoad( data.cover, ()=>{
+			self.$el.find(".picture-card").height( self.$el.find(".cover").height() );
+		});
+		cover.classList.add( "w3-image" );
+		self.$el.find(".section .cover").html( cover );
+		let dp = this.lazyLoad( data.picture );
+		dp.classList.add("w3-image","w3-card-4","w3-circle", "w3-border", "w3-theme", "profile-picture");
+		self.$el.find(".section .dp").html( dp );
+		self.$el.find(".section .info-card .display-name").text( data.name );
+		self.$el.find(".section .info-card .bio").text( data.about );
+
+		// Update info-card-modal fields as well
+		self.$el.find("#info-card-modal .cover_photo_url").val( data.cover );
+		self.$el.find("#info-card-modal .profile_photo_url").val( data.picture );
+		self.$el.find("#info-card-modal .display_name").val( data.name );
+		self.$el.find("#info-card-modal .about").val( data.about );
+
+		self.$el.find('.refrence').html( Parse.User.current().get("username") );
+		self.$el.find('.refrence').data( "ref", Parse.User.current().get("username") );
+		cover.setAttribute( "src", cover.getAttribute("data-src") );
+		dp.setAttribute( "src", dp.getAttribute("data-src") );
+	},
+	lazyLoad: function( src, callback ) {
+		let im = new Image();
+		im.setAttribute( "data-src", src );
+		im.onload = ( ev )=>{
+			im.removeAttribute( "data-src" );
+			if( callback )
+				callback( ev );
+		};
+		return im;
 	},
 	closeModal: function( ev ) {
 		if( ev.target.classList.contains('w3-modal') ) {
@@ -165,43 +198,6 @@ const Creator = Backbone.View.extend({
 		console.log( model );
 		this.$el.find('.w3-modal').click();
 	},
-	prepareInfo: function( data ) {
-		var self = this;
-		return new Promise( resolve =>{
-			let cover = self.lazyLoad( data.cover, ()=>{
-				self.$el.find(".picture-card").height( self.$el.find(".cover").height() );
-				setTimeout( resolve, 1000 );
-			});
-			cover.classList.add( "w3-image" );
-			self.$el.find(".section .cover").html( cover );
-			let dp = this.lazyLoad( data.picture );
-			dp.classList.add("w3-image","w3-card-4","w3-circle", "w3-border", "w3-theme", "profile-picture");
-			self.$el.find(".section .dp").html( dp );
-			self.$el.find(".section .info-card .display-name").text( data.name );
-			self.$el.find(".section .info-card .bio").text( data.about );
-
-			// Update info-card-modal fields as well
-			self.$el.find("#info-card-modal .cover_photo_url").val( data.cover );
-			self.$el.find("#info-card-modal .profile_photo_url").val( data.picture );
-			self.$el.find("#info-card-modal .display_name").val( data.name );
-			self.$el.find("#info-card-modal .about").val( data.about );
-
-			self.$el.find('.refrence').html( Parse.User.current().get("username") );
-			self.$el.find('.refrence').data( "ref", Parse.User.current().get("username") );
-			cover.setAttribute( "src", cover.getAttribute("data-src") );
-			dp.setAttribute( "src", dp.getAttribute("data-src") );
-		});
-	},
-	lazyLoad: function( src, callback ) {
-		let im = new Image();
-		im.setAttribute( "data-src", src );
-		im.onload = ( ev )=>{
-			im.removeAttribute( "data-src" );
-			if( callback )
-				callback( ev );
-		};
-		return im;
-	},
 	openUsernameModal: function( ev ) {
 		ev.preventDefault();
 		this.$el.find('#username-modal .username').val( Parse.User.current().get("username") );
@@ -212,7 +208,7 @@ const Creator = Backbone.View.extend({
 		var self = this;
 		let username = this.$el.find('#username-modal .username').val();
 		if( username.length < 4 ) {
-			toastr.error("Username is too short");
+			$.sticky("Username is too short");
 			return false;
 		}
 		$("#my-spinner").show();
@@ -226,7 +222,7 @@ const Creator = Backbone.View.extend({
 			self.$el.find('.w3-modal').click();
 		}, function( user, error ) {
 			$("#my-spinner").hide();
-			toastr.error( error.message );
+			$.sticky( error.message );
 			console.log( user, error );
 		});
 	},
@@ -239,9 +235,9 @@ const Creator = Backbone.View.extend({
 		ta.select();
 		let fa = document.execCommand( "copy" );
 		if( fa ) {
-			toastr.success( "Shareable link copied to clipboard", ta.value );
+			$.sticky( "Link copied" );
 		} else {
-			toastr.success( "Something went wrong" );
+			$.sticky( "Something went wrong" );
 		}
 		ta.remove();
 	},
@@ -294,17 +290,20 @@ const Creator = Backbone.View.extend({
 		let data = {};
 		data.image_url = form.find(".image_url").val();
 		data.page_url = form.find(".page_url").val();
+		if( $.trim(data.image_url) == "" ) {
+			data.image_url = "https://source.unsplash.com/random/150x150";
+		}
 		if( !data.image_url.startsWith("http") ) {
-			toastr.error("Image url is not correct");
+			$.sticky("Image url is not correct");
 			return false;
 		}
 		if( !data.page_url.startsWith("http") ) {
-			toastr.error("Page url is not correct");
+			$.sticky("Page url is not correct");
 			return false;
 		}
 		data.caption = form.find(".caption").val();
 		if( data.caption.length == 0 || data.caption.length > 16 ) {
-			toastr.error("Caption is either too long or too short");
+			$.sticky("Caption is either too long or too short");
 			return false;
 		}
 		let u = Parse.User.current();
@@ -334,11 +333,6 @@ const Creator = Backbone.View.extend({
 				$( this ).remove();
 			});
 		}
-	},
-	openLink: function( ev ) {
-		ev.preventDefault();
-		let card = $( ev.currentTarget );
-		window.open(card.data("url"), "_blank")
 	}
 });
 

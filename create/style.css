@@ -88,9 +88,11 @@
 	top: 0;
 	left: 0;
 	z-index: 10000;
+	display: none;
 }
-.link-card {
-	cursor: pointer;
+.link-card .remove {
+	font-size: 32px;
+	padding: 0 8px;
 }
 img {
 	opacity: 1;
