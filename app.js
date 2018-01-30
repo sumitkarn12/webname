@@ -18,94 +18,26 @@ const spin = new Spinner( opts ).spin();
 $("#my-spinner").html( spin.el );
 $("#my-spinner").show();
 
-window.fbAsyncInit = function() {
-	Parse.FacebookUtils.init({
-		appId 	: "1778142652491392",	// Facebook App ID
-		status 	: false,				// check Facebook Login status
-		cookie 	: true,				// enable cookies to allow Parse to access the session
-		xfbml 	: true,				// initialize Facebook social plugins on the page
-		version 	: "v2.11"				// point to the latest Facebook Graph API version
-	});
-	console.log( "Facebook SDK loaded" );
-	var self = this;
-	if( auth == null )
-		auth = new Auth();
-	auth.checkLogin().then( response => {
-		if( response.status == "connected" && Parse.User.current() != null ) {
-			creator = new Creator();
-			creator.render();
-		} else {
-			auth.render();
-		}
-	});
-};
-
-const Auth = Backbone.View.extend({
-	el: "#auth",
-	initialize: function() {
-		return this;
-	},
-	events: {
-		"click .login-btn": "openLogin"
-	},
-	openLogin: function( ev ) {
-		ev.preventDefault();
-		let self = this;
-		$("#my-spinner").show();
-		Parse.FacebookUtils.logIn("email,public_profile", {
-			success: function(user) {
-				$("#my-spinner").hide();
-				self.getProfile().then( res => {
-					if( creator == null )
-						creator = new Creator();
-					creator.render();
-				});
-			},
-			error: function(user, error) {
-				$("#my-spinner").hide();
-				console.log("User cancelled the Facebook login or did not fully authorize.");
-				toastr.error("User cancelled the Facebook login or did not fully authorize.");
-			}
-		});
-	},
-	getProfile: function() {
-		return new Promise(( resolve ) => {
-			FB.api("/me?fields=id,name,email,picture,cover", function( response ) {
-				resolve( response );
-			});
-		});
-	},
-	checkLogin: function() {
-		return new Promise(( resolve )=>{
-			FB.getLoginStatus( resolve );
-		});
-	},
-	render: function() {
-		$( ".page" ).hide();
-		this.$el.show();
-		return this;
-	}
-});
+let page = "sumit";
 
 const Creator = Backbone.View.extend({
 	el: "#creator",
 	initialize: function() {
 		var self = this;
+		this.$el.find('.fav-btns a').hide();
 		this.cardTemplate = _.template(this.$el.find("#link-card-template").html());
-		let user = Parse.User.current().get("profile");
-		if( user != null ) {
-			this.prepareInfo( user ).then(()=>{
-				self.populateLinkCard();
+		this.searchProfile( page ).then(r => {
+			$("#my-spinner").fadeOut( "slow" );
+			let profile = r.get("profile");
+			profile.username = r.get("username");
+			this.prepareInfo( profile ).then(async function() {
+				await self.populateFavBtns( r.get("favbtns") );
+				await self.populateLinkCard( r.get("links") );
 			});
-		} else {
-			this.prepareInfo({
-				name: "Excited user",
-				picture: "https://avatars.io/facebook",
-				cover: "https://placeimg.com/851/316/any"
-			}).then(()=>{
-				self.populateLinkCard();
-			});
-		}
+			console.log( r );
+		}).catch(err=>{
+			console.log( err );
+		});
 		return this;
 	},
 	render: function() {
@@ -113,6 +45,13 @@ const Creator = Backbone.View.extend({
 		$( ".page" ).hide();
 		this.$el.show();
 		return this;
+	},
+	searchProfile: function( username ) {
+		return new Promise((resolve, reject)=>{
+			let q = new Parse.Query( Parse.User );
+			q.equalTo( "username", username );
+			q.first().then( resolve, reject );
+		});
 	},
 	events: {
 		"click .new-link-btn": "openNewLinkCardModal",
@@ -128,42 +67,6 @@ const Creator = Backbone.View.extend({
 		"submit #username-modal form": "changeUsername",
 		"submit #fav-btn-modal form": "addFavBtn",
 		"click .link-card": "openLink"
-	},
-	closeModal: function( ev ) {
-		if( ev.target.classList.contains('w3-modal') ) {
-			ev.preventDefault();
-			$(".w3-modal").hide();
-		}
-	},
-	openInfoCardModal: function( ev ) {
-		ev.preventDefault();
-		this.$el.find("#info-card-modal").show();
-	},
-	fromFacebook: function( ev ) {
-		ev.preventDefault();
-		var self = this;
-		$("#my-spinner").show();
-		auth.getProfile().then(profile=>{
-			$("#my-spinner").hide();
-			self.$el.find(".cover_photo_url").val( profile.cover.source );
-			self.$el.find(".profile_photo_url").val( profile.picture.data.url );
-			self.$el.find(".display_name").val( profile.name );
-			console.log( profile );
-		});
-	},
-	updateInfoCard: function( ev ) {
-		ev.preventDefault();
-		let model = {};
-		model.cover = this.$el.find("#info-card-modal .cover_photo_url").val();
-		model.picture = this.$el.find("#info-card-modal .profile_photo_url").val();
-		model.name = this.$el.find("#info-card-modal .display_name").val();
-		model.about = this.$el.find("#info-card-modal .about").val();
-		let u = Parse.User.current();
-		u.set("profile", model);
-		u.save();
-		this.prepareInfo( model );
-		console.log( model );
-		this.$el.find('.w3-modal').click();
 	},
 	prepareInfo: function( data ) {
 		var self = this;
@@ -186,8 +89,6 @@ const Creator = Backbone.View.extend({
 			self.$el.find("#info-card-modal .display_name").val( data.name );
 			self.$el.find("#info-card-modal .about").val( data.about );
 
-			self.$el.find('.refrence').html( Parse.User.current().get("username") );
-			self.$el.find('.refrence').data( "ref", Parse.User.current().get("username") );
 			cover.setAttribute( "src", cover.getAttribute("data-src") );
 			dp.setAttribute( "src", dp.getAttribute("data-src") );
 		});
@@ -202,116 +103,36 @@ const Creator = Backbone.View.extend({
 		};
 		return im;
 	},
-	openUsernameModal: function( ev ) {
-		ev.preventDefault();
-		this.$el.find('#username-modal .username').val( Parse.User.current().get("username") );
-		this.$el.find('#username-modal').show();
-	},
-	changeUsername: function( ev ) {
-		ev.preventDefault();
+	populateFavBtns: async function( data ) {
 		var self = this;
-		let username = this.$el.find('#username-modal .username').val();
-		if( username.length < 4 ) {
-			toastr.error("Username is too short");
-			return false;
+		for( const btn of data ) {
+			await self.renderFavBtn( btn );
 		}
-		$("#my-spinner").show();
-		let user = Parse.User.current();
-		user.set("username", username);
-		user.save().then(function( user ) {
-			$("#my-spinner").hide();
-			self.$el.find('.refrence').html( user.get("username") );
-			self.$el.find('.refrence').data( "ref", user.get("username") );
-			console.log( user.get("username") );
-			self.$el.find('.w3-modal').click();
-		}, function( user, error ) {
-			$("#my-spinner").hide();
-			toastr.error( error.message );
-			console.log( user, error );
+	},
+	renderFavBtn: function( data ) {
+		var self = this;
+		return new Promise((res)=>{
+			let btn = self.$el.find('.fav-btns').find(`[data-type=${data.type}]`);
+			btn.show();
+			btn.attr( "href", self.createUrl( data ) );
+			res();
 		});
 	},
-	copyUsername: function( ev ) {
-		ev.preventDefault();
-		let ta = document.createElement( "textarea" );
-		$( ta ).addClass('clipboard-textarea');
-		ta.value = location.origin+"/"+Parse.User.current().get("username");
-		$( "body" ).append( ta );
-		ta.select();
-		let fa = document.execCommand( "copy" );
-		if( fa ) {
-			toastr.success( "Shareable link copied to clipboard", ta.value );
-		} else {
-			toastr.success( "Something went wrong" );
+	createUrl: function( res ) {
+		switch( res.type ) {
+			case "facebook": return `https://fb.me/${res.uid}`;
+			case "twitter": return `https://twitter.com/${res.uid}`;
+			case "instagram": return `https://instagr.am/_u/${res.uid}`;
+			case "whatsapp": return `https://api.whatsapp.com/send?phone=${res.uid}`;
+			case "youtube": return `https://www.youtube.com/${res.uid}`;
 		}
-		ta.remove();
+		return "";
 	},
-	populateLinkCard: async function() {
+	populateLinkCard: async function( data ) {
 		var self = this;
-		for( const card of Parse.User.current().get("links") ) {
+		for( const card of data ) {
 			await self.renderLinkCard( card );
 		}
-	},
-	openFavBtnModal: function( ev ) {
-		ev.preventDefault();
-		let type = $(ev.currentTarget).data("type");
-		this.$el.find('form').data( "type", type );
-		let favbtns = Parse.User.current().get("favbtns");
-		if( favbtns != null ) {
-			favbtns = favbtns.filter(function(btn) {
-				return btn.type == type;
-			});
-			try {this.$el.find('input').val( favbtns[0].uid ); } catch(e){}
-		}
-		this.$el.find('label').text( `Enter ${$(ev.currentTarget).data("type")} userid` );
-		this.$el.find('#fav-btn-modal').show();
-	},
-	addFavBtn: function( ev ) {
-		ev.preventDefault();
-		let form = $(ev.currentTarget);
-		let type = form.data("type");
-		let uid = form.find("input").val();
-		let favbtns = Parse.User.current().get("favbtns");
-		if( favbtns == null ) favbtns = [];
-		favbtns = favbtns.filter(function(btn) {
-			return btn.type != type;
-		});
-		favbtns.push({
-			type: type,
-			uid: uid
-		});
-		Parse.User.current().set("favbtns", favbtns );
-		Parse.User.current().save();
-		console.log( favbtns );
-		this.$el.find('.w3-modal').click();
-	},
-	openNewLinkCardModal: function( ev ) {
-		ev.preventDefault();
-		this.$el.find('#new-link-card-modal').show();
-	},
-	addNewLinkCard: function( ev ) {
-		ev.preventDefault();
-		let form = $( ev.target );
-		let data = {};
-		data.image_url = form.find(".image_url").val();
-		data.page_url = form.find(".page_url").val();
-		if( !data.image_url.startsWith("http") ) {
-			toastr.error("Image url is not correct");
-			return false;
-		}
-		if( !data.page_url.startsWith("http") ) {
-			toastr.error("Page url is not correct");
-			return false;
-		}
-		data.caption = form.find(".caption").val();
-		if( data.caption.length == 0 || data.caption.length > 16 ) {
-			toastr.error("Caption is either too long or too short");
-			return false;
-		}
-		let u = Parse.User.current();
-		u.add("links", data);
-		u.save();
-		this.renderLinkCard( data );
-		this.$el.find('.w3-modal').click();
 	},
 	renderLinkCard: function( data ) {
 		var self = this;
@@ -322,23 +143,13 @@ const Creator = Backbone.View.extend({
 			setTimeout( res, 500);
 		});
 	},
-	removeLinkCard: function(ev) {
-		let links = Parse.User.current().get("links");
-		let target = $( ev.target );
-		if( target.hasClass('remove') ) {
-			ev.stopPropagation();
-			links = links.filter(a=> a.page_url != target.data("url") );
-			Parse.User.current().set("links", links);
-			Parse.User.current().save();
-			target.parent().parent().parent().parent().fadeOut('slow', function() {
-				$( this ).remove();
-			});
-		}
-	},
 	openLink: function( ev ) {
 		ev.preventDefault();
 		let card = $( ev.currentTarget );
 		window.open(card.data("url"), "_blank")
 	}
 });
+
+creator = new Creator();
+creator.render();
 
