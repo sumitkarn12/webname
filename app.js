@@ -2,7 +2,7 @@ toastr.options.closeButton = true;
 toastr.options.positionClass = "toast-bottom-center";
 
 var auth = null;
-var creator = null;
+var content = null;
 
 Parse.initialize( "1e3bc14f-0975-4cb6-9872-bff78542f22b" );
 Parse.serverURL = "https://parse.buddy.com/parse";
@@ -16,27 +16,25 @@ var opts = {
 };
 const spin = new Spinner( opts ).spin();
 $("#my-spinner").html( spin.el );
-$("#my-spinner").show();
 
-let page = "sumit";
-
-const Creator = Backbone.View.extend({
-	el: "#creator",
+const Content = Backbone.View.extend({
+	el: "#content",
 	initialize: function() {
+		$("#my-spinner").show();
 		var self = this;
-		this.$el.find('.fav-btns a').hide();
+		this.username = location.pathname.substring( 1 );
 		this.cardTemplate = _.template(this.$el.find("#link-card-template").html());
-		this.searchProfile( page ).then(r => {
+		this.searchProfile( this.username ).then(r => {
+			self.user = r;
 			$("#my-spinner").fadeOut( "slow" );
-			let profile = r.get("profile");
-			profile.username = r.get("username");
-			this.prepareInfo( profile ).then(async function() {
+			this.prepareInfo( self.user.get("profile") ).then(async function() {
 				await self.populateFavBtns( r.get("favbtns") );
 				await self.populateLinkCard( r.get("links") );
 			});
-			console.log( r );
 		}).catch(err=>{
-			console.log( err );
+			toastr.error("User not found");
+			$(".page").hide();
+			$("#main").show();
 		});
 		return this;
 	},
@@ -54,18 +52,6 @@ const Creator = Backbone.View.extend({
 		});
 	},
 	events: {
-		"click .new-link-btn": "openNewLinkCardModal",
-		"submit #new-link-card-modal form": "addNewLinkCard",
-		"click .open-info-card-modal": "openInfoCardModal",
-		"submit #info-card-modal form": "updateInfoCard",
-		"click .w3-modal": "closeModal",
-		"click .from-facebook-btn": "fromFacebook",
-		"click .link-card .remove": "removeLinkCard",
-		"click .refrence": "openUsernameModal",
-		"click .copy-username": "copyUsername",
-		"click .fav-btns button": "openFavBtnModal",
-		"submit #username-modal form": "changeUsername",
-		"submit #fav-btn-modal form": "addFavBtn",
 		"click .link-card": "openLink"
 	},
 	prepareInfo: function( data ) {
@@ -115,7 +101,7 @@ const Creator = Backbone.View.extend({
 			let btn = self.$el.find('.fav-btns').find(`[data-type=${data.type}]`);
 			btn.show();
 			btn.attr( "href", self.createUrl( data ) );
-			res();
+			setTimeout( res, 500 );
 		});
 	},
 	createUrl: function( res ) {
@@ -150,6 +136,9 @@ const Creator = Backbone.View.extend({
 	}
 });
 
-creator = new Creator();
-creator.render();
-
+let path = location.pathname.substring( 1 );
+if( path != "" ) {
+	console.log( path );
+	content = new Content();
+	content.render();
+}
