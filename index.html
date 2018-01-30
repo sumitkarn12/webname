@@ -42,7 +42,10 @@
 	<div id="fb-root"></div>
 
 	<div id="auth" class="page w3-card">
-		<button class="login-btn w3-button w3-round w3-card w3-theme w3-xlarge">Login with Facebook</button>
+		<div class="w3-card w3-theme-l1">
+			<p class="w3-container w3-xxlarge" style="font-family: raleway;">One link <br> for all your links</p>
+			<button class="login-btn w3-button w3-theme" style="width: 100%;">Login with Facebook</button>
+		</div>
 	</div>
 	<div id="creator" class="page w3-card">
 		<div class="section">
@@ -58,12 +61,17 @@
 				<div class="info-card w3-padding">
 					<div class="w3-xlarge display-name w3-text-theme"></div>
 					<div class="w3-small bio"></div>
+					<div>
+						https://webname.ga/<button class="w3-button w3-theme w3-round-xlarge refrence w3-tiny"></button>
+						<button class="w3-button w3-tiny w3-card w3-round-xlarge copy-username"><i class="fas fa-copy"></i></button>
+					</div>
 				</div>
-				<div class="fav-btns w3-container w3-padding-16">
-					<button class="facebook-fav-btn w3-xlarge w3-animate-zoom w3-theme w3-button w3-circle w3-card"><i class="fab fa-facebook-square"></i></button>
-					<button class="twitter-fav-btn w3-xlarge w3-animate-zoom w3-theme w3-button w3-circle w3-card"><i class="fab fa-twitter-square"></i></button>
-					<button class="youtube-fav-btn w3-xlarge w3-animate-zoom w3-theme w3-button w3-circle w3-card"><i class="fab fa-youtube-square"></i></button>
-					<button class="instagram-fav-btn w3-xlarge w3-animate-zoom w3-theme w3-button w3-circle w3-card"><i class="fab fa-instagram"></i></button>
+				<div class="fav-btns w3-container w3-padding-16 w3-xlarge">
+					<button data-type="facebook" class="w3-animate-zoom w3-theme w3-button w3-circle w3-card"><i class="fab fa-facebook-square"></i></button>
+					<button data-type="instagram" class="w3-animate-zoom w3-theme w3-button w3-circle w3-card"><i class="fab fa-instagram"></i></button>
+					<button data-type="twitter" class="w3-animate-zoom w3-theme w3-button w3-circle w3-card"><i class="fab fa-twitter-square"></i></button>
+					<button data-type="youtube" class="w3-animate-zoom w3-theme w3-button w3-circle w3-card"><i class="fab fa-youtube-square"></i></button>
+					<button data-type="whatsapp" class="w3-animate-zoom w3-theme w3-button w3-circle w3-card"><i class="fab fa-whatsapp"></i></button>
 				</div>
 				<div class="link-cards w3-row"></div>
 				<div class="w3-padding w3-center">
@@ -71,12 +79,34 @@
 				</div>
 			</div>
 		</div>
-		<div class="w3-modal" id="info-card-modal">
-			<div class="w3-modal-content w3-card-4 w3-animate-top">
+		<div class="w3-modal" id="username-modal">
+			<div class="w3-modal-content w3-card-4 w3-animate-zoom">
 				<form class="w3-container w3-padding-16">
+					<label>New username</label>
+					<input type="text" class="w3-input w3-card w3-round username" required="" placeholder="Username should be unique" /><br>
+					<button class="w3-button w3-theme w3-round w3-card">Update</button>
+				</form>
+			</div>
+		</div>
+		<div class="w3-modal" id="fav-btn-modal">
+			<div class="w3-modal-content w3-card-4 w3-animate-zoom">
+				<form class="w3-container w3-padding-16">
+					<label>Enter userid</label>
+					<input type="text" class="w3-input w3-card w3-round username" required="" placeholder="Enter userid" /><br>
+					<button class="w3-button w3-theme w3-round w3-card">Save</button>
+				</form>
+			</div>
+		</div>
+		<div class="w3-modal" id="info-card-modal">
+			<div class="w3-modal-content w3-card-4 w3-animate-zoom">
+				<form class="w3-container w3-padding-16">
+					<label>Cover photo url</label>
 					<input type="text" class="w3-input w3-card w3-round cover_photo_url" required="" placeholder="Cover photo url" /><br>
+					<label>Profile photo url</label>
 					<input type="text" class="w3-input w3-card w3-round profile_photo_url" required="" placeholder="Profile photo url" /><br>
+					<label>Name</label>
 					<input type="text" class="w3-input w3-card w3-round display_name" required=""  placeholder="Display name" /><br>
+					<label>About</label>
 					<input type="text" class="w3-input w3-card w3-round about"  placeholder="About" /><br>
 					<button class="w3-button w3-theme w3-round w3-card">Update</button>
 				</form>
@@ -86,26 +116,30 @@
 			</div>
 		</div>
 		<div class="w3-modal" id="new-link-card-modal">
-			<div class="w3-modal-content w3-card-4 w3-animate-top">
+			<div class="w3-modal-content w3-card-4 w3-animate-zoom">
 				<form class="w3-container w3-padding-16">
-					<input type="text" class="w3-input w3-card w3-round url" placeholder="Page url" required="" /><br>
+					<label for="url">Image url</label>
+					<input type="text" class="w3-input w3-card w3-round image_url" placeholder="Image url ( Optional )" /><br>
+					<label for="url">Link</label>
+					<input type="text" class="w3-input w3-card w3-round page_url" placeholder="Page url" required="" /><br>
+					<label for="url">Caption</label>
 					<input type="text" class="w3-input w3-card w3-round caption"  placeholder="Caption" required="" /><br>
-					<button class="w3-button w3-theme w3-round w3-card">Save</button>
+					<button class="w3-button w3-theme w3-round w3-card">Add</button>
 				</form>
 			</div>
 		</div>
 		<script id="link-card-template" type="x-template">
-			<div class="w3-container w3-padding-16 w3-col s6 m4 l3 link-card" data-url="<%= url %>">
+			<div class="w3-container w3-padding-16 w3-col s6 m4 l3 link-card" data-url="<%= page_url %>">
 				<div class="w3-card w3-round w3-animate-opacity">
 					<div class="w3-display-container">
-						<img src="https://avatars.io/<%= caption %>/<%= username %>" class="w3-image w3-card" alt="" />
+						<img data-src="" src="<%= image_url %>" class="w3-image w3-card" alt="" />
 						<div class="w3-display-topright">
-							<button class="w3-button w3-theme w3-xlarge remove" data-url="<%= url %>"><i class="fas fa-times"></i></button>
+							<button class="w3-button w3-theme w3-xlarge remove" data-url="<%= page_url %>"><i class="fas fa-times"></i></button>
 						</div>
 					</div>
 					<div class="info w3-padding">
-						<div class="w3-text-theme">/<%= username %></div>
-						<div class="w3-tiny"><%= caption %></div>
+						<div class="w3-text-theme"><%= caption %></div>
+						<div class="w3-text-grey w3-tiny"><%= page_url %></div>
 					</div>
 				</div>
 			</div>
@@ -114,12 +148,12 @@
 	<div class="page" id="my-spinner"></div>
 	<div class="w3-bottom w3-theme w3-row" style="z-index: -1;">
 		<div class="w3-padding w3-center w3-col s12">
-			<a href="#">Like this? Click here to create yours.</a>
+			<a href="/">Like this? Click here to create yours.</a>
 		</div>
-		<div class="w3-padding w3-center w3-col s6">
+		<div class="w3-padding w3-center w3-col s6 w3-tiny">
 			<a href="/privacypolicy.html">Privacy Policy</a>
 		</div>
-		<div class="w3-padding w3-center w3-col s6">
+		<div class="w3-padding w3-center w3-col s6 w3-tiny">
 			<a href="/terms-and-conditions.html">Terms and Conditions</a>
 		</div>
 	</div>

@@ -55,7 +55,6 @@ const Auth = Backbone.View.extend({
 		Parse.FacebookUtils.logIn("email,public_profile", {
 			success: function(user) {
 				$("#my-spinner").hide();
-				toastr.info("Logged in with Facebook");
 				self.getProfile().then( res => {
 					if( creator == null )
 						creator = new Creator();
@@ -123,6 +122,11 @@ const Creator = Backbone.View.extend({
 		"click .w3-modal": "closeModal",
 		"click .from-facebook-btn": "fromFacebook",
 		"click .link-card .remove": "removeLinkCard",
+		"click .refrence": "openUsernameModal",
+		"click .copy-username": "copyUsername",
+		"click .fav-btns button": "openFavBtnModal",
+		"submit #username-modal form": "changeUsername",
+		"submit #fav-btn-modal form": "addFavBtn",
 		"click .link-card": "openLink"
 	},
 	closeModal: function( ev ) {
@@ -165,14 +169,12 @@ const Creator = Backbone.View.extend({
 		var self = this;
 		return new Promise( resolve =>{
 			let cover = self.lazyLoad( data.cover, ()=>{
-				setTimeout(async function() {
-					self.$el.find(".picture-card").height( self.$el.find(".cover").height() );
-					resolve()
-				}, 500);
+				self.$el.find(".picture-card").height( self.$el.find(".cover").height() );
+				setTimeout( resolve, 1000 );
 			});
 			cover.classList.add( "w3-image" );
 			self.$el.find(".section .cover").html( cover );
-			let dp = this.lazyLoad( data.picture, ()=>{});
+			let dp = this.lazyLoad( data.picture );
 			dp.classList.add("w3-image","w3-card-4","w3-circle", "w3-border", "w3-theme", "profile-picture");
 			self.$el.find(".section .dp").html( dp );
 			self.$el.find(".section .info-card .display-name").text( data.name );
@@ -183,23 +185,104 @@ const Creator = Backbone.View.extend({
 			self.$el.find("#info-card-modal .profile_photo_url").val( data.picture );
 			self.$el.find("#info-card-modal .display_name").val( data.name );
 			self.$el.find("#info-card-modal .about").val( data.about );
+
+			self.$el.find('.refrence').html( Parse.User.current().get("username") );
+			self.$el.find('.refrence').data( "ref", Parse.User.current().get("username") );
+			cover.setAttribute( "src", cover.getAttribute("data-src") );
+			dp.setAttribute( "src", dp.getAttribute("data-src") );
 		});
 	},
 	lazyLoad: function( src, callback ) {
 		let im = new Image();
-		im.setAttribute( "src", src );
-		im.setAttribute( "data-src", "" );
+		im.setAttribute( "data-src", src );
 		im.onload = ( ev )=>{
 			im.removeAttribute( "data-src" );
-			callback( ev );
+			if( callback )
+				callback( ev );
 		};
 		return im;
+	},
+	openUsernameModal: function( ev ) {
+		ev.preventDefault();
+		this.$el.find('#username-modal .username').val( Parse.User.current().get("username") );
+		this.$el.find('#username-modal').show();
+	},
+	changeUsername: function( ev ) {
+		ev.preventDefault();
+		var self = this;
+		let username = this.$el.find('#username-modal .username').val();
+		if( username.length < 4 ) {
+			toastr.error("Username is too short");
+			return false;
+		}
+		$("#my-spinner").show();
+		let user = Parse.User.current();
+		user.set("username", username);
+		user.save().then(function( user ) {
+			$("#my-spinner").hide();
+			self.$el.find('.refrence').html( user.get("username") );
+			self.$el.find('.refrence').data( "ref", user.get("username") );
+			console.log( user.get("username") );
+			self.$el.find('.w3-modal').click();
+		}, function( user, error ) {
+			$("#my-spinner").hide();
+			toastr.error( error.message );
+			console.log( user, error );
+		});
+	},
+	copyUsername: function( ev ) {
+		ev.preventDefault();
+		let ta = document.createElement( "textarea" );
+		$( ta ).addClass('clipboard-textarea');
+		ta.value = location.origin+"/"+Parse.User.current().get("username");
+		$( "body" ).append( ta );
+		ta.select();
+		let fa = document.execCommand( "copy" );
+		if( fa ) {
+			toastr.success( "Shareable link copied to clipboard", ta.value );
+		} else {
+			toastr.success( "Something went wrong" );
+		}
+		ta.remove();
 	},
 	populateLinkCard: async function() {
 		var self = this;
 		for( const card of Parse.User.current().get("links") ) {
 			await self.renderLinkCard( card );
 		}
+	},
+	openFavBtnModal: function( ev ) {
+		ev.preventDefault();
+		let type = $(ev.currentTarget).data("type");
+		this.$el.find('form').data( "type", type );
+		let favbtns = Parse.User.current().get("favbtns");
+		if( favbtns != null ) {
+			favbtns = favbtns.filter(function(btn) {
+				return btn.type == type;
+			});
+			try {this.$el.find('input').val( favbtns[0].uid ); } catch(e){}
+		}
+		this.$el.find('label').text( `Enter ${$(ev.currentTarget).data("type")} userid` );
+		this.$el.find('#fav-btn-modal').show();
+	},
+	addFavBtn: function( ev ) {
+		ev.preventDefault();
+		let form = $(ev.currentTarget);
+		let type = form.data("type");
+		let uid = form.find("input").val();
+		let favbtns = Parse.User.current().get("favbtns");
+		if( favbtns == null ) favbtns = [];
+		favbtns = favbtns.filter(function(btn) {
+			return btn.type != type;
+		});
+		favbtns.push({
+			type: type,
+			uid: uid
+		});
+		Parse.User.current().set("favbtns", favbtns );
+		Parse.User.current().save();
+		console.log( favbtns );
+		this.$el.find('.w3-modal').click();
 	},
 	openNewLinkCardModal: function( ev ) {
 		ev.preventDefault();
@@ -209,12 +292,21 @@ const Creator = Backbone.View.extend({
 		ev.preventDefault();
 		let form = $( ev.target );
 		let data = {};
-		data.url = form.find(".url").val();
-		if( !data.url.startsWith("http") ) {
-			toastr.error("Seems not a correct web address");
+		data.image_url = form.find(".image_url").val();
+		data.page_url = form.find(".page_url").val();
+		if( !data.image_url.startsWith("http") ) {
+			toastr.error("Image url is not correct");
+			return false;
+		}
+		if( !data.page_url.startsWith("http") ) {
+			toastr.error("Page url is not correct");
 			return false;
 		}
 		data.caption = form.find(".caption").val();
+		if( data.caption.length == 0 || data.caption.length > 16 ) {
+			toastr.error("Caption is either too long or too short");
+			return false;
+		}
 		let u = Parse.User.current();
 		u.add("links", data);
 		u.save();
@@ -224,9 +316,9 @@ const Creator = Backbone.View.extend({
 	renderLinkCard: function( data ) {
 		var self = this;
 		return new Promise((res)=>{
-			let username = data.url.substring( data.url.lastIndexOf("/")+1 );
-			data.username = username;
-			self.$el.find('.link-cards').append( self.cardTemplate( data ) );
+			let el = $( self.cardTemplate( data ) );
+			el.find("img").on("load", (ev)=> ev.target.removeAttribute("data-src") );
+			self.$el.find('.link-cards').append( el );
 			setTimeout( res, 500);
 		});
 	},
@@ -235,7 +327,7 @@ const Creator = Backbone.View.extend({
 		let target = $( ev.target );
 		if( target.hasClass('remove') ) {
 			ev.stopPropagation();
-			links = links.filter(a=> a.url != target.data("url") );
+			links = links.filter(a=> a.page_url != target.data("url") );
 			Parse.User.current().set("links", links);
 			Parse.User.current().save();
 			target.parent().parent().parent().parent().fadeOut('slow', function() {
