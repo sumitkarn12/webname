@@ -112,3 +112,6 @@ img {
 img[data-src] {
 	opacity: 0;
 }
+.explore {
+	display: none;
+}

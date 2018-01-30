@@ -145,4 +145,11 @@ $( window ).on('resize', function(event) {
 	event.preventDefault();
 	$(".page").css("margin-bottom", $(".w3-bottom").height())
 });
-$(".page").css("margin-bottom", $(".w3-bottom").height())
+$(".page").css("margin-bottom", $(".w3-bottom").height());
+
+let recentU = new Parse.Query( Parse.User );
+recentU.descending( "updatedAt" );
+recentU.first().then(u=>{
+	$(".explore").attr("href", `https://webname.ga/${u.get("username")}`);
+	$(".explore").show();
+});
