@@ -24,7 +24,9 @@
 	position: absolute;
 	bottom: 200px;
 }
-#main .create-btn { bottom: 0;}
+#main .text-box { font-weight: lighter; font-family: raleway; }
+#main .create-btn { bottom: 0; }
+#main .create-btn .w3-button { max-width: 600px; }
 #content, #content .contents {
 	position: relative;
 	background: #fff;
@@ -112,6 +114,15 @@ img {
 img[data-src] {
 	opacity: 0;
 }
+.image-wrapper {
+	display: flex;;
+	justify-content: center;
+	align-items: center;
+}
 .explore {
 	display: none;
+}
+#faq .section {
+	max-width: 600px;
+	margin: auto;
 }

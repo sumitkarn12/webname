@@ -41,8 +41,11 @@
 <body>
 
 	<div class="w3-card page w3-animate-opacity" id="main">
+		<div class="w3-top w3-container w3-padding-16">
+			<button class="faq w3-button w3-xlarge w3-round w3-theme">FAQ</button>
+		</div>
 		<div class="textbox">
-			<h1>One page <br> for all your links</h1>
+			<div class="w3-xxlarge">Create<br>your own<br>landing page</div>
 			<br>
 			<a target="_blank" href="#" class="explore w3-button w3-xlarge w3-circle w3-theme w3-card"><i class="fas fa-arrow-right"></i></a>
 		</div>
@@ -76,7 +79,9 @@
 		<script id="link-card-template" type="x-template">
 			<div class="w3-container w3-padding-16 w3-col s6 m4 l3 link-card" data-url="<%= page_url %>">
 				<div class="w3-card w3-round w3-animate-opacity">
-					<img data-src="" src="<%= image_url %>" class="w3-image w3-card" alt="" />
+					<div class="image-wrapper">
+						<img data-src="" src="<%= image_url %>" class="w3-image w3-card" alt="" />
+					</div>
 					<div class="info w3-padding">
 						<div class="w3-text-theme"><%= caption %></div>
 						<div class="w3-text-grey w3-tiny"><%= page_url %></div>
@@ -87,6 +92,44 @@
 	</div>
 
 	<div class="page" id="my-spinner"></div>
+
+	<div class="page w3-white" id="faq">
+		<div class="w3-theme w3-xlarge w3-container">
+			<p>FAQ</p>
+		</div>
+		<div class="w3-section"></div>
+		<div class="section w3-container">
+			<ol class="w3-ul w3-border w3-card">
+				<li>What is <a href="https://webname.ga">webname</a>?</li>
+				<li class="w3-tiny">It allows you to create single landing page for all your links/social media links. Use it in Instagram bios or places where you're restricted to one link.</li>
+
+				<li>How do others view my page?</li>
+				<li class="w3-tiny">You can share your page link with others like <a target="_blank" href="https://webname.ga/sumit">https://webname.ga/sumit</a>. The perfect place for this is your Instagram/Twitter bios, or even in YouTube descriptions.</li>
+
+				<li>Will my email be displayed publicly?</li>
+				<li class="w3-tiny">It's upto you. If you want to share, then you can do so.</li>
+
+				<li>What is a profile image?</li>
+				<li class="w3-tiny">You can include a profile image, similar to other social networks. The URL must be to an image file. You can upload your image to <a target="_blank" href="https://ctrlq.org/images/">https://ctrlq.org/images/</a> and get a link from there.</li>
+
+				<li>How to get image url?</li>
+				<li class="w3-tiny">You can use any image hosting service like <a target="_blank" href="https://ctrlq.org/images/">https://ctrlq.org/images/</a>.</li>
+
+				<li>Can I add other links that aren't currently on the list of social networks?</li>
+				<li class="w3-tiny">Definitely.</li>
+
+				<li>I'm having problems with the site, where can I get help?</li>
+				<li class="w3-tiny">Contact <a href="mailto:sumitkarn123@yahoo.com">sumitkarn123@yahoo.com</a>.</li>
+
+				<li>Can I change my username address?</li>
+				<li class="w3-tiny">Sure</li>
+
+				<li>I would like to delete my account, how do I do this?</li>
+				<li class="w3-tiny">You can remove all your data by contacting <a href="mailto:sumitkarn123@yahoo.com">sumitkarn123@yahoo.com</a>.</li>
+			</ol>
+			<div class="w3-section"></div>
+		</div>
+	</div>
 
 	<div class="w3-bottom w3-theme w3-row" style="z-index: -1;">
 		<div class="w3-padding w3-center w3-col s12">

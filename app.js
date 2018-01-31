@@ -1,5 +1,5 @@
 
-var auth = null;
+var faq = null;
 var content = null;
 
 Parse.initialize( "1e3bc14f-0975-4cb6-9872-bff78542f22b" );
@@ -14,6 +14,10 @@ var opts = {
 };
 const spin = new Spinner( opts ).spin();
 $("#my-spinner").html( spin.el );
+
+$(".faq").on("click", ()=>{
+	faq.render();
+})
 
 const Content = Backbone.View.extend({
 	el: "#content",
@@ -122,7 +126,11 @@ const Content = Backbone.View.extend({
 		var self = this;
 		return new Promise((res)=>{
 			let el = $( self.cardTemplate( data ) );
-			el.find("img").on("load", (ev)=> ev.target.removeAttribute("data-src") );
+			el.find("img").on("load", (ev)=>{
+				ev.target.removeAttribute("data-src");
+				let img = $(ev.target);
+				img.parent().height( img.width() );
+			});
 			self.$el.find('.link-cards').append( el );
 			setTimeout( res, 500);
 		});
@@ -133,6 +141,18 @@ const Content = Backbone.View.extend({
 		window.open(card.data("url"), "_blank")
 	}
 });
+const FAQ = Backbone.View.extend({
+	el: "#faq",
+	initialize: function() {
+		return this;
+	},
+	render: function() {
+		$( ".page" ).hide();
+		this.$el.show();
+		return this;
+	}
+});
+faq = new FAQ();
 
 let path = location.pathname.substring( 1 );
 if( path != "" ) {

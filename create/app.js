@@ -168,9 +168,15 @@ const Creator = Backbone.View.extend({
 			$(".w3-modal").hide();
 		}
 	},
+	showImageUrlHint: function() {
+		$.sticky("use <a target='_blank' href='https://ctrlq.org/images'>https://ctrlq.org/images</a> to get image url", {
+			autoclose: 10000
+		});
+	},
 	openInfoCardModal: function( ev ) {
 		ev.preventDefault();
 		this.$el.find("#info-card-modal").show();
+		this.showImageUrlHint();
 	},
 	fromFacebook: function( ev ) {
 		ev.preventDefault();
@@ -202,6 +208,7 @@ const Creator = Backbone.View.extend({
 		ev.preventDefault();
 		this.$el.find('#username-modal .username').val( Parse.User.current().get("username") );
 		this.$el.find('#username-modal').show();
+		this.showImageUrlHint();
 	},
 	changeUsername: function( ev ) {
 		ev.preventDefault();
@@ -283,6 +290,7 @@ const Creator = Backbone.View.extend({
 	openNewLinkCardModal: function( ev ) {
 		ev.preventDefault();
 		this.$el.find('#new-link-card-modal').show();
+		this.showImageUrlHint();
 	},
 	addNewLinkCard: function( ev ) {
 		ev.preventDefault();
@@ -316,7 +324,11 @@ const Creator = Backbone.View.extend({
 		var self = this;
 		return new Promise((res)=>{
 			let el = $( self.cardTemplate( data ) );
-			el.find("img").on("load", (ev)=> ev.target.removeAttribute("data-src") );
+			el.find("img").on("load", (ev)=>{
+				ev.target.removeAttribute("data-src");
+				let img = $(ev.target);
+				img.parent().height( img.width() );
+			});
 			self.$el.find('.link-cards').append( el );
 			setTimeout( res, 500);
 		});
@@ -335,7 +347,6 @@ const Creator = Backbone.View.extend({
 		}
 	}
 });
-
 
 $( window ).on('resize', function(event) {
 	event.preventDefault();
