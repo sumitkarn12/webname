@@ -22,35 +22,47 @@ $(".faq").on("click", ()=>{
 const Content = Backbone.View.extend({
 	el: "#content",
 	initialize: function() {
-		$("#my-spinner").show();
 		var self = this;
 		this.username = location.pathname.substring( 1 );
 		this.cardTemplate = _.template(this.$el.find("#link-card-template").html());
-		this.searchProfile( this.username ).then(r => {
-			self.user = r;
-			$("#my-spinner").fadeOut( "slow" );
-			this.prepareInfo( self.user.get("profile") ).then(async function() {
-				await self.populateFavBtns( r.get("favbtns") );
-				await self.populateLinkCard( r.get("links") );
+		console.log( "Searching", this.username, this.username.length );
+		if( this.username.length != 0 ) {
+			$("#my-spinner").show();
+			this.searchProfile( this.username ).then(r => {
+				self.user = r;
+				$("#my-spinner").hide();
+				this.prepareInfo( self.user.get("profile") ).then(async function() {
+					await self.populateFavBtns( r.get("favbtns") );
+					await self.populateLinkCard( r.get("links") );
+				});
+			}).catch(err=>{
+				$.sticky("User not found");
+				$(".page").hide();
+				$("#main").show();
 			});
-		}).catch(err=>{
-			$.sticky("User not found");
+		} else {
 			$(".page").hide();
 			$("#main").show();
-		});
+		}
 		return this;
 	},
 	render: function() {
 		let self = this;
 		$( ".page" ).hide();
-		this.$el.show();
+		if( this.username.length != 0 ) {
+			this.$el.show();
+		} else {
+			$("#main").show();
+		}
 		return this;
 	},
 	searchProfile: function( username ) {
 		return new Promise((resolve, reject)=>{
 			let q = new Parse.Query( Parse.User );
-			q.equalTo( "username", username );
-			q.first().then( resolve, reject );
+			q.equalTo( "username", username.toLowerCase() );
+			setTimeout(()=>{
+				q.first().then( resolve, reject );
+			}, 3000);
 		});
 	},
 	events: {
@@ -60,7 +72,12 @@ const Content = Backbone.View.extend({
 		var self = this;
 		return new Promise( resolve =>{
 			let cover = self.lazyLoad( data.cover, ()=>{
-				self.$el.find(".picture-card").height( self.$el.find(".cover").height() );
+				console.log( self.$el.find(".cover").height() );
+				if (self.$el.find(".cover").height()<300) {
+					self.$el.find(".picture-card").height( self.$el.find(".cover").height() );
+				} else {
+					self.$el.find(".picture-card").height( 300 );
+				}
 				setTimeout( resolve, 1000 );
 			});
 			cover.classList.add( "w3-image" );
@@ -103,7 +120,7 @@ const Content = Backbone.View.extend({
 			let btn = self.$el.find('.fav-btns').find(`[data-type=${data.type}]`);
 			btn.show();
 			btn.attr( "href", self.createUrl( data ) );
-			setTimeout( res, 500 );
+			setTimeout( res, 10 );
 		});
 	},
 	createUrl: function( res ) {
@@ -111,7 +128,7 @@ const Content = Backbone.View.extend({
 			case "facebook": return `https://fb.me/${res.uid}`;
 			case "twitter": return `https://twitter.com/${res.uid}`;
 			case "instagram": return `https://instagr.am/_u/${res.uid}`;
-			case "whatsapp": return `https://api.whatsapp.com/send?phone=${res.uid}`;
+			case "whatsapp": return `https://api.whatsapp.com/send?phone=${res.uid}&text=hey`;
 			case "youtube": return `https://www.youtube.com/${res.uid}`;
 		}
 		return "";
@@ -132,7 +149,7 @@ const Content = Backbone.View.extend({
 				img.parent().height( img.width() );
 			});
 			self.$el.find('.link-cards').append( el );
-			setTimeout( res, 500);
+			setTimeout( res, 50);
 		});
 	},
 	openLink: function( ev ) {
@@ -146,6 +163,14 @@ const FAQ = Backbone.View.extend({
 	initialize: function() {
 		return this;
 	},
+	events: {
+		"click .back" : "back"
+	},
+	back: function( ev ) {
+		ev.preventDefault();
+		if( content == null ) content = new Content();
+		content.render();
+	},
 	render: function() {
 		$( ".page" ).hide();
 		this.$el.show();
@@ -155,10 +180,14 @@ const FAQ = Backbone.View.extend({
 faq = new FAQ();
 
 let path = location.pathname.substring( 1 );
+console.log( "PATH", path );
 if( path != "" ) {
 	console.log( path );
 	content = new Content();
 	content.render();
+} else {
+	$("#my-spinner").hide();
+	$("#main").show();
 }
 
 $( window ).on('resize', function(event) {

@@ -31,6 +31,9 @@
 	max-width: 300px;
 	margin: auto;
 }
+#creator #username-modal .username {
+	text-transform: lowercase;
+}
 .picture-card {
 	height: 120px;
 	transition: height 1s;

@@ -213,7 +213,7 @@ const Creator = Backbone.View.extend({
 	changeUsername: function( ev ) {
 		ev.preventDefault();
 		var self = this;
-		let username = this.$el.find('#username-modal .username').val();
+		let username = this.$el.find('#username-modal .username').val().toLowerCase();
 		if( username.length < 4 ) {
 			$.sticky("Username is too short");
 			return false;
@@ -265,7 +265,12 @@ const Creator = Backbone.View.extend({
 			});
 			try {this.$el.find('input').val( favbtns[0].uid ); } catch(e){}
 		}
-		this.$el.find('label').text( `Enter ${$(ev.currentTarget).data("type")} userid` );
+		console.log( favbtns );
+		if( $(ev.currentTarget).data("type") == "whatsapp" ) {
+			this.$el.find('label').text( `Enter your mobile number with ISD code (919821123456)` );
+		} else {
+			this.$el.find('label').text( `Enter ${$(ev.currentTarget).data("type")} userid` );
+		}
 		this.$el.find('#fav-btn-modal').show();
 	},
 	addFavBtn: function( ev ) {
@@ -278,10 +283,12 @@ const Creator = Backbone.View.extend({
 		favbtns = favbtns.filter(function(btn) {
 			return btn.type != type;
 		});
-		favbtns.push({
-			type: type,
-			uid: uid
-		});
+		if( uid.length != 0 ) {
+			favbtns.push({
+				type: type,
+				uid: uid
+			});
+		}
 		Parse.User.current().set("favbtns", favbtns );
 		Parse.User.current().save();
 		console.log( favbtns );

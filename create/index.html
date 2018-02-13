@@ -23,7 +23,7 @@
 
 	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue.css">
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+	<link href="https://fonts.googleapis.com/css?family=Raleway:100" rel="stylesheet">
 	<link rel="stylesheet" href="/create/style.css">
 	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
 	<link rel="stylesheet" href="/sticky.css">
@@ -85,7 +85,7 @@
 			<div class="w3-modal-content w3-card-4 w3-animate-zoom">
 				<form class="w3-container w3-padding-16">
 					<label>New username</label>
-					<input type="text" class="w3-input w3-card w3-round username" required="" placeholder="Username should be unique" /><br>
+					<input type="text" class="w3-input w3-card w3-round username" placeholder="Username should be unique" required="" pattern="^[0-9A-Za-z\.\-\_]{3,15}$" /><br>
 					<button class="w3-button w3-theme w3-round w3-card">Update</button>
 				</form>
 			</div>
@@ -94,7 +94,7 @@
 			<div class="w3-modal-content w3-card-4 w3-animate-zoom">
 				<form class="w3-container w3-padding-16">
 					<label>Enter userid</label>
-					<input type="text" class="w3-input w3-card w3-round username" required="" placeholder="Enter userid" /><br>
+					<input type="text" class="w3-input w3-card w3-round username" pattern="[0-9A-Za-z\.\-_]{3,20}" /><br>
 					<button class="w3-button w3-theme w3-round w3-card">Save</button>
 				</form>
 			</div>
