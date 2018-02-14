@@ -29,6 +29,9 @@ body {
 	position: absolute;
 	bottom: 200px;
 }
+#main .textbox>img {
+	opacity: 0.2;
+}
 #main .text-box { font-weight: lighter; font-family: raleway; }
 #main .create-btn { bottom: 0; }
 #main .create-btn .w3-button { max-width: 600px; }
