@@ -31,10 +31,9 @@ const Content = Backbone.View.extend({
 			this.searchProfile( this.username ).then(r => {
 				self.user = r;
 				$("#my-spinner").hide();
-				this.prepareInfo( self.user.get("profile") ).then(async function() {
-					await self.populateFavBtns( r.get("favbtns") );
-					await self.populateLinkCard( r.get("links") );
-				});
+				this.prepareInfo( self.user.get("profile") );
+				self.populateFavBtns( r.get("favbtns") );
+				self.populateLinkCard( r.get("links") );
 			}).catch(err=>{
 				$.sticky("User not found");
 				$(".page").hide();
