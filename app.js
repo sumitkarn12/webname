@@ -58,7 +58,7 @@ const Content = Backbone.View.extend({
 	searchProfile: function( username ) {
 		return new Promise((resolve, reject)=>{
 			let q = new Parse.Query( Parse.User );
-			q.equalTo( "username", username.toLowerCase() );
+			q.equalTo( "username", username );
 			setTimeout(()=>{
 				q.first().then( resolve, reject );
 			}, 3000);
