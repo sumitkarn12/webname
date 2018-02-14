@@ -202,3 +202,4 @@ recentU.first().then(u=>{
 	$(".explore").attr("href", `https://webname.ga/${u.get("username")}`);
 	$(".explore").show();
 });
+

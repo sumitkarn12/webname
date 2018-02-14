@@ -33,7 +33,11 @@ body {
 	opacity: 0.2;
 }
 #main .text-box { font-weight: lighter; font-family: raleway; }
-#main .create-btn { bottom: 0; }
+#main .create-btn {
+	bottom: 0;
+	flex-direction: column;
+	justify-content: space-between;
+}
 #main .create-btn .w3-button { max-width: 600px; }
 #content, #content .contents {
 	position: relative;
