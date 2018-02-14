@@ -63,9 +63,10 @@
 				<div class="info-card w3-padding">
 					<div class="w3-xlarge display-name w3-text-theme"></div>
 					<div class="w3-small bio"></div>
-					<div>
+					<div class="sharable-link-card">
 						https://webname.ga/<button class="w3-button w3-theme w3-round-xlarge refrence w3-tiny"></button>
 						<button class="w3-button w3-tiny w3-card w3-round-xlarge copy-username"><i class="fas fa-copy"></i></button>
+						<p>This is your sharable link</p>
 					</div>
 				</div>
 				<div class="fav-btns w3-container w3-padding-16 w3-xlarge">
@@ -85,7 +86,7 @@
 			<div class="w3-modal-content w3-card-4 w3-animate-zoom">
 				<form class="w3-container w3-padding-16">
 					<label>New username</label>
-					<input type="text" class="w3-input w3-card w3-round username" placeholder="Username should be unique" required="" pattern="^[0-9A-Za-z\.\-\_]{3,15}$" /><br>
+					<input type="text" class="w3-input w3-card w3-round username" placeholder="Username should be unique" required="" pattern="[0-9A-Za-z\.\-_]{3,15}" /><br>
 					<button class="w3-button w3-theme w3-round w3-card">Update</button>
 				</form>
 			</div>

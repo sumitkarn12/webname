@@ -34,6 +34,20 @@
 #creator #username-modal .username {
 	text-transform: lowercase;
 }
+#creator .sharable-link-card {
+	width: 100%;
+	padding: 16px;
+	background: #fff;
+	animation: backgroundanim 1s ease infinite alternate;
+}
+@keyframes backgroundanim {
+	from {
+		background: yellow;
+	}
+	to {
+		background: #fff;
+	}
+}
 .picture-card {
 	height: 120px;
 	transition: height 1s;

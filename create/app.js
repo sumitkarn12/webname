@@ -201,7 +201,6 @@ const Creator = Backbone.View.extend({
 		u.set("profile", model);
 		u.save();
 		this.prepareInfo( model );
-		console.log( model );
 		this.$el.find('.w3-modal').click();
 	},
 	openUsernameModal: function( ev ) {
@@ -291,7 +290,6 @@ const Creator = Backbone.View.extend({
 		}
 		Parse.User.current().set("favbtns", favbtns );
 		Parse.User.current().save();
-		console.log( favbtns );
 		this.$el.find('.w3-modal').click();
 	},
 	openNewLinkCardModal: function( ev ) {
@@ -308,6 +306,7 @@ const Creator = Backbone.View.extend({
 		if( $.trim(data.image_url) == "" ) {
 			data.image_url = "https://source.unsplash.com/random/150x150";
 		}
+		console.log( data );
 		if( !data.image_url.startsWith("http") ) {
 			$.sticky("Image url is not correct");
 			return false;
