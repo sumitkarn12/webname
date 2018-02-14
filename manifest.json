@@ -4,7 +4,7 @@
     "orientation": "portrait",
     "description": "One link for all your links",
     "display": "standalone",
-    "start_url": "/index.html?launcher=true",
+    "start_url": "/?launcher=true",
     "theme_color": "#2196f3",
     "background_color": "#2196f3",
     "icons": [
