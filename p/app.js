@@ -122,7 +122,7 @@ var mdl = new Mdl();
 mdl.render({header: "Painting canvas", timeout: 10*60*1000});
 let path = location.pathname.replace(/\//g,"");
 let q = new Parse.Query( Parse.User );
-q.equalTo( "username", "sumit" );
+q.equalTo( "username", path );
 q.first().then(( u )=>{
 	model.set( "image", u.get( "image" ) );
 	model.set( "profile", u.get( "profile" ) );
