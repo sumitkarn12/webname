@@ -24,6 +24,7 @@ const Content = Backbone.View.extend({
 	initialize: function() {
 		var self = this;
 		this.username = location.pathname.substring( 1 );
+		this.username = "sumit";
 		this.cardTemplate = _.template(this.$el.find("#link-card-template").html());
 		console.log( "Searching", this.username, this.username.length );
 		if( this.username.length != 0 ) {
@@ -180,14 +181,14 @@ faq = new FAQ();
 
 let path = location.pathname.substring( 1 );
 console.log( "PATH", path );
-if( path != "" ) {
-	console.log( path );
+// if( path != "" ) {
+// 	console.log( path );
 	content = new Content();
 	content.render();
-} else {
-	$("#my-spinner").hide();
-	$("#main").show();
-}
+// } else {
+// 	$("#my-spinner").hide();
+// 	$("#main").show();
+// }
 
 $( window ).on('resize', function(event) {
 	event.preventDefault();

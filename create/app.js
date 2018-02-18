@@ -1,6 +1,6 @@
 
-var auth = null;
-var creator = null;
+let auth, creator, username, dp, info, quickie, bookmark, topbar;
+let model, fbProfile = null;
 
 Parse.initialize( "1e3bc14f-0975-4cb6-9872-bff78542f22b" );
 Parse.serverURL = "https://parse.buddy.com/parse";
@@ -14,6 +14,23 @@ var opts = {
 };
 const spin = new Spinner( opts ).spin();
 $("#my-spinner").html( spin.el );
+$.fn.serializeObject = function() {
+	var o = {};
+	var a = this.serializeArray();
+	$.each(a, function() {
+		if (o[this.name]) {
+			if (!o[this.name].push) {
+				o[this.name] = [o[this.name]];
+			}
+			o[this.name].push(this.value || '');
+		} else {
+			o[this.name] = this.value || '';
+		}
+	});
+	return o;
+};
+
+const Model = Backbone.Model.extend();
 
 window.fbAsyncInit = function() {
 	Parse.FacebookUtils.init({
@@ -23,13 +40,11 @@ window.fbAsyncInit = function() {
 		xfbml 	: true,				// initialize Facebook social plugins on the page
 		version 	: "v2.11"				// point to the latest Facebook Graph API version
 	});
-	if( auth == null )
-		auth = new Auth();
+	if( auth == null ) auth = new Auth();
 	$("#my-spinner").show();
 	auth.checkLogin().then( response => {
 		if( response.status == "connected" && Parse.User.current() != null ) {
-			creator = new Creator();
-			creator.render();
+			auth.getProfile().then( prof => auth.afterLogin( prof ) );
 		} else {
 			auth.render();
 		}
@@ -38,9 +53,6 @@ window.fbAsyncInit = function() {
 
 const Auth = Backbone.View.extend({
 	el: "#auth",
-	initialize: function() {
-		return this;
-	},
 	events: {
 		"click .login-btn": "openLogin"
 	},
@@ -50,10 +62,7 @@ const Auth = Backbone.View.extend({
 		$("#my-spinner").show();
 		Parse.FacebookUtils.logIn("email,public_profile", {
 			success: function(user) {
-				$("#my-spinner").hide();
-				if( creator == null )
-					creator = new Creator();
-				creator.render();
+				self.getProfile().then( prof => self.afterLogin( prof ) );
 			},
 			error: function(user, error) {
 				$("#my-spinner").hide();
@@ -74,6 +83,38 @@ const Auth = Backbone.View.extend({
 			FB.getLoginStatus( resolve );
 		});
 	},
+	afterLogin: function( prof ) {
+		$(".page").hide();
+		$(".main-page").fadeIn();
+		fbProfile = prof;	
+		if( username == null ) username = new Username();
+		username.render();
+		model = new Model();
+		model.on("change:profile", ( model, profile )=>{ info.render(); });
+		model.on("change:image", ( model, image )=>{ dp.render(); });
+		model.on("change:favbtns", ( model, favbtns )=>{ quickie.render(); });
+		model.on("change:links", ( model, links )=> bookmark.render() );
+
+		dp = new DP();
+		info = new Info();
+		quickie = new Quickie();
+		bookmark = new Bookmark();
+		topbar = new Topbar();
+
+		let profile = { name: "Excited user", email: "excited@user.com", about: "Excited to see this", mobile: "+919650123456" }
+		profile = $.extend( profile, fbProfile, Parse.User.current().get( "profile" ) );
+		delete profile.cover;
+		delete profile.picture;
+
+		model.set( "profile", profile );
+		model.set("favbtns", Parse.User.current().get("favbtns"));
+		model.set("links", Parse.User.current().get("links"));
+		if ( Parse.User.current().get("image") != null ) {
+			model.set( "image", Parse.User.current().get("image") );
+		} else {
+			model.set( "image", fbProfile.picture.data.url );
+		}
+	},
 	render: function() {
 		$( ".page" ).hide();
 		this.$el.show();
@@ -81,162 +122,90 @@ const Auth = Backbone.View.extend({
 	}
 });
 
-const Creator = Backbone.View.extend({
-	el: "#creator",
-	initialize: function() {
-		var self = this;
-		this.cardTemplate = _.template(this.$el.find("#link-card-template").html());
-		setTimeout(()=>{
-			$("#my-spinner").show();
-			Parse.User.current().fetch().then(( u )=>{
-				if( u.get( "profile" ) != null ) {
-					self.prepareInfo( u.get( "profile" ) );
-					self.populateLinkCard();
-				} else {
-					self.prepareInfo({
-						name: "Excited user",
-						picture: "https://avatars.io/facebook",
-						cover: "https://placeimg.com/851/316/any"
-					});
-				}
-				$("#my-spinner").hide();
-			}, ()=>{
-				$.sticky("Something went wrong");
-				$("#my-spinner").hide();
-				auth.render();
-			});
-		}, 100);
-		return this;
+const Topbar = Backbone.View.extend({
+	el: "#topbar",
+	events: {
+		"click .signout": "signOut",
+		"click .save": "save"
 	},
-	render: function() {
+	save: function( ev ) {
+		ev.preventDefault();
+		let favbtns = [];
+		let bookmarks = [];
+		quickie.$el.find('.links .link').each(function(index, el) {
+			let els = $( el );
+			favbtns.push({
+				type: els.data( "type" ),
+				uid: els.data( "uid" )
+			});
+		});
+		bookmark.$el.find('.links .link').each(function(index, el) {
+			let els = $( el );
+			bookmarks.push({
+				image_url: els.data( "image" ),
+				page_url: els.data( "url" )
+			});
+		});
+		let user = Parse.User.current();
+		user.set( "image", model.get("image") );
+		user.set( "profile", model.get("profile") );
+		user.set( "favbtns", favbtns );
+		user.set( "links", bookmarks );
+		$.sticky( "Saving..." );
+		user.save().then(()=>{
+			$.sticky( "Saved" );
+		}, ()=>{
+			$.sticky( "Could not saved" );
+		});
+	},
+	signOut: function( ev ) {
+		ev.preventDefault();
 		let self = this;
-		$( ".page" ).hide();
-		this.$el.show();
+		Parse.User.logOut().then(()=> auth.render() );
+	}
+});
+
+
+const Username = Backbone.View.extend({
+	el: "#username",
+	render: function() {
+		this.$el.find('input').val( Parse.User.current().get("username") );
+		this.updateShareLink( Parse.User.current().get("username") );
 		return this;
 	},
 	events: {
-		"click .new-link-btn": "openNewLinkCardModal",
-		"submit #new-link-card-modal form": "addNewLinkCard",
-		"click .open-info-card-modal": "openInfoCardModal",
-		"submit #info-card-modal form": "updateInfoCard",
-		"click .w3-modal": "closeModal",
-		"click .from-facebook-btn": "fromFacebook",
-		"click .link-card .remove": "removeLinkCard",
-		"click .refrence": "openUsernameModal",
-		"click .copy-username": "copyUsername",
-		"click .fav-btns button": "openFavBtnModal",
-		"submit #username-modal form": "changeUsername",
-		"submit #fav-btn-modal form": "addFavBtn"
+		"submit form": "updateUsername",
+		"keyup input": "inputKeyUp",
+		"click .copy-share-link": "copyShareLink"
 	},
-	prepareInfo: function( data ) {
-		var self = this;
-		let cover = self.lazyLoad( data.cover, ()=>{
-			self.$el.find(".picture-card").height( self.$el.find(".cover").height() );
-		});
-		cover.classList.add( "w3-image" );
-		self.$el.find(".section .cover").html( cover );
-		let dp = this.lazyLoad( data.picture );
-		dp.classList.add("w3-image","w3-card-4","w3-circle", "w3-border", "w3-theme", "profile-picture");
-		self.$el.find(".section .dp").html( dp );
-		self.$el.find(".section .info-card .display-name").text( data.name );
-		self.$el.find(".section .info-card .bio").text( data.about );
-
-		// Update info-card-modal fields as well
-		self.$el.find("#info-card-modal .cover_photo_url").val( data.cover );
-		self.$el.find("#info-card-modal .profile_photo_url").val( data.picture );
-		self.$el.find("#info-card-modal .display_name").val( data.name );
-		self.$el.find("#info-card-modal .about").val( data.about );
-
-		self.$el.find('.refrence').html( Parse.User.current().get("username") );
-		self.$el.find('.refrence').data( "ref", Parse.User.current().get("username") );
-		cover.setAttribute( "src", cover.getAttribute("data-src") );
-		dp.setAttribute( "src", dp.getAttribute("data-src") );
-	},
-	lazyLoad: function( src, callback ) {
-		let im = new Image();
-		im.setAttribute( "data-src", src );
-		im.onload = ( ev )=>{
-			im.removeAttribute( "data-src" );
-			if( callback )
-				callback( ev );
-		};
-		return im;
-	},
-	closeModal: function( ev ) {
-		if( ev.target.classList.contains('w3-modal') ) {
-			ev.preventDefault();
-			$(".w3-modal").hide();
-		}
-	},
-	showImageUrlHint: function() {
-		$.sticky("use <a target='_blank' href='https://ctrlq.org/images'>https://ctrlq.org/images</a> to get image url", {
-			autoclose: 10000
-		});
-	},
-	openInfoCardModal: function( ev ) {
-		ev.preventDefault();
-		this.$el.find("#info-card-modal").show();
-		this.showImageUrlHint();
-	},
-	fromFacebook: function( ev ) {
+	updateUsername: function( ev ) {
 		ev.preventDefault();
 		var self = this;
-		$("#my-spinner").show();
-		auth.getProfile().then(profile=>{
-			$("#my-spinner").hide();
-			self.$el.find(".cover_photo_url").val( profile.cover.source );
-			self.$el.find(".profile_photo_url").val( profile.picture.data.url );
-			self.$el.find(".display_name").val( profile.name );
-			console.log( profile );
-		});
-	},
-	updateInfoCard: function( ev ) {
-		ev.preventDefault();
-		let model = {};
-		model.cover = this.$el.find("#info-card-modal .cover_photo_url").val();
-		model.picture = this.$el.find("#info-card-modal .profile_photo_url").val();
-		model.name = this.$el.find("#info-card-modal .display_name").val();
-		model.about = this.$el.find("#info-card-modal .about").val();
-		let u = Parse.User.current();
-		u.set("profile", model);
-		u.save();
-		this.prepareInfo( model );
-		this.$el.find('.w3-modal').click();
-	},
-	openUsernameModal: function( ev ) {
-		ev.preventDefault();
-		this.$el.find('#username-modal .username').val( Parse.User.current().get("username") );
-		this.$el.find('#username-modal').show();
-		this.showImageUrlHint();
-	},
-	changeUsername: function( ev ) {
-		ev.preventDefault();
-		var self = this;
-		let username = this.$el.find('#username-modal .username').val().toLowerCase();
+		let username = this.$el.find('input').val().toLowerCase();
 		if( username.length < 4 ) {
 			$.sticky("Username is too short");
 			return false;
 		}
-		$("#my-spinner").show();
 		let user = Parse.User.current();
 		user.set("username", username);
+		$.sticky( "updating username" );
 		user.save().then(function( user ) {
-			$("#my-spinner").hide();
-			self.$el.find('.refrence').html( user.get("username") );
-			self.$el.find('.refrence').data( "ref", user.get("username") );
-			console.log( user.get("username") );
-			self.$el.find('.w3-modal').click();
+			$.sticky( "username updated" );
 		}, function( user, error ) {
-			$("#my-spinner").hide();
 			$.sticky( error.message );
 			console.log( user, error );
 		});
 	},
-	copyUsername: function( ev ) {
-		ev.preventDefault();
+	inputKeyUp: function( ev ) {
+		this.updateShareLink( ev.currentTarget.value );
+	},
+	updateShareLink: function( username ) {
+		this.$el.find('.share-link').text( `${location.origin}/${username}` );
+	},
+	copyShareLink: function() {
 		let ta = document.createElement( "textarea" );
 		$( ta ).addClass('clipboard-textarea');
-		ta.value = location.origin+"/"+Parse.User.current().get("username");
+		ta.value = this.$el.find('.share-link').text().trim();
 		$( "body" ).append( ta );
 		ta.select();
 		let fa = document.execCommand( "copy" );
@@ -246,116 +215,140 @@ const Creator = Backbone.View.extend({
 			$.sticky( "Something went wrong" );
 		}
 		ta.remove();
-	},
-	populateLinkCard: async function() {
-		var self = this;
-		for( const card of Parse.User.current().get("links") ) {
-			await self.renderLinkCard( card );
-		}
-	},
-	openFavBtnModal: function( ev ) {
-		ev.preventDefault();
-		let type = $(ev.currentTarget).data("type");
-		this.$el.find('form').data( "type", type );
-		let favbtns = Parse.User.current().get("favbtns");
-		if( favbtns != null ) {
-			favbtns = favbtns.filter(function(btn) {
-				return btn.type == type;
-			});
-			try {this.$el.find('input').val( favbtns[0].uid ); } catch(e){}
-		}
-		console.log( favbtns );
-		if( $(ev.currentTarget).data("type") == "whatsapp" ) {
-			this.$el.find('label').text( `Enter your mobile number with ISD code (919821123456)` );
-		} else {
-			this.$el.find('label').text( `Enter ${$(ev.currentTarget).data("type")} userid` );
-		}
-		this.$el.find('#fav-btn-modal').show();
-	},
-	addFavBtn: function( ev ) {
-		ev.preventDefault();
-		let form = $(ev.currentTarget);
-		let type = form.data("type");
-		let uid = form.find("input").val();
-		let favbtns = Parse.User.current().get("favbtns");
-		if( favbtns == null ) favbtns = [];
-		favbtns = favbtns.filter(function(btn) {
-			return btn.type != type;
-		});
-		if( uid.length != 0 ) {
-			favbtns.push({
-				type: type,
-				uid: uid
-			});
-		}
-		Parse.User.current().set("favbtns", favbtns );
-		Parse.User.current().save();
-		this.$el.find('.w3-modal').click();
-	},
-	openNewLinkCardModal: function( ev ) {
-		ev.preventDefault();
-		this.$el.find('#new-link-card-modal').show();
-		this.showImageUrlHint();
-	},
-	addNewLinkCard: function( ev ) {
-		ev.preventDefault();
-		let form = $( ev.target );
-		let data = {};
-		data.image_url = form.find(".image_url").val();
-		data.page_url = form.find(".page_url").val();
-		if( $.trim(data.image_url) == "" ) {
-			data.image_url = "https://source.unsplash.com/random/150x150";
-		}
-		console.log( data );
-		if( !data.image_url.startsWith("http") ) {
-			$.sticky("Image url is not correct");
-			return false;
-		}
-		if( !data.page_url.startsWith("http") ) {
-			$.sticky("Page url is not correct");
-			return false;
-		}
-		data.caption = form.find(".caption").val();
-		if( data.caption.length == 0 || data.caption.length > 16 ) {
-			$.sticky("Caption is either too long or too short");
-			return false;
-		}
-		let u = Parse.User.current();
-		u.add("links", data);
-		u.save();
-		this.renderLinkCard( data );
-		this.$el.find('.w3-modal').click();
-	},
-	renderLinkCard: function( data ) {
-		var self = this;
-		return new Promise((res)=>{
-			let el = $( self.cardTemplate( data ) );
-			el.find("img").on("load", (ev)=>{
-				ev.target.removeAttribute("data-src");
-				let img = $(ev.target);
-				img.parent().height( img.width() );
-			});
-			self.$el.find('.link-cards').append( el );
-			setTimeout( res, 500);
-		});
-	},
-	removeLinkCard: function(ev) {
-		let links = Parse.User.current().get("links");
-		let target = $( ev.target );
-		if( target.hasClass('remove') ) {
-			ev.stopPropagation();
-			links = links.filter(a=> a.page_url != target.data("url") );
-			Parse.User.current().set("links", links);
-			Parse.User.current().save();
-			target.parent().parent().parent().parent().fadeOut('slow', function() {
-				$( this ).remove();
-			});
-		}
 	}
 });
 
-$( window ).on('resize', function(event) {
-	event.preventDefault();
-	$(".page").css("margin-bottom", $(".w3-bottom").height())
+const DP = Backbone.View.extend({
+	el: "#dp",
+	render: function() {
+		this.$el.find('.profile-image-url').val( model.get( "image" ) );
+		this.$el.find('.profile-image').attr( "src", model.get( "image" ) );
+		this.$el.find('.cover-image').attr( "src", model.get( "image" ) );
+		return this;
+	},
+	events: {
+		"submit form": "updateProfilePicture",
+		"click .profile-image": "removeProfilePicture"
+	},
+	removeProfilePicture: function( ev ) {
+		ev.preventDefault();
+		model.set( "image", fbProfile.picture.data.url );
+		$.sticky( "Changed to default Profile picture" );
+	},
+	updateProfilePicture: function( ev ) {
+		ev.preventDefault();
+		model.set("image", this.$el.find(".profile-image-url").val().trim() );
+		$.sticky( "Profile picture changed" );
+	}
 });
-$(".page").css("margin-bottom", $(".w3-bottom").height())
+
+const Info = Backbone.View.extend({
+	el: "#info",
+	render: function() {
+		this.$el.find("[name=name]").val( model.get("profile").name );
+		this.$el.find("[name=about]").val( model.get("profile").about );
+		this.$el.find("[name=mobile]").val( model.get("profile").mobile );
+		this.$el.find("[name=email]").val( model.get("profile").email );
+		return this;
+	},
+	events: {
+		"submit form": "updateInfo"
+	},
+	updateInfo: function( ev ) {
+		ev.preventDefault();
+		let profile = $( ev.currentTarget ).serializeObject();
+		model.set( "profile", profile );
+	}
+});
+
+const Quickie = Backbone.View.extend({
+	el: "#quickie",
+	initialize: function() {
+		this.template = _.template( this.$el.find("#q-tmpl").html() );
+		Sortable.create( document.querySelector('#quickie .links') );
+		return this;
+	},
+	render: function() {
+		let self = this;
+		this.model = Parse.User.current().get("favbtns");
+		if ( model.get("favbtns") ) {
+			this.$el.find(".links").empty();
+			model.get("favbtns").forEach((e,i)=> self.renderQuickie( e ) );
+		}
+		return this;
+	},
+	events: {
+		"click .remove": "removeQuickie",
+		"change .sitename": "changeTypeInfo",
+		"submit form": "addQuickie"
+	},
+	renderQuickie: function( e ) {
+		let self = this;
+		if( e.type == "messenger" )
+			self.$el.find('.links').append( self.template({ sitename: "facebook-messenger", username: e.uid }) );
+		else
+			self.$el.find('.links').append( self.template({ sitename: e.type, username: e.uid }) );
+	},
+	changeTypeInfo: function( ev ) {
+		ev.preventDefault();
+		let type = ev.currentTarget.value;
+		switch ( type ) {
+			case "whatsapp": this.$el.find('.info').text( "Enter mobile with ISD code" ); break;
+			case "facebook": this.$el.find('.info').text( "Enter facebook userid" ); break;
+			case "instagram": this.$el.find('.info').text( "Enter instagram userid" ); break;
+			default: this.$el.find('.info').text( "Enter userid only" ); break;
+		}
+		this.$el.find("input").focus();
+	},
+	removeQuickie: function( ev ) {
+		ev.preventDefault();
+		$( ev.currentTarget ).closest('.link').remove();
+	},
+	addQuickie: function( ev ) {
+		ev.preventDefault();
+		let quickie = $( ev.currentTarget ).serializeObject();
+		$( ev.currentTarget ).find('input').val("");
+		this.renderQuickie( quickie );
+	}
+});
+
+const Bookmark = Backbone.View.extend({
+	el: "#bookmark",
+	initialize: function() {
+		this.template = _.template( this.$el.find("#b-tmpl").html() );
+		Sortable.create( document.querySelector('#bookmark .links') );
+		return this;
+	},
+	render: function() {
+		let self = this;
+		this.model = Parse.User.current().get("links");
+		if ( model.get("links") ) {
+			this.$el.find(".links").empty();
+			model.get("links").forEach((e,i)=> self.renderBookmark( e ) );
+		}
+		return this;
+	},
+	events: {
+		"click .link .remove>button": "removeBookmark",
+		"submit form": "addBookmark"
+	},
+	renderBookmark: function( bm ) {
+		let temp = $(this.template( bm ));
+		this.$el.find('.links').append( temp );
+		let cardWidth = temp.find(".image-wrapper").width();
+		temp.find(".image-wrapper, .image-wrapper img").height( cardWidth );
+	},
+	removeBookmark: function( ev ) {
+		ev.preventDefault();
+		$( ev.currentTarget ).closest('.link').remove();
+	},
+	addBookmark: function( ev ) {
+		ev.preventDefault();
+		let bookmark = $( ev.currentTarget ).serializeObject();
+		bookmark.image_url = $.trim(bookmark.image_url);
+		if( bookmark.image_url.length == 0 ) bookmark.image_url = "https://source.unsplash.com/random/150x150";
+		this.renderBookmark( bookmark );
+		$( ev.currentTarget ).find('input').val("");
+	}
+});
+

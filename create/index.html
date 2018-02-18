@@ -24,7 +24,7 @@
 	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue.css">
 	<link href="https://fonts.googleapis.com/css?family=Raleway:100" rel="stylesheet">
-	<link rel="stylesheet" href="/create/style.css">
+	<link rel="stylesheet" href="style.css">
 	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
 	<link rel="stylesheet" href="/sticky.css">
 
@@ -44,121 +44,167 @@
 	<div id="fb-root"></div>
 
 	<div id="auth" class="page w3-card">
-		<div class="w3-card w3-theme-l1">
-			<p class="w3-container w3-xxlarge" style="font-family: raleway;">One link <br> for all your links</p>
-			<button class="login-btn w3-button w3-theme" style="width: 100%;">Login with Facebook</button>
+		<div style="width: 300px;">
+			<button class="login-btn w3-button w3-round w3-card-4"><i class="fab fa-facebook fa-3x"></i><div>Continue with Facebook</div></button>
 		</div>
 	</div>
-	<div id="creator" class="page w3-card">
-		<div class="section">
-			<div class="cover w3-top"></div>
-			<div class="w3-display-container picture-card">
-				<div class="w3-display-topright w3-container w3-padding-16">
-					<button class="open-info-card-modal w3-button w3-theme w3-circle w3-card w3-xlarge"><i class="fas fa-pen-square"></i></button>
-				</div>
-				<div class="rounded-cover"></div>
-				<div class="w3-display-bottommiddle dp"></div>
-			</div>
-			<div class="contents">
-				<div class="info-card w3-padding">
-					<div class="w3-xlarge display-name w3-text-theme"></div>
-					<div class="w3-small bio"></div>
-					<div class="sharable-link-card">
-						https://webname.ga/<button class="w3-button w3-theme w3-round-xlarge refrence w3-tiny"></button>
-						<button class="w3-button w3-tiny w3-card w3-round-xlarge copy-username"><i class="fas fa-copy"></i></button>
-						<p>This is your sharable link</p>
-					</div>
-				</div>
-				<div class="fav-btns w3-container w3-padding-16 w3-xlarge">
-					<button data-type="facebook" class="w3-animate-zoom w3-theme w3-button w3-circle w3-card"><i class="fab fa-facebook-square"></i></button>
-					<button data-type="instagram" class="w3-animate-zoom w3-theme w3-button w3-circle w3-card"><i class="fab fa-instagram"></i></button>
-					<button data-type="twitter" class="w3-animate-zoom w3-theme w3-button w3-circle w3-card"><i class="fab fa-twitter-square"></i></button>
-					<button data-type="youtube" class="w3-animate-zoom w3-theme w3-button w3-circle w3-card"><i class="fab fa-youtube-square"></i></button>
-					<button data-type="whatsapp" class="w3-animate-zoom w3-theme w3-button w3-circle w3-card"><i class="fab fa-whatsapp"></i></button>
-				</div>
-				<div class="link-cards w3-row"></div>
-				<div class="w3-padding w3-center">
-					<button class="w3-button w3-round w3-card w3-theme new-link-btn">Add new link</button>
+
+	<div class="w3-row page main-page">
+		<div class="w3-col s12">
+			<div class="w3-card-4 w3-theme" id="topbar">
+				<div class="w3-xlarge w3-theme">
+					<img src="/icons/icon.png" style="width: 52px; margin-left: 16px;" alt=""/>
+					<button class="w3-button w3-theme w3-right signout"><i class="fas fa-sign-out-alt"></i></button>
+					<button class="w3-button w3-theme w3-right save"><i class="fas fa-save"></i></button>
 				</div>
 			</div>
 		</div>
-		<div class="w3-modal" id="username-modal">
-			<div class="w3-modal-content w3-card-4 w3-animate-zoom">
-				<form class="w3-container w3-padding-16">
-					<label>New username</label>
-					<input type="text" class="w3-input w3-card w3-round username" placeholder="Username should be unique" required="" pattern="[0-9A-Za-z\.\-_]{3,15}" /><br>
-					<button class="w3-button w3-theme w3-round w3-card">Update</button>
-				</form>
-			</div>
-		</div>
-		<div class="w3-modal" id="fav-btn-modal">
-			<div class="w3-modal-content w3-card-4 w3-animate-zoom">
-				<form class="w3-container w3-padding-16">
-					<label>Enter userid</label>
-					<input type="text" class="w3-input w3-card w3-round username" pattern="[0-9A-Za-z\.\-_]{3,20}" /><br>
-					<button class="w3-button w3-theme w3-round w3-card">Save</button>
-				</form>
-			</div>
-		</div>
-		<div class="w3-modal" id="info-card-modal">
-			<div class="w3-modal-content w3-card-4 w3-animate-zoom">
-				<form class="w3-container w3-padding-16">
-					<label>Cover photo url</label>
-					<input type="text" class="w3-input w3-card w3-round cover_photo_url" required="" placeholder="Cover photo url" /><br>
-					<label>Profile photo url</label>
-					<input type="text" class="w3-input w3-card w3-round profile_photo_url" required="" placeholder="Profile photo url" /><br>
-					<label>Name</label>
-					<input type="text" class="w3-input w3-card w3-round display_name" required=""  placeholder="Display name" /><br>
-					<label>About</label>
-					<input type="text" class="w3-input w3-card w3-round about"  placeholder="About" /><br>
-					<button class="w3-button w3-theme w3-round w3-card">Update</button>
-				</form>
-				<div class="w3-container w3-padding-16">
-					<button class="w3-button w3-theme w3-round w3-card from-facebook-btn">Get it from Facebook</button>
-				</div>
-			</div>
-		</div>
-		<div class="w3-modal" id="new-link-card-modal">
-			<div class="w3-modal-content w3-card-4 w3-animate-zoom">
-				<form class="w3-container w3-padding-16">
-					<label for="url">Image url</label>
-					<input type="text" class="w3-input w3-card w3-round image_url" placeholder="Image url ( Optional )" /><br>
-					<label for="url">Link</label>
-					<input type="text" class="w3-input w3-card w3-round page_url" placeholder="Page url" required="" /><br>
-					<label for="url">Caption</label>
-					<input type="text" class="w3-input w3-card w3-round caption"  placeholder="Caption" required="" /><br>
-					<button class="w3-button w3-theme w3-round w3-card">Add</button>
-				</form>
-			</div>
-		</div>
-		<script id="link-card-template" type="x-template">
-			<div class="w3-container w3-padding-16 w3-col s6 m4 l3 link-card" data-url="<%= page_url %>">
-				<div class="w3-card w3-round w3-animate-opacity">
+		<div class="w3-col s12 m6 l3">
+			<div id="dp" class="w3-container w3-padding-16">
+				<div class="w3-card">
 					<div class="w3-display-container">
-						<div class="image-wrapper">
-							<img data-src="" src="<%= image_url %>" class="w3-image w3-card" alt="" />
+						<div class="cover-image-wrapper">
+							<img src="https://source.unsplash.com/random/150x150" class="cover-image" alt="">
 						</div>
-						<div class="w3-display-topright">
-							<button class="w3-button w3-theme remove" data-url="<%= page_url %>">&times;</button>
-						</div>
+						<img src="https://source.unsplash.com/random/150x150" alt="profile image" class="w3-image w3-circle w3-card-4 w3-display-middle profile-image" />
 					</div>
-					<div class="info w3-padding">
-						<div class="w3-text-theme"><%= caption %></div>
-						<div class="w3-text-grey w3-tiny"><%= page_url %></div>
+					<div class="w3-container w3-padding-16">
+						<form class="profile-pic-url w3-row">
+							<div class="w3-col s12">Profile picture url</div>
+							<div class="w3-col s10 w3-tiny">
+								<input type="text" class="w3-input profile-image-url" />
+							</div>
+							<div class="w3-col s2 w3-tiny">
+								<button class="w3-button w3-theme w3-border-bottom" style="width: 100%;"><i class="fas fa-check"></i></button>
+							</div>
+							<div class="w3-col s12">
+								<div class="w3-small w3-text-gray">You can use <a target="_blank" href="https://ctrlq.org/images/">https://ctrlq.org/images/</a> to get image url</div>
+							</div>
+						</form>
 					</div>
 				</div>
 			</div>
-		</script>
+			<div id="info" class="w3-container w3-padding-16">
+				<div class="w3-card">
+					<div class="w3-padding w3-large w3-theme">Personal info</div>
+					<div class="w3-container w3-padding-16">
+						<form class="w3-tiny">
+							<label>Name</label>
+							<input type="text" name="name" class="w3-input" required="" pattern="[A-Za-z ]{3,32}">
+							<label>About</label>
+							<input type="text" class="w3-input" name="about" />
+							<label>Mobile</label>
+							<input type="text" class="w3-input" name="mobile" />
+							<label>Email</label>
+							<input type="email" class="w3-input" name="email" />
+							<div class="w3-section"></div>
+							<button class="w3-button w3-theme" style="width: 100%;"><i class="fas fa-check"></i></button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="w3-col s12 m6 l3">
+			<div id="username" class="w3-container w3-padding-16">
+				<div class="w3-card">
+					<div class="w3-large w3-theme">
+						<div class="w3-padding" style="display: inline-block;">Share with your friends</div>
+						<button class="w3-button w3-theme copy-share-link w3-right"><i class="fas fa-copy"></i></button>
+					</div>
+					<div class="w3-container w3-padding-16">
+						<form>
+							<div class="w3-row">
+								<div class="w3-col s12">
+									<div class="w3-large share-link">https://webname.ga/</div>
+								</div>
+								<div class="w3-col s10">
+									<input type="text" class="w3-input" required="" pattern="[0-9A-Za-z\.\-_]{3,15}">
+								</div>
+								<div class="w3-col s2">
+									<button class="w3-button w3-theme" style="width: 100%;"><i class="fas fa-check"></i></button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div id="quickie" class="w3-container w3-padding-16">
+				<script type="text/x-template" id="q-tmpl">
+					<div class="link w3-display-container w3-theme w3-round-xxlarge sortable-dragging" data-uid="<%= username %>" data-type="<%= sitename %>">
+						<div class="username w3-padding-16"><%= username %></div>
+						<div class="w3-display-left sitename w3-padding-16 w3-container"><i class="fab fa-<%= sitename %> fa-2x"></i></div>
+						<button class="w3-display-right w3-button remove"><i class="fas fa-times"></i></button>
+					</div>
+				</script>
+				<div class="w3-card">
+					<div class="w3-padding w3-large w3-theme">Quick links</div>
+					<div class="w3-container w3-padding-16">
+						<div class="links"></div>
+						<div class="w3-section"></div>
+						<form class="w3-row">
+							<select name="type" class="w3-col s4 w3-select sitename">
+								<option value="facebook">Facebook</option>
+								<option value="messenger">Messenger</option>
+								<option value="twitter">Twitter</option>
+								<option value="instagram">Instagram</option>
+								<option value="whatsapp">WhatsApp</option>
+								<option value="googleplus">Google Plus</option>
+								<option value="youtube">Youtube</option>
+								<option value="github">GitHub</option>
+								<option value="linkedin">LinkedIn</option>
+							</select>
+							<input type="text" name="uid" class="w3-input w3-col s6 username" required="" pattern="[0-9A-Za-z\.\-_]{3,15}">
+							<button class="w3-button w3-theme w3-col s2"><i class="fas fa-check"></i></button>
+							<div class="w3-col s12 w3-small w3-text-gray info"></div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="w3-col s12 l6">
+			<div id="bookmark" class="w3-container w3-padding-16">
+				<script type="text/x-template" id="b-tmpl">
+					<div class="w3-col s6 m4 l3 w3-container w3-padding-16 link" data-image="<%= image_url %>" data-url="<%= page_url %>">
+						<div class="w3-card w3-display-container">
+							<div class="image-wrapper">
+								<img src="<%= image_url %>" class="" alt="" />
+							</div>
+							<div class="w3-display-bottomleft w3-tiny page-url"><%= page_url %></div>
+							<div class="w3-display-topright w3-tiny remove">
+								<button class="w3-circle w3-button">
+									<i class="fas fa-times"></i>
+								</button>
+							</div>
+						</div>
+					</div>
+				</script>
+				<div class="w3-card">
+					<div class="w3-padding w3-large w3-theme">My bookmarks</div>
+					<div>
+						<div class="links w3-row"></div>
+						<form class="w3-row w3-small w3-border-top">
+							<div class="w3-col s6 w3-padding">
+								<span class="w3-text-theme">Image url ( Optional )</span>
+								<input type="text" name="image_url" placeholder="Image url ( Optional )" class="w3-input image" pattern="^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$">
+							</div>
+							<div class="w3-col s6 w3-padding">
+								<span class="w3-text-theme">URL</span>
+								<input type="text" name="page_url" placeholder="URL" class="w3-input username" required="" pattern="^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$">
+							</div>
+							<div class="w3-col s12 w3-padding">
+								<button class="w3-button w3-theme" style="width: 100%;"><i class="fas fa-check"></i></button>
+								<div class="w3-small w3-text-gray">You can use <a target="_blank" href="https://ctrlq.org/images/">https://ctrlq.org/images/</a> to get image url</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
+
 	<div class="page" id="my-spinner"></div>
-	<div class="w3-bottom w3-theme w3-row" style="z-index: -1;">
-		<div class="w3-padding w3-center w3-col s6 w3-tiny">
-			<a href="/privacypolicy.html">Privacy Policy</a>
-		</div>
-		<div class="w3-padding w3-center w3-col s6 w3-tiny">
-			<a href="/terms-and-conditions.html">Terms and Conditions</a>
-		</div>
-	</div>
-	<script src="/create/app.js"></script>
+
+	<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+	<script src="app.js"></script>
 </body>
 </html>

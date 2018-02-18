@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>webname | My presence on web</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+	<meta name="description" content="One link for all your links"/>
+
+	<link rel="alternate" href="https://webname.ga/" hreflang="x-default" />
+
+	<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+	<link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#000000">
+	<meta name="apple-mobile-web-app-title" content="webname.ga">
+
+	<link rel="manifest" href="/manifest.json" />
+	<meta name="application-name" content="webname" />
+	<meta name="theme-color" content="#2196f3" />
+	<meta name="msapplication-TileColor" content="#2196f3">
+	<meta name="msapplication-config" content="/browserconfig.xml">
+	<link rel="shortcut icon" href="/favicon.ico" />
+
+	<!-- og tags -->
+	<meta property="og:image" content="https://webname.ga/icons/cover.png?i=0"/>
+	<meta property="og:title" content="webname | My presence on web"/>
+	<meta property="og:description" content="One link for all your links"/>
+	<meta property="og:site_name" content="webname.ga"/>
+	<meta property="og:type" content="website"/>
+	<meta property="og:url" content="https://webname.ga"/>
+	<meta property="fb:app_id" content="1778142652491392"/>
+	<meta name="twitter:card" content="summary_large_image">
+
+	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
+	<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue.css">
+	<link href="https://fonts.googleapis.com/css?family=Raleway:100,200,300,400" rel="stylesheet">
+	<link rel="stylesheet" href="/p/style.css">
+
+	<script defer src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
+	<script src="https://npmcdn.com/parse@1.11.0/dist/parse.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js"></script>
+	<script src="/spin.js"></script>
+</head>
+<body>
+
+	<div class="w3-row main page">
+		<div class="w3-col s12 l4">
+			<div id="profile">
+				<div class="w3-container w3-padding-16">
+					<div class="w3-card">
+						<div class="w3-display-container">
+							<div class="cover"></div>
+							<div class="w3-display-middle">
+								<img src="https://source.unsplash.com/random/150x150" alt="" class="w3-image dp w3-circle w3-card-4" />
+							</div>
+						</div>
+						<div class="w3-xlarge w3-text-theme name w3-padding">Sumit Karn</div>
+						<div class="w3-small w3-text-gray about w3-container">Loves chai prefer coffee code 4 web made logos hate to be in frame don't want call on birthday &amp; hav no identity</div>
+						<div class="contact">
+							<a href="tel:+919650716417" class="w3-button w3-theme w3-border-right call" style="width: 100%;">Call</a>
+							<a href="mailto:sumitkarn123@yahoo.com" class="w3-border-left w3-button w3-theme email" style="width: 100%;">Email</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="quickie" class="w3-container">
+				<div class="btns"></div>
+				<script type="q-tmpl" id="template">
+					<a href="<%= url %>" target="_blank" class="w3-button w3-theme w3-circle w3-card"><i class="fab fa-<%= type %> fa-2x"></i></a>
+				</script>
+			</div>
+		</div>
+		<div class="w3-col s12 l8">
+			<div id="bookmark">
+				<script type="q-tmpl" id="template">
+					<div class="w3-col s6 m4 l3 w3-container w3-padding-16 link">
+						<a href="<%= page_url %>" target="_blank">
+							<div class="w3-card w3-display-container" style="overflow:hidden;">
+								<div class="faded-background" style="background-image:url(<%= image_url %>);"></div>
+								<div class="w3-display-middle" style="width:85%;">
+									<img src="<%= image_url %>" class="w3-image" alt="" />
+								</div>
+								<div class="w3-display-bottomleft w3-tiny page-url"><%= page_url %></div>
+							</div>
+						</a>
+					</div>
+				</script>
+				<div class="links w3-row"></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="w3-section"></div>
+
+	<div class="w3-theme w3-row">
+		<div class="w3-padding w3-center w3-col s12">
+			<a href="/create">Like this? Click here to create yours.</a>
+		</div>
+		<div class="w3-padding w3-center w3-col s6 w3-tiny">
+			<a href="/privacypolicy.html">Privacy Policy</a>
+		</div>
+		<div class="w3-padding w3-center w3-col s6 w3-tiny">
+			<a href="/terms-and-conditions.html">Terms and Conditions</a>
+		</div>
+	</div>
+
+	<div class="w3-modal" id="mdl">
+		<div class="w3-modal-content w3-animate-zoom">
+			<div class="w3-theme w3-padding w3-large header"></div>
+			<div class="w3-container w3-padding-16 body"></div>
+		</div>
+	</div>
+
+	<script src="/p/app.js"></script>
+</body>
+</html>
