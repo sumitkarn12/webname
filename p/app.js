@@ -120,6 +120,7 @@ let bookmark = new Bookmark();
 var mdl = new Mdl();
 
 mdl.render({header: "Painting canvas", timeout: 10*60*1000});
+let path = location.pathname.replace(/\//g,"");
 let q = new Parse.Query( Parse.User );
 q.equalTo( "username", "sumit" );
 q.first().then(( u )=>{
@@ -130,7 +131,6 @@ q.first().then(( u )=>{
 	mdl.hide();
 });
 
-let path = location.pathname.substring( 1 );
 
 $( window ).on('resize', function(event) {
 	event.preventDefault();
