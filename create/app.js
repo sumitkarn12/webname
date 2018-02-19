@@ -165,7 +165,6 @@ const Topbar = Backbone.View.extend({
 	}
 });
 
-
 const Username = Backbone.View.extend({
 	el: "#username",
 	render: function() {
@@ -284,10 +283,7 @@ const Quickie = Backbone.View.extend({
 	},
 	renderQuickie: function( e ) {
 		let self = this;
-		if( e.type == "messenger" )
-			self.$el.find('.links').append( self.template({ sitename: "facebook-messenger", username: e.uid }) );
-		else
-			self.$el.find('.links').append( self.template({ sitename: e.type, username: e.uid }) );
+		self.$el.find('.links').append( self.template({ sitename: e.type, username: e.uid }) );
 	},
 	changeTypeInfo: function( ev ) {
 		ev.preventDefault();

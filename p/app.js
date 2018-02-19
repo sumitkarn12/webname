@@ -28,11 +28,11 @@ const Profile = Backbone.View.extend({
 		this.$el.find(".name").html( profile.name );
 		this.$el.find(".about").html( profile.about );
 		if( profile.mobile ) {
-			this.$el.find(".call").attr( `tel:${profile.mobile}` );
+			this.$el.find(".call").attr( "href", `tel:${profile.mobile}` );
 			this.$el.find(".call").show();
 		}
 		if( profile.email ) {
-			this.$el.find(".email").attr( `mailto:${profile.email}` );
+			this.$el.find(".email").attr( "href", `mailto:${profile.email}` );
 			this.$el.find(".email").show();
 		}
 	}
@@ -56,10 +56,10 @@ const Quickie = Backbone.View.extend({
 			case "facebook" : return `https://www.facebook.com/${o.uid}`;
 			case "twitter" : return `https://www.twitter.com/${o.uid}`;
 			case "instagram" : return `https://www.instagram.com/_u/${o.uid}`;
-			case "messenger" : return `https://m.me/${o.uid}`;
+			case "facebook-messenger" : return `https://m.me/${o.uid}`;
 			case "youtube" : return `https://www.youtube.com/${o.uid}`;
-			case "googleplus" : return `https://plus.google.com/${o.uid}`;
-			case "linkedin" : return `https://www.linkedin.com/${o.uid}`;
+			case "google-plus" : return `https://plus.google.com/+${o.uid}`;
+			case "linkedin" : return `https://www.linkedin.com/in/${o.uid}`;
 			case "github" : return `https://www.github.com/${o.uid}`;
 			case "whatsapp" : return `https://api.whatsapp.com/send?phone=${o.uid}&text=${encodeURIComponent("Sending hi from "+location.href)}`;
 			default: return o.uid;
@@ -124,13 +124,20 @@ let path = location.pathname.replace(/\//g,"");
 let q = new Parse.Query( Parse.User );
 q.equalTo( "username", path );
 q.first().then(( u )=>{
-	model.set( "image", u.get( "image" ) );
-	model.set( "profile", u.get( "profile" ) );
-	model.set( "favbtns", u.get( "favbtns" ) );
-	model.set( "bookmarks", u.get( "links" ) );
-	mdl.hide();
-});
-
+	if( u == null ) {
+		mdl.render({
+			header: "<i class='fas fa-exclamation-circle'></i>Not found",
+			body: "The user you are looking for, could not be found. Please recheck link given to you.<br/>However you can create your own by clicking <a href='/create'>here</a>",
+			timeout: 60*60*1000
+		});
+	} else {
+		model.set( "image", u.get( "image" ) );
+		model.set( "profile", u.get( "profile" ) );
+		model.set( "favbtns", u.get( "favbtns" ) );
+		model.set( "bookmarks", u.get( "links" ) );
+		mdl.hide();
+	}
+}, console.error );
 
 $( window ).on('resize', function(event) {
 	event.preventDefault();
