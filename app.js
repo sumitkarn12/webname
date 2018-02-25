@@ -22,10 +22,18 @@ const FAQ = Backbone.View.extend({
 });
 faq = new FAQ();
 
+let recentUTemplate = _.template( $("#recent-li").html() );
 let recentU = new Parse.Query( Parse.User );
 recentU.descending( "updatedAt" );
-recentU.first().then(u=>{
-	$(".explore").attr("href", `https://webname.ga/${u.get("username")}`);
-	$(".explore").show();
+recentU.limit( 10 );
+// recentU.find().each(u=>{
+// 	$(".explore").attr("href", `https://webname.ga/${u.get("username")}`);
+// 	$(".explore").show();
+// });
+recentU.find().then(r=>{
+	r.forEach(e=>{
+		$("#recent").append( recentUTemplate(e.toJSON()) );
+		console.log( e.toJSON() );
+	});
 });
 

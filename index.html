@@ -67,13 +67,24 @@
 			<a target="_blank" href="https://streamable.com/s/37aa2/emsqko" class="w3-button w3-round w3-theme w3-large">Know more</a>
 		</div>
 	</div>
+	<script type="q-tmpl" id="recent-li">
+		<div class="w3-col s12 m6 l4 w3-container w3-padding-16">
+			<a href="/<%= username %>" target="_blank" class="w3-display-container w3-card" style="height: 50px; display: block;">
+				<div style="padding-left: 50px;">
+					<div class="w3-padding w3-large"><%= profile.name %></div>
+				</div>
+				<div class="w3-display-left">
+					<img src="<%= image %>" style="height:50px; width:50px;" class="w3-image" alt="" />
+				</div>
+			</a>
+		</div>		
+	</script>
+	<div class="w3-row" id="recent"></div>
 
 	<div class="page w3-white" id="faq">
-		<div class="w3-theme w3-xlarge w3-container">
-			<p>
-				<button class="w3-button back"><i class="fas fa-arrow-left"></i></button>
-				FAQ
-			</p>
+		<div class="w3-theme w3-display-container">
+			<div class="w3-padding" style="position: relative;left: 72px;">FAQ</div>
+			<button class="w3-button back w3-display-left"><i class="fas fa-arrow-left"></i></button>
 		</div>
 		<div class="w3-section"></div>
 		<div class="section w3-container">

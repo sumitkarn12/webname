@@ -12,6 +12,14 @@ var opts = {
 const spin = new Spinner( opts ).spin();
 // $("#my-spinner").html( spin.el );
 
+fetch("/gradients.json").then(res=>res.json()).then(json=>{
+	let index = Math.floor(Math.random()*json.length);
+	let colors = json[index].colors;
+	console.log( colors[0], colors[colors.length-1] );
+	$("body").css({
+		"background": `linear-gradient( ${colors[0]}, ${colors[colors.length-1]})`
+	});
+});
 const Model = Backbone.Model.extend();
 let model = new Model();
 const Profile = Backbone.View.extend({

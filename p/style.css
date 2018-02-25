@@ -1,6 +1,7 @@
 ::-webkit-scrollbar { width: 6px; } 
 ::-webkit-scrollbar-thumb { background: #000; box-shadow: 0 0 15px 5px #f1c40f; } 
-body { font-family: 'Raleway', Verdana; }
+body { font-family: 'Raleway', Verdana; background-attachment: fixed; }
+.w3-col .w3-card, .w3-col .w3-card-4 { background: #fff; } 
 #profile .w3-display-container { height: 220px; width: 100%; overflow: hidden; }
 #profile .w3-display-container .cover { width: 100%; height: 220px; background-image: url(https://source.unsplash.com/random/150x150); background-size: cover; filter: blur(7px); transform: scale(1.2,1.2); }
 #profile .w3-display-container .dp { height: 150px; width: 150px; }
@@ -10,3 +11,4 @@ body { font-family: 'Raleway', Verdana; }
 #quickie .btns a { margin:4px; width: 52px; height: 52px; display: flex; justify-content: center; align-items: center; }
 #bookmark .faded-background { background-size: cover; background-position: center center; filter: blur(25px); transform: scale(2,2);}
 #bookmark .page-url { overflow: hidden; text-overflow: ellipsis; width: 100%; padding: 4px 8px; color: #fff; background: linear-gradient(#ffffff00, #000);  }
+#bookmark .link .main-image { width: 100%; }

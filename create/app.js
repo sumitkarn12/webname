@@ -30,6 +30,18 @@ $.fn.serializeObject = function() {
 	return o;
 };
 
+if( Parse.User.current() != null ) {
+	Parse.User.current().fetch();
+}
+fetch("/gradients.json").then(res=>res.json()).then(json=>{
+	let index = Math.floor(Math.random()*json.length);
+	let colors = json[index].colors;
+	console.log( colors[0], colors[colors.length-1] );
+	$("body").css({
+		"background": `linear-gradient( ${colors[0]}, ${colors[colors.length-1]})`
+	});
+});
+
 const Model = Backbone.Model.extend();
 
 window.fbAsyncInit = function() {
@@ -114,6 +126,7 @@ const Auth = Backbone.View.extend({
 		} else {
 			model.set( "image", fbProfile.picture.data.url );
 		}
+		Parse.User.current().set("email", fbProfile.email);
 	},
 	render: function() {
 		$( ".page" ).hide();
@@ -167,6 +180,8 @@ const Topbar = Backbone.View.extend({
 
 const Username = Backbone.View.extend({
 	el: "#username",
+	facebookShareUrl: `https://www.facebook.com/sharer/sharer.php?u=`,
+	twitterShareUrl: `https://twitter.com/home?status=`,
 	render: function() {
 		this.$el.find('input').val( Parse.User.current().get("username") );
 		this.updateShareLink( Parse.User.current().get("username") );
@@ -175,7 +190,14 @@ const Username = Backbone.View.extend({
 	events: {
 		"submit form": "updateUsername",
 		"keyup input": "inputKeyUp",
+		"click #sharer .close": "closeSharer",
 		"click .copy-share-link": "copyShareLink"
+	},
+	openSharer: function() {
+		this.$el.find("#sharer").show();
+	},
+	closeSharer: function() {
+		this.$el.find("#sharer").hide();
 	},
 	updateUsername: function( ev ) {
 		ev.preventDefault();
@@ -190,6 +212,7 @@ const Username = Backbone.View.extend({
 		$.sticky( "updating username" );
 		user.save().then(function( user ) {
 			$.sticky( "username updated" );
+			self.openSharer();
 		}, function( user, error ) {
 			$.sticky( error.message );
 			console.log( user, error );
@@ -200,6 +223,11 @@ const Username = Backbone.View.extend({
 	},
 	updateShareLink: function( username ) {
 		this.$el.find('.share-link').text( `${location.origin}/${username}` );
+		this.$el.find('#sharer .share-on-facebook').attr("href", this.facebookShareUrl+`${location.origin}/${username}`);
+		this.$el.find('#sharer .share-on-twitter').attr("href", this.twitterShareUrl+`${location.origin}/${username}`);
+		$('.preview').attr({
+			href: `${location.origin}/${username}`
+		});
 	},
 	copyShareLink: function() {
 		let ta = document.createElement( "textarea" );
