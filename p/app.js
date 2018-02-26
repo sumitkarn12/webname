@@ -129,6 +129,7 @@ var mdl = new Mdl();
 
 mdl.render({header: "Painting canvas", timeout: 10*60*1000});
 let path = location.pathname.replace(/\//g,"");
+path = "sumit"
 let q = new Parse.Query( Parse.User );
 q.equalTo( "username", path );
 q.first().then(( u )=>{
@@ -144,6 +145,11 @@ q.first().then(( u )=>{
 		model.set( "favbtns", u.get( "favbtns" ) );
 		model.set( "bookmarks", u.get( "links" ) );
 		mdl.hide();
+		if( Parse.User.current() == null ) {
+			$(".edit-profile").text( "Create your profile" );
+		} else {
+			$(".edit-profile").text( `Hey ${Parse.User.current().get("profile").name}, Update your profile` );
+		}
 	}
 }, console.error );
 
