@@ -129,7 +129,6 @@ var mdl = new Mdl();
 
 mdl.render({header: "Painting canvas", timeout: 10*60*1000});
 let path = location.pathname.replace(/\//g,"");
-path = "sumit"
 let q = new Parse.Query( Parse.User );
 q.equalTo( "username", path );
 q.first().then(( u )=>{
