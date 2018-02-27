@@ -9,15 +9,14 @@ var opts = {
 	radius: 45, // The radius of the inner circle
 	position: 'absolute' // Element positioning
 };
-const spin = new Spinner( opts ).spin();
-// $("#my-spinner").html( spin.el );
 
 fetch("/gradients.json").then(res=>res.json()).then(json=>{
 	let index = Math.floor(Math.random()*json.length);
 	let colors = json[index].colors;
 	console.log( colors[0], colors[colors.length-1] );
 	$("body").css({
-		"background": `linear-gradient( ${colors[0]}, ${colors[colors.length-1]})`
+		"background": `linear-gradient( ${colors[0]}, ${colors[colors.length-1]})`,
+		"background-attachment": `fixed`
 	});
 });
 const Model = Backbone.Model.extend();
@@ -29,8 +28,28 @@ const Profile = Backbone.View.extend({
 		model.on("change:image", (m,v)=>this.renderDP( v ) );
 	},
 	renderDP: function( image ) {
-		this.$el.find(".cover").css( "background-image", `url(${image})` );
-		this.$el.find(".dp").attr( "src", image );
+		if( image.type == "file" ) {
+			this.$el.find(".cover").css( "background-image", `url(${image.data.url()})` );
+			this.$el.find(".dp").attr( "src", image.data.url() );
+		} else {
+			this.$el.find(".cover").css( "background-image", `url(${image.data})` );
+			this.$el.find(".dp").attr( "src", image.data );
+		}
+	},
+	updateMeta: function( profile ) {
+		$("meta").each((i,m)=>{
+			switch( m.name ) {
+				case "og:image":
+				case "og:description":
+				case "description":
+				case "application-name":
+				case "og:title": m.content = profile.name+" | My presence on web"; break;
+				case "og:url":
+				case "og:site_name": m.content = "https://webname.ga/"+profile.username; break;
+				case "og:type": m.content = "profile"; break;
+			}
+		});
+		$("title").html( profile.name+" | My presence on web" );
 	},
 	renderProfile: function( profile ) {
 		this.$el.find(".name").html( profile.name );
@@ -43,6 +62,7 @@ const Profile = Backbone.View.extend({
 			this.$el.find(".email").attr( "href", `mailto:${profile.email}` );
 			this.$el.find(".email").show();
 		}
+		this.updateMeta( profile );
 	}
 });
 const Quickie = Backbone.View.extend({
@@ -127,7 +147,7 @@ let quickie = new Quickie();
 let bookmark = new Bookmark();
 var mdl = new Mdl();
 
-mdl.render({header: "Painting canvas", timeout: 10*60*1000});
+mdl.render({header: "Painting profile on canvas", timeout: 10*60*1000});
 let path = location.pathname.replace(/\//g,"");
 let q = new Parse.Query( Parse.User );
 q.equalTo( "username", path );
@@ -143,6 +163,7 @@ q.first().then(( u )=>{
 		model.set( "profile", u.get( "profile" ) );
 		model.set( "favbtns", u.get( "favbtns" ) );
 		model.set( "bookmarks", u.get( "links" ) );
+		$("#app-theme-link").attr("href", u.get("theme"))
 		mdl.hide();
 		if( Parse.User.current() == null ) {
 			$(".edit-profile").text( "Create your profile" );

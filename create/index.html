@@ -20,21 +20,22 @@
 	<meta property="og:url" content="https://webname.ga"/>
 
 	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
-	<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue.css">
+	<link rel="stylesheet" id="app-theme-link" href="https://www.w3schools.com/lib/w3-theme-blue.css">
 	<link href="https://fonts.googleapis.com/css?family=Raleway:100" rel="stylesheet">
 	<link rel="stylesheet" href="style.css">
 	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+	<link rel="stylesheet" href="/css/croppie.css">
 	<link rel="stylesheet" href="/sticky.css">
 
 	<script defer src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
 	<script defer src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.11&appId=1778142652491392&autoLogAppEvents=1"></script>
-	<script async defer src="//platform.instagram.com/en_US/embeds.js"></script>
 
 	<script src="https://npmcdn.com/parse@1.11.0/dist/parse.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+	<script src="/js/croppie.js"></script>
 	<script src="/spin.js"></script>
 	<script src="/sticky.js"></script>
 </head>
@@ -61,25 +62,17 @@
 		<div class="w3-col s12 m6 l3">
 			<div id="dp" class="w3-container w3-padding-16">
 				<div class="w3-card">
-					<div class="w3-display-container">
-						<div class="cover-image-wrapper">
-							<img src="https://source.unsplash.com/random/150x150" class="cover-image" alt="">
-						</div>
-						<img src="https://source.unsplash.com/random/150x150" alt="profile image" class="w3-image w3-circle w3-card-4 w3-display-middle profile-image" />
+					<div id="picture-wrap" style="height: 320px;">
+						<img src="" id="picture" alt="Profile Picture" />
 					</div>
-					<div class="w3-container w3-padding-16">
-						<form class="profile-pic-url w3-row">
-							<div class="w3-col s12">Profile picture url</div>
-							<div class="w3-col s10 w3-tiny">
-								<input type="text" class="w3-input profile-image-url" />
-							</div>
-							<div class="w3-col s2 w3-tiny">
-								<button class="w3-button w3-theme w3-border-bottom" style="width: 100%;"><i class="fas fa-check"></i></button>
-							</div>
-							<div class="w3-col s12">
-								<div class="w3-small w3-text-gray">You can use <a target="_blank" href="https://ctrlq.org/images/">https://ctrlq.org/images/</a> to get image url</div>
-							</div>
-						</form>
+					<br><br>
+					<div class="w3-row">
+						<div class="w3-col s10">
+							<input type="file" accept="image/*" class="w3-input picture-selector" />
+						</div>
+						<div class="w3-col s2">
+							<button class="w3-button w3-theme w3-border-bottom change-picture" style="width: 100%;"><i class="fas fa-check"></i></button>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -173,38 +166,75 @@
 			</div>
 		</div>
 		<div class="w3-col s12 l6">
-			<div id="bookmark" class="w3-container w3-padding-16">
-				<script type="text/x-template" id="b-tmpl">
-					<div class="w3-col s6 m4 l3 w3-container w3-padding-16 link" data-image="<%= image_url %>" data-url="<%= page_url %>">
-						<div class="w3-card w3-display-container">
-							<div class="image-wrapper">
-								<img src="<%= image_url %>" class="" alt="" />
-							</div>
-							<div class="w3-display-bottomleft w3-tiny page-url"><%= page_url %></div>
-							<div class="w3-display-topright w3-tiny remove">
-								<button class="w3-circle w3-button">
-									<i class="fas fa-times"></i>
-								</button>
-							</div>
+			<div id="app-theme" class="w3-container w3-padding-16">
+				<div class="w3-card">
+					<div class="w3-large w3-theme">
+						<div class="w3-padding" style="display: inline-block;">App theme</div>
+					</div>
+					<div class="w3-container w3-padding-16">
+						<select class="w3-select theme-selector">
+							<option value="https://www.w3schools.com/lib/w3-theme-red.css">Red</option>
+							<option value="https://www.w3schools.com/lib/w3-theme-pink.css">Pink</option>
+							<option value="https://www.w3schools.com/lib/w3-theme-purple.css">Purple</option>
+							<option value="https://www.w3schools.com/lib/w3-theme-deep-purple.css">Deep Purple</option>
+							<option value="https://www.w3schools.com/lib/w3-theme-indigo.css">Indigo</option>
+							<option value="https://www.w3schools.com/lib/w3-theme-blue.css">Blue</option>
+							<option value="https://www.w3schools.com/lib/w3-theme-light-blue.css">Light Blue</option>
+							<option value="https://www.w3schools.com/lib/w3-theme-cyan.css">Cyan</option>
+							<option value="https://www.w3schools.com/lib/w3-theme-teal.css">Teal</option>
+							<option value="https://www.w3schools.com/lib/w3-theme-green.css">Green</option>
+							<option value="https://www.w3schools.com/lib/w3-theme-light-green.css">Light Green</option>
+							<option value="https://www.w3schools.com/lib/w3-theme-lime.css">Lime</option>
+							<option value="https://www.w3schools.com/lib/w3-theme-khaki.css">Khaki</option>
+							<option value="https://www.w3schools.com/lib/w3-theme-yellow.css">Yellow</option>
+							<option value="https://www.w3schools.com/lib/w3-theme-amber.css">Amber</option>
+							<option value="https://www.w3schools.com/lib/w3-theme-orange.css">Orange</option>
+							<option value="https://www.w3schools.com/lib/w3-theme-deep-orange.css">Deep Orange</option>
+							<option value="https://www.w3schools.com/lib/w3-theme-blue-grey.css">Blue Grey</option>
+							<option value="https://www.w3schools.com/lib/w3-theme-brown.css">Brown</option>
+							<option value="https://www.w3schools.com/lib/w3-theme-grey.css">Grey</option>
+							<option value="https://www.w3schools.com/lib/w3-theme-dark-grey.css">Dark Grey</option>
+							<option value="https://www.w3schools.com/lib/w3-theme-black.css">Black</option>		
+						</select>
+					</div>
+				</div>
+				<div class="w3-modal" id="sharer">
+					<div class="w3-modal-content w3-animate-zoom w3-card-4">
+						<div class="w3-theme w3-display-container">
+							<div class="w3-padding">Share your link</div>
+							<button class="w3-display-right close w3-button w3-theme"><i class="fas fa-times"></i></button>
+						</div>
+						<div class="content w3-center w3-padding w3-container">
+							<a href="#" target="_blank" class="w3-button w3-theme w3-round share-on-facebook"><i class="fab fa-facebook fa-3x"></i></a>
+							<a href="#" target="_blank" class="w3-button w3-theme w3-round share-on-twitter"><i class="fab fa-twitter fa-3x"></i></a>
 						</div>
 					</div>
+				</div>
+			</div>
+			<div id="bookmark" class="w3-container w3-padding-16">
+				<script type="text/x-template" id="b-tmpl">
+					<li class="w3-display-container link">
+						<div class="">
+							<div class="w3-large"><%= title %></div>
+							<div class="page-url"><%= page_url %></div>
+						</div>
+						<div class="w3-display-right">
+							<button class="w3-button count" data-url="<%=short_page_url%>"><i class="fas fa-hand-pointer"></i></button>
+							<button class="w3-button remove"><i class="fas fa-times"></i></button>
+						</div>
+					</li>
 				</script>
+
 				<div class="w3-card">
 					<div class="w3-padding w3-large w3-theme">My bookmarks</div>
 					<div>
-						<div class="links w3-row"></div>
-						<form class="w3-row w3-small w3-border-top">
-							<div class="w3-col s6 w3-padding">
-								<span class="w3-text-theme">Image url ( Optional )</span>
-								<input type="text" name="image_url" placeholder="Image url ( Optional )" class="w3-input image" pattern="^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$">
+						<ul class="links w3-ul w3-border-bottom"></ul>
+						<form class="w3-row w3-small">
+							<div class="w3-col s8 w3-padding">
+								<input type="text" name="page_url" placeholder="URL" class="w3-input w3-border" required="" pattern="^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$">
 							</div>
-							<div class="w3-col s6 w3-padding">
-								<span class="w3-text-theme">URL</span>
-								<input type="text" name="page_url" placeholder="URL" class="w3-input username" required="" pattern="^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$">
-							</div>
-							<div class="w3-col s12 w3-padding">
+							<div class="w3-col s4 w3-padding">
 								<button class="w3-button w3-theme" style="width: 100%;"><i class="fas fa-check"></i></button>
-								<div class="w3-small w3-text-gray">You can use <a target="_blank" href="https://ctrlq.org/images/">https://ctrlq.org/images/</a> to get image url</div>
 							</div>
 						</form>
 					</div>

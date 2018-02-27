@@ -12,8 +12,7 @@ body {background-attachment: fixed; }
 #quickie .link .username { height: 100%; vertical-align: middle; padding-left: 52px; }
 #quickie .link .remove { height: 52px; }
 #bookmark .image-wrapper { overflow: hidden; }
-#bookmark .page-url { overflow: hidden; text-overflow: ellipsis; width: 100%; padding: 4px 8px; color: #fff; background: rgba(0,0,0,0.7); }
-#bookmark .remove { padding: 4px; }
+#bookmark .page-url { overflow: hidden; text-overflow: ellipsis; width: 100%; height: 22px; }
 #bookmark .remove>button { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px;background: #ff00006b; }
 #my-spinner  { background: #ffffff; height: 100vh; width: 100%; position: fixed; top: 0; left: 0; z-index: 10000; display: none; }
 .image-wrapper { display: flex; justify-content: center; align-items: center; }

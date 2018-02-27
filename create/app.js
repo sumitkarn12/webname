@@ -1,10 +1,12 @@
 
-let auth, creator, username, dp, info, quickie, bookmark, topbar;
+let auth, creator, username, dp, info, quickie, bookmark, topbar, theme;
 let model, fbProfile = null;
 
 Parse.initialize( "1e3bc14f-0975-4cb6-9872-bff78542f22b" );
 Parse.serverURL = "https://parse.buddy.com/parse";
 
+
+let GOOGLE_API_KEY = "AIzaSyDypHKQ7C0LtLgv9fkd0VJcEdAvJjrdNEQ";
 var opts = {
 	lines: 13, // The number of lines to draw
 	length: 38, // The length of each line
@@ -43,6 +45,9 @@ fetch("/gradients.json").then(res=>res.json()).then(json=>{
 });
 
 const Model = Backbone.Model.extend();
+const Goog = Backbone.Model.extend({
+	urlRoot: `https://www.googleapis.com/urlshortener/v1/url?key=${GOOGLE_API_KEY}`
+});
 
 window.fbAsyncInit = function() {
 	Parse.FacebookUtils.init({
@@ -106,12 +111,14 @@ const Auth = Backbone.View.extend({
 		model.on("change:image", ( model, image )=>{ dp.render(); });
 		model.on("change:favbtns", ( model, favbtns )=>{ quickie.render(); });
 		model.on("change:links", ( model, links )=> bookmark.render() );
+		model.on("change:theme", ( model )=> theme.render() );
 
 		dp = new DP();
 		info = new Info();
 		quickie = new Quickie();
 		bookmark = new Bookmark();
 		topbar = new Topbar();
+		theme = new Theme();
 
 		let profile = { name: "Excited user", email: "excited@user.com", about: "Excited to see this", mobile: "+919650123456" }
 		profile = $.extend( profile, fbProfile, Parse.User.current().get( "profile" ) );
@@ -121,6 +128,7 @@ const Auth = Backbone.View.extend({
 		model.set( "profile", profile );
 		model.set("favbtns", Parse.User.current().get("favbtns"));
 		model.set("links", Parse.User.current().get("links"));
+		model.set("theme", Parse.User.current().get("theme"));
 		if ( Parse.User.current().get("image") != null ) {
 			model.set( "image", Parse.User.current().get("image") );
 		} else {
@@ -154,16 +162,15 @@ const Topbar = Backbone.View.extend({
 		});
 		bookmark.$el.find('.links .link').each(function(index, el) {
 			let els = $( el );
-			bookmarks.push({
-				image_url: els.data( "image" ),
-				page_url: els.data( "url" )
-			});
+			bookmarks.push(els.data("raw"));
 		});
+		console.log( bookmarks );
 		let user = Parse.User.current();
 		user.set( "image", model.get("image") );
 		user.set( "profile", model.get("profile") );
 		user.set( "favbtns", favbtns );
 		user.set( "links", bookmarks );
+		user.set( "theme", model.get("theme") );
 		$.sticky( "Saving..." );
 		user.save().then(()=>{
 			$.sticky( "Saved" );
@@ -245,17 +252,56 @@ const Username = Backbone.View.extend({
 	}
 });
 
-const DP = Backbone.View.extend({
-	el: "#dp",
+const Theme = Backbone.View.extend({
+	el: "#app-theme",
 	render: function() {
-		this.$el.find('.profile-image-url').val( model.get( "image" ) );
-		this.$el.find('.profile-image').attr( "src", model.get( "image" ) );
-		this.$el.find('.cover-image').attr( "src", model.get( "image" ) );
+		this.$el.find('.theme-selector').val( model.get("theme") );
+		$("#app-theme-link").attr( "href", model.get("theme") );
 		return this;
 	},
 	events: {
-		"submit form": "updateProfilePicture",
-		"click .profile-image": "removeProfilePicture"
+		"change .theme-selector": "changeTheme"
+	},
+	changeTheme: function( ev ) {
+		model.set("theme", ev.currentTarget.value );
+	}
+});
+
+const DP = Backbone.View.extend({
+	el: "#dp",
+	initialize: function() {
+		this.croppie = new Croppie(this.$el.find("#picture")[0], {
+			viewport: {
+				width: 240,
+				height: 240,
+				type: 'circle'
+			}
+		});
+	},
+	render: function() {
+		let u = null;
+		if( model.get("image").type == "file" ) {
+			u = model.get("image").data.url()
+		} else {
+			u = model.get("image").data
+		}
+		this.croppie.bind({ url: u, points: [ 0,0,640,640 ] });
+		return this;
+	},
+	events: {
+		"click .change-picture": "updateProfilePicture",
+		"click .profile-image": "removeProfilePicture",
+		"change .picture-selector": "changePicture"
+	},
+	changePicture: function( ev ) {
+		let self = this;
+		let fr = new FileReader();
+		fr.onload = ( r ) => {
+			self.croppie.bind({
+				url: r.target.result
+			})
+		}
+		fr.readAsDataURL( ev.target.files[0] );
 	},
 	removeProfilePicture: function( ev ) {
 		ev.preventDefault();
@@ -263,9 +309,24 @@ const DP = Backbone.View.extend({
 		$.sticky( "Changed to default Profile picture" );
 	},
 	updateProfilePicture: function( ev ) {
+		let self = this;
 		ev.preventDefault();
-		model.set("image", this.$el.find(".profile-image-url").val().trim() );
-		$.sticky( "Profile picture changed" );
+		this.croppie.result({
+			type:"base64",
+			quality: 0.5,
+			size: { width:640, height: 640 },
+			format: "jpeg"
+		}).then(r=>{
+			let parseProfilePicFile = new Parse.File(fbProfile.id+".jpg", { base64: r });
+			$.sticky( "Uploading porfile picture" );
+			parseProfilePicFile.save().then((file)=>{
+				model.set("image", {
+					type: "file",
+					data: file
+				});
+				$.sticky( "Profile picture uploaded" );
+			}, () =>$.sticky( "Profile picture couldn't uploaded" ))
+		});
 	}
 });
 
@@ -348,30 +409,86 @@ const Bookmark = Backbone.View.extend({
 		this.model = Parse.User.current().get("links");
 		if ( model.get("links") ) {
 			this.$el.find(".links").empty();
-			model.get("links").forEach((e,i)=> self.renderBookmark( e ) );
+			model.get("links").forEach((e,i)=> {
+				self.renderBookmark( e );
+			});
 		}
 		return this;
 	},
 	events: {
-		"click .link .remove>button": "removeBookmark",
+		"click .link .count": "clickCount",
+		"click .link .remove": "removeBookmark",
 		"submit form": "addBookmark"
 	},
+	clickCount: function( ev ) {
+		ev.preventDefault();
+		$.get(`https://www.googleapis.com/urlshortener/v1/url`,{
+			shortUrl: ev.currentTarget.dataset.url,
+			projection: "FULL",
+			key: GOOGLE_API_KEY
+		}).done(r=>{
+			ev.currentTarget.innerHTML = parseInt(r.analytics.allTime.longUrlClicks) + parseInt(r.analytics.allTime.shortUrlClicks)
+		}).fail(console.error);
+	},
 	renderBookmark: function( bm ) {
-		let temp = $(this.template( bm ));
-		this.$el.find('.links').append( temp );
-		let cardWidth = temp.find(".image-wrapper").width();
-		temp.find(".image-wrapper, .image-wrapper img").height( cardWidth );
+		try {
+			bm = $.extend({ title: "", description: "", short_page_url: "" }, bm);
+			let temp = $(this.template( bm ));
+			this.$el.find('.links').append( temp );
+			temp.data("raw", bm);
+			return temp;
+		} catch ( e ) {
+			console.log( e );
+		}
+		return null;
 	},
 	removeBookmark: function( ev ) {
 		ev.preventDefault();
 		$( ev.currentTarget ).closest('.link').remove();
 	},
+	shortenUrl: async function( long_url ) {
+		let g = new Goog();
+		g.set( "longUrl", long_url );
+		return g.save();
+	},
 	addBookmark: function( ev ) {
+		let self = this;
 		ev.preventDefault();
 		let bookmark = $( ev.currentTarget ).serializeObject();
-		bookmark.image_url = $.trim(bookmark.image_url);
-		if( bookmark.image_url.length == 0 ) bookmark.image_url = "https://source.unsplash.com/random/150x150";
-		this.renderBookmark( bookmark );
+		console.log( bookmark );
+		$.sticky( "Getting url details" );
+		Parse.Cloud.run("og", {
+			url: bookmark.page_url
+		}).then(( res )=>{
+			try {
+
+			let dummy = null;
+			if( res.error ) {
+				$.sticky( res.error.message );
+				dummy = {
+					description: "",favicon:"",image_url:"https://webname.ga/icons/cover.png?i=0",
+					page_url:bookmark.page_url,
+					site_name:"",title:"",type:"website"
+				}
+			} else {
+				dummy = res.hybridGraph;
+				dummy.image_url = dummy.image;
+				dummy.page_url = dummy.url;
+				delete dummy.image;
+				delete dummy.url;
+			}
+			console.log( dummy );
+			if( !dummy.page_url.startsWith("http") ) dummy.page_url = "http://"+dummy.page_url;
+			self.shortenUrl( dummy.page_url ).then(r=>{
+				dummy.short_page_url = r.id;
+				console.log( dummy );
+				self.renderBookmark( dummy );
+			});
+			} catch(e) { console.log( e );}
+		}, (  er ) => {
+			console.log( er );
+			$.sticky( "Couldn't get url details" );
+		});
 		$( ev.currentTarget ).find('input').val("");
 	}
 });
