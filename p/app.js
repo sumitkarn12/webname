@@ -14,7 +14,7 @@ fetch("/gradients.json").then(res=>res.json()).then(json=>{
 	let index = Math.floor(Math.random()*json.length);
 	let colors = json[index].colors;
 	console.log( colors[0], colors[colors.length-1] );
-	$("body").css({
+	$(".bg-color").css({
 		"background": `linear-gradient( ${colors[0]}, ${colors[colors.length-1]})`,
 		"background-attachment": `fixed`
 	});
@@ -149,6 +149,7 @@ var mdl = new Mdl();
 
 mdl.render({header: "Painting profile on canvas", timeout: 10*60*1000});
 let path = location.pathname.replace(/\//g,"");
+path = "sumit"
 let q = new Parse.Query( Parse.User );
 q.equalTo( "username", path );
 q.first().then(( u )=>{
