@@ -1,3 +1,4 @@
+
 ::-webkit-scrollbar { width: 6px; } 
 ::-webkit-scrollbar-thumb { background: #000; box-shadow: 0 0 15px 5px #f1c40f; } 
 body {background-attachment: fixed; }
@@ -8,7 +9,7 @@ body {background-attachment: fixed; }
 #dp .cover-image-wrapper { width: 100%; height: 150px; overflow: hidden; }
 #dp .cover-image { transform: scale(1.2,1.2); filter: blur(20px); width: 100%; }
 #dp .profile-image { max-width: 50px; }
-#quickie .link { height: 52px; margin: 8px; overflow: hidden; cursor: ns-resize; }
+#quickie .link { height: 52px; overflow: hidden; cursor: ns-resize; }
 #quickie .link .username { height: 100%; vertical-align: middle; padding-left: 52px; }
 #quickie .link .remove { height: 52px; }
 #bookmark .image-wrapper { overflow: hidden; }

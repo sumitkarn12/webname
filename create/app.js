@@ -120,7 +120,7 @@ const Auth = Backbone.View.extend({
 		topbar = new Topbar();
 		theme = new Theme();
 
-		let profile = { name: "Excited user", email: "excited@user.com", about: "Excited to see this", mobile: "+919650123456" }
+		let profile = { name: "Excited user", email: "", about: "Excited to see this", mobile: "" }
 		profile = $.extend( profile, fbProfile, Parse.User.current().get( "profile" ) );
 		delete profile.cover;
 		delete profile.picture;
@@ -154,11 +154,7 @@ const Topbar = Backbone.View.extend({
 		let favbtns = [];
 		let bookmarks = [];
 		quickie.$el.find('.links .link').each(function(index, el) {
-			let els = $( el );
-			favbtns.push({
-				type: els.data( "type" ),
-				uid: els.data( "uid" )
-			});
+			favbtns.push( $( el ).data("raw") );
 		});
 		bookmark.$el.find('.links .link').each(function(index, el) {
 			let els = $( el );
@@ -171,6 +167,7 @@ const Topbar = Backbone.View.extend({
 		user.set( "favbtns", favbtns );
 		user.set( "links", bookmarks );
 		user.set( "theme", model.get("theme") );
+		console.log( user.toJSON() );
 		$.sticky( "Saving..." );
 		user.save().then(()=>{
 			$.sticky( "Saved" );
@@ -366,13 +363,32 @@ const Quickie = Backbone.View.extend({
 		return this;
 	},
 	events: {
+		"click .count": "countClick",
 		"click .remove": "removeQuickie",
 		"change .sitename": "changeTypeInfo",
 		"submit form": "addQuickie"
 	},
-	renderQuickie: function( e ) {
+	countClick: function( ev ) {
+		ev.preventDefault();
+		if($.trim(ev.currentTarget.dataset.url)=="") {
+			$.sticky("Click count is only available for newly added links");
+			return false;
+		}
+		$.get(`https://www.googleapis.com/urlshortener/v1/url`,{
+			shortUrl: ev.currentTarget.dataset.url,
+			projection: "FULL",
+			key: GOOGLE_API_KEY
+		}).done(r=>{
+			ev.currentTarget.innerHTML = r.analytics.allTime.shortUrlClicks
+		}).fail(console.error);
+	},
+	renderQuickie: function( d ) {
 		let self = this;
-		self.$el.find('.links').append( self.template({ sitename: e.type, username: e.uid }) );
+		d = $.extend({ url: null, short_url:null }, d);
+		let temp = $( self.template( d ) );
+		temp.data( "raw", d );
+		self.$el.find('.links').append( temp );
+		console.log( d );
 	},
 	changeTypeInfo: function( ev ) {
 		ev.preventDefault();
@@ -391,9 +407,33 @@ const Quickie = Backbone.View.extend({
 	},
 	addQuickie: function( ev ) {
 		ev.preventDefault();
+		let self = this;
 		let quickie = $( ev.currentTarget ).serializeObject();
 		$( ev.currentTarget ).find('input').val("");
-		this.renderQuickie( quickie );
+		quickie.url = this.toUrl( quickie );
+		self.shortenUrl( quickie.url ).then(r=>{
+			quickie.short_url = r.id;
+			self.renderQuickie( quickie );
+		});
+	},
+	shortenUrl: async function( long_url ) {
+		let g = new Goog();
+		g.set( "longUrl", long_url );
+		return g.save();
+	},
+	toUrl: function( o ) {
+		switch( o.type ) {
+			case "facebook" : return `https://www.facebook.com/${o.uid}`;
+			case "twitter" : return `https://www.twitter.com/${o.uid}`;
+			case "instagram" : return `https://www.instagram.com/_u/${o.uid}`;
+			case "facebook-messenger" : return `https://m.me/${o.uid}`;
+			case "youtube" : return `https://www.youtube.com/${o.uid}`;
+			case "google-plus" : return `https://plus.google.com/+${o.uid}`;
+			case "linkedin" : return `https://www.linkedin.com/in/${o.uid}`;
+			case "github" : return `https://www.github.com/${o.uid}`;
+			case "whatsapp" : return `https://api.whatsapp.com/send?phone=${o.uid}&text=${encodeURIComponent("Sending hi from "+location.href)}`;
+			default: return o.uid;
+		}
 	}
 });
 
@@ -427,7 +467,7 @@ const Bookmark = Backbone.View.extend({
 			projection: "FULL",
 			key: GOOGLE_API_KEY
 		}).done(r=>{
-			ev.currentTarget.innerHTML = parseInt(r.analytics.allTime.longUrlClicks) + parseInt(r.analytics.allTime.shortUrlClicks)
+			ev.currentTarget.innerHTML = r.analytics.allTime.shortUrlClicks
 		}).fail(console.error);
 	},
 	renderBookmark: function( bm ) {

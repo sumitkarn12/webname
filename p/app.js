@@ -75,7 +75,8 @@ const Quickie = Backbone.View.extend({
 		let self = this;
 		this.$el.find(".btns").empty();
 		links.forEach(( e )=>{
-			e = $.extend({ url: self.toUrl( e ) }, e);
+			if( e.url == null ) e = $.extend(e, { url: self.toUrl( e ) });
+			else e.url = e.short_url;
 			self.$el.find(".btns").append( self.template( e ) );
 		});
 	},
@@ -149,6 +150,7 @@ var mdl = new Mdl();
 
 mdl.render({header: "Painting profile on canvas", timeout: 10*60*1000});
 let path = location.pathname.replace(/\//g,"");
+path = "sumit"
 let q = new Parse.Query( Parse.User );
 q.equalTo( "username", path );
 q.first().then(( u )=>{

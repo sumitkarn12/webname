@@ -134,17 +134,19 @@
 			</div>
 			<div id="quickie" class="w3-container w3-padding-16">
 				<script type="text/x-template" id="q-tmpl">
-					<div class="link w3-display-container w3-theme w3-round-xxlarge sortable-dragging" data-uid="<%= username %>" data-type="<%= sitename %>">
-						<div class="username w3-padding-16"><%= username %></div>
-						<div class="w3-display-left sitename w3-padding-16 w3-container"><i class="fab fa-<%= sitename %> fa-2x"></i></div>
-						<button class="w3-display-right w3-button remove"><i class="fas fa-times"></i></button>
-					</div>
+					<li class="link w3-display-container sortable-dragging" data-uid="<%= uid %>" data-type="<%= type %>">
+						<div class="username w3-large"><%= uid %></div>
+						<div class="w3-display-left sitename w3-padding-16 w3-container"><i class="fab fa-<%= type %> fa-2x"></i></div>
+						<div class="w3-display-right">
+							<button class="w3-button count" data-url="<%= short_url %>"><i class="fas fa-hand-pointer"></i></button>
+							<button class="w3-button remove"><i class="fas fa-times"></i></button>
+						</div>
+					</li>
 				</script>
 				<div class="w3-card">
 					<div class="w3-padding w3-large w3-theme">Quick links</div>
+					<ul class="links w3-ul w3-border-bottom"></ul>
 					<div class="w3-container w3-padding-16">
-						<div class="links"></div>
-						<div class="w3-section"></div>
 						<form class="w3-row">
 							<select name="type" class="w3-col s4 w3-select sitename">
 								<option value="facebook">Facebook</option>

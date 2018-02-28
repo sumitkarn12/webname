@@ -12,7 +12,7 @@
 	$.fn.sticky = function(note, options, callback) 
 		{
 		// Default settings
-		var position = 'top-right'; // top-left, top-right, bottom-left, or bottom-right
+		var position = 'bottom-left'; // top-left, top-right, bottom-left, or bottom-right
 		
 		var settings =
 			{
