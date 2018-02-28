@@ -114,16 +114,19 @@ const Bookmark = Backbone.View.extend({
 	},
 	render: function( links ) {
 		let self = this;
-		this.$el.find(".links").empty();
-		links.forEach(( e )=>{
-			try {
-				let tmpl = $(self.template( e ));
-				self.$el.find(".links").append( tmpl );
-				tmpl.find(".faded-background").height( tmpl.find(".w3-card").width() );
-			} catch ( e ) {
-				console.log( e );
-			}
-		});
+		console.log( links );
+		if( links && links.length > 0 ) {
+			this.$el.find(".links").empty();
+			links.forEach(( e )=>{
+				try {
+					let tmpl = $(self.template( e ));
+					self.$el.find(".links").append( tmpl );
+					tmpl.find(".faded-background").height( tmpl.find(".w3-card").width() );
+				} catch ( e ) {
+					console.log( e );
+				}
+			});
+		}
 	}
 });
 const Mdl = Backbone.View.extend({
@@ -163,6 +166,7 @@ var mdl = new Mdl();
 
 mdl.render({body: "Smile! Your're about to see a magic", timeout: 10*60*1000});
 let path = location.pathname.replace(/\//g,"");
+path = "digamber"
 let q = new Parse.Query( Parse.User );
 q.equalTo( "username", path );
 q.first().then(( u )=>{
