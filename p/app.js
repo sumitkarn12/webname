@@ -28,24 +28,35 @@ const Profile = Backbone.View.extend({
 		model.on("change:image", (m,v)=>this.renderDP( v ) );
 	},
 	renderDP: function( image ) {
+		let u = null;
 		if( image.type == "file" ) {
-			this.$el.find(".cover").css( "background-image", `url(${image.data.url()})` );
-			this.$el.find(".dp").attr( "src", image.data.url() );
+			u = image.data.url();
 		} else {
-			this.$el.find(".cover").css( "background-image", `url(${image.data})` );
-			this.$el.find(".dp").attr( "src", image.data );
+			u = image.data;
 		}
+		this.$el.find(".cover").css( "background-image", `url(${u})` );
+		this.$el.find(".dp").attr( "src", u );
+		$("link[rel]").each((i,m)=> {
+			if(m.rel.search("icon") != -1) {
+				m.href = u
+			}
+		});
+		$("meta[property]").each((i,m)=> {
+			if($(m).attr("property").search("image") != -1) {
+				m.content = u
+			}
+		});
 	},
 	updateMeta: function( profile ) {
 		$("meta").each((i,m)=>{
-			switch( m.name ) {
-				case "og:image":
-				case "og:description":
-				case "description":
+			let n = $(m).attr("property") || $(m).attr("name");
+			switch( n ) {
+				case "og:description": 
+				case "description": m.content = profile.about; break;
 				case "application-name":
 				case "og:title": m.content = profile.name+" | My presence on web"; break;
 				case "og:url":
-				case "og:site_name": m.content = "https://webname.ga/"+profile.username; break;
+				case "og:site_name": m.content = location.href; break;
 				case "og:type": m.content = "profile"; break;
 			}
 		});
@@ -116,30 +127,32 @@ const Bookmark = Backbone.View.extend({
 	}
 });
 const Mdl = Backbone.View.extend({
-	el: "#mdl",
+	el: ".spinner-wrapper",
+	initialize: function() {
+		this.$el.on("animationend", ()=> {
+			this.$el.removeClass('spinner-wrapper-hide')
+			this.$el.hide()
+		});
+	},
 	render: function( o ) {
-		if( o.header ) {
-			this.$el.find(".header").html( o.header );
-			this.$el.find(".header").show();
-		} else {
-			this.$el.find(".header").hide();
-		}
-		if( o.body ) {
-			this.$el.find(".body").html( o.body );
-			this.$el.find(".body").show();
-		} else {
-			this.$el.find(".body").hide();
-		}
-		this.$el.show();
-		if (o.timeout && $.isNumeric(o.timeout)) {
-			this.tym = setTimeout( ()=> this.hide(), o.timeout );
-		} else {
+		try {
+			this.$el.find(".msg").html( o.body );
+		} catch(e){}
+		try {
+			if (o.timeout && $.isNumeric(o.timeout)) {
+				this.tym = setTimeout( ()=> this.hide(), o.timeout );
+			} else {
+				this.tym = setTimeout( ()=> this.hide(), 10000 );
+			}
+		} catch(e){
 			this.tym = setTimeout( ()=> this.hide(), 5000 );
 		}
+		this.$el.show();
 	},
 	hide: function() {
 		clearTimeout( this.tym );
-		this.$el.hide();
+		this.$el.addClass('spinner-wrapper-hide');
+		// this.$el.hide();
 	}
 });
 
@@ -148,7 +161,7 @@ let quickie = new Quickie();
 let bookmark = new Bookmark();
 var mdl = new Mdl();
 
-mdl.render({header: "Painting profile on canvas", timeout: 10*60*1000});
+mdl.render({body: "Smile! Your're about to see a magic", timeout: 10*60*1000});
 let path = location.pathname.replace(/\//g,"");
 let q = new Parse.Query( Parse.User );
 q.equalTo( "username", path );

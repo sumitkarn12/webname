@@ -53,8 +53,10 @@
 					<div class="w3-card">
 						<div class="w3-display-container">
 							<div class="cover"></div>
-							<div class="w3-display-topleft w3-container">
-								<a href="/create" target="_blank"><img src="/icons/icon.png" class="brand-logo" alt="webname brand logo" /></a>
+							<div class="w3-display-topleft">
+								<a href="/create" target="_blank">
+									<img src="/icons/icon.png" class="brand-logo" alt="webname brand logo" />
+								</a>
 							</div>
 							<div class="w3-display-middle">
 								<img src="https://source.unsplash.com/random/150x150" alt="" class="w3-image dp w3-circle w3-card-4" />
@@ -72,7 +74,7 @@
 			<div id="quickie" class="w3-container">
 				<div class="btns"></div>
 				<script type="q-tmpl" id="template">
-					<a href="<%= url %>" target="_blank" class="w3-button w3-theme w3-circle w3-card"><i class="fab fa-<%= type %> fa-2x"></i></a>
+					<a href="<%= url %>" target="_blank" class="w3-button w3-theme w3-circle w3-card w3-animate-zoom"><i class="fab fa-<%= type %> fa-2x"></i></a>
 				</script>
 			</div>
 		</div>
@@ -81,7 +83,7 @@
 				<script type="q-tmpl" id="template">
 					<div class="w3-col s6 m4 l3 w3-container w3-padding-16 link">
 						<a href="<%= short_page_url %>" target="_blank">
-							<div class="w3-card w3-display-container" style="overflow:hidden;">
+							<div class="w3-card w3-display-container w3-animate-zoom" style="overflow:hidden;">
 								<div class="faded-background" style="background-image:url(<%= image_url %>);"></div>
 								<div class="w3-display-topmiddle" style="width:100%;">
 									<img src="<%= image_url %>" class="main-image" alt="" />
@@ -94,29 +96,40 @@
 						</a>
 					</div>
 				</script>
-				<div class="links w3-row"></div>
+				<div class="links w3-row">
+					<div class="w3-col s12 w3-container w3-padding-16 w3-animate-right w3-opacity">
+						<a href="/" style="text-decoration: none; display: block;">
+							<div style="min-height:150px;" class="dummy-image">
+								<img src="icons/cover.png" class="w3-opacity" style="width: 100%;" alt="webname template image">
+							</div>
+							<div class="w3-white w3-display-bottom w3-container">
+								<h3>Do you know?</h3>
+								<p>You can also create a profile like this for free. Click here to know more</p>
+							</div>
+						</a>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
 
-	<div class="w3-section"></div>
-
-	<div class="w3-modal" id="mdl">
-		<div class="w3-modal-content w3-animate-zoom">
-			<div class="w3-theme w3-padding w3-large header"></div>
-			<div class="w3-container w3-padding-16 body"></div>
-		</div>
+	<div class="spinner-wrapper w3-theme flex-center">
+		<div class="spinner"></div>
+		<div class="msg"></div>
 	</div>
 
 	<div class="w3-theme w3-row w3-bottom">
 		<div class="w3-padding w3-center w3-col s12">
 			<a href="/create" class="edit-profile">Like this? Click here to create yours.</a>
 		</div>
-		<div class="w3-padding w3-center w3-col s6 w3-tiny">
-			<a href="/privacypolicy.html">Privacy Policy</a>
+		<div class="w3-padding w3-center w3-col s4 w3-tiny">
+			<a href="/privacypolicy">Privacy Policy</a>
 		</div>
-		<div class="w3-padding w3-center w3-col s6 w3-tiny">
-			<a href="/terms-and-conditions.html">Terms and Conditions</a>
+		<div class="w3-padding w3-center w3-col s4 w3-tiny">
+			<a href="/terms-and-conditions">Terms and Conditions</a>
+		</div>
+		<div class="w3-padding w3-center w3-col s4 w3-tiny">
+			<a href="/faq">FAQs</a>
 		</div>
 	</div>
 
