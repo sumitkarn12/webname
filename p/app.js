@@ -13,7 +13,6 @@ var opts = {
 fetch("/gradients.json").then(res=>res.json()).then(json=>{
 	let index = Math.floor(Math.random()*json.length);
 	let colors = json[index].colors;
-	console.log( colors[0], colors[colors.length-1] );
 	$(".bg-color").css({
 		"background": `linear-gradient( ${colors[0]}, ${colors[colors.length-1]})`,
 		"background-attachment": `fixed`
@@ -114,7 +113,6 @@ const Bookmark = Backbone.View.extend({
 	},
 	render: function( links ) {
 		let self = this;
-		console.log( links );
 		if( links && links.length > 0 ) {
 			this.$el.find(".links").empty();
 			links.forEach(( e )=>{
@@ -166,7 +164,6 @@ var mdl = new Mdl();
 
 mdl.render({body: "Smile! Your're about to see a magic", timeout: 10*60*1000});
 let path = location.pathname.replace(/\//g,"");
-path = "digamber"
 let q = new Parse.Query( Parse.User );
 q.equalTo( "username", path );
 q.first().then(( u )=>{
