@@ -1,21 +1,12 @@
 
-let auth, creator, username, dp, info, quickie, bookmark, topbar, theme;
+let auth, creator, username, dp, info, quickie, bookmark, topbar, theme, mdl;
 let model, fbProfile = null;
 
 Parse.initialize( "1e3bc14f-0975-4cb6-9872-bff78542f22b" );
 Parse.serverURL = "https://parse.buddy.com/parse";
 
-
 let GOOGLE_API_KEY = "AIzaSyDypHKQ7C0LtLgv9fkd0VJcEdAvJjrdNEQ";
-var opts = {
-	lines: 13, // The number of lines to draw
-	length: 38, // The length of each line
-	width: 10, // The line thickness
-	radius: 45, // The radius of the inner circle
-	position: 'absolute' // Element positioning
-};
-const spin = new Spinner( opts ).spin();
-$("#my-spinner").html( spin.el );
+
 $.fn.serializeObject = function() {
 	var o = {};
 	var a = this.serializeArray();
@@ -32,9 +23,7 @@ $.fn.serializeObject = function() {
 	return o;
 };
 
-if( Parse.User.current() != null ) {
-	Parse.User.current().fetch();
-}
+if( Parse.User.current() != null ) { Parse.User.current().fetch(); }
 fetch("/gradients.json").then(res=>res.json()).then(json=>{
 	let index = Math.floor(Math.random()*json.length);
 	let colors = json[index].colors;
@@ -58,7 +47,7 @@ window.fbAsyncInit = function() {
 		version 	: "v2.11"				// point to the latest Facebook Graph API version
 	});
 	if( auth == null ) auth = new Auth();
-	$("#my-spinner").show();
+	mdl.render({ body: "Checking authentication" });
 	auth.checkLogin().then( response => {
 		if( response.status == "connected" && Parse.User.current() != null ) {
 			auth.getProfile().then( prof => auth.afterLogin( prof ) );
@@ -70,21 +59,19 @@ window.fbAsyncInit = function() {
 
 const Auth = Backbone.View.extend({
 	el: "#auth",
-	events: {
-		"click .login-btn": "openLogin"
-	},
+	events: { "click .login-btn": "openLogin" },
 	openLogin: function( ev ) {
 		ev.preventDefault();
 		let self = this;
-		$("#my-spinner").show();
+		mdl.render({ body: "Waiting for auth confirmation" });
 		Parse.FacebookUtils.logIn("email,public_profile", {
 			success: function(user) {
 				self.getProfile().then( prof => self.afterLogin( prof ) );
 			},
 			error: function(user, error) {
-				$("#my-spinner").hide();
+				mdl.hide();
 				console.log("User cancelled the Facebook login or did not fully authorize.");
-				$.sticky("User cancelled the Facebook login or did not fully authorize.");
+				mdl.render({ type: "error", body: "User cancelled the Facebook login or did not fully authorize.", timeout:3000 });
 			}
 		});
 	},
@@ -103,6 +90,7 @@ const Auth = Backbone.View.extend({
 	afterLogin: function( prof ) {
 		$(".page").hide();
 		$(".main-page").fadeIn();
+		mdl.hide();
 		fbProfile = prof;	
 		if( username == null ) username = new Username();
 		username.render();
@@ -168,11 +156,11 @@ const Topbar = Backbone.View.extend({
 		user.set( "links", bookmarks );
 		user.set( "theme", model.get("theme") );
 		console.log( user.toJSON() );
-		$.sticky( "Saving..." );
+		mdl.render({ body: "Saving..." });
 		user.save().then(()=>{
-			$.sticky( "Saved" );
+			mdl.hide();
 		}, ()=>{
-			$.sticky( "Could not saved" );
+			mdl.render({ type: "error", body: "Couldn't save", timeout: 4*1000 });
 		});
 	},
 	signOut: function( ev ) {
@@ -208,17 +196,17 @@ const Username = Backbone.View.extend({
 		var self = this;
 		let username = this.$el.find('input').val().toLowerCase();
 		if( username.length < 4 ) {
-			$.sticky("Username is too short");
+			mdl.render({ type: "error", body: "Username is too short", timeout: 3*1000 });
 			return false;
 		}
 		let user = Parse.User.current();
 		user.set("username", username);
-		$.sticky( "updating username" );
+		mdl.render({ body: "Updating username" });
 		user.save().then(function( user ) {
-			$.sticky( "username updated" );
+			mdl.hide();
 			self.openSharer();
 		}, function( user, error ) {
-			$.sticky( error.message );
+			mdl.render({ type: "error", body: error.message, timeout: 4000 });
 			console.log( user, error );
 		});
 	},
@@ -241,9 +229,9 @@ const Username = Backbone.View.extend({
 		ta.select();
 		let fa = document.execCommand( "copy" );
 		if( fa ) {
-			$.sticky( "Link copied" );
+			mdl.render({ type: "success", body: "Link copied", timeout: 1*1000 });
 		} else {
-			$.sticky( "Something went wrong" );
+			mdl.render({ type: "error", body: "Something went wrong", timeout: 2*1000 });
 		}
 		ta.remove();
 	}
@@ -303,7 +291,7 @@ const DP = Backbone.View.extend({
 	removeProfilePicture: function( ev ) {
 		ev.preventDefault();
 		model.set( "image", fbProfile.picture.data.url );
-		$.sticky( "Changed to default Profile picture" );
+		mdl.render({ type: "success", body: "Changed to default Profile picture", timeout: 2000 });
 	},
 	updateProfilePicture: function( ev ) {
 		let self = this;
@@ -312,17 +300,17 @@ const DP = Backbone.View.extend({
 			type:"base64",
 			quality: 0.5,
 			size: { width:640, height: 640 },
-			format: "jpeg"
+			format: "png"
 		}).then(r=>{
 			let parseProfilePicFile = new Parse.File(fbProfile.id+".jpg", { base64: r });
-			$.sticky( "Uploading porfile picture" );
+			mdl.render({ body: "Uploading porfile picture" });
 			parseProfilePicFile.save().then((file)=>{
 				model.set("image", {
 					type: "file",
 					data: file
 				});
-				$.sticky( "Profile picture uploaded" );
-			}, () =>$.sticky( "Profile picture couldn't uploaded" ))
+				mdl.hide();
+			}, () => mdl.render({ type: "error", body: "Profile picture couldn't uploaded", timeout: 3*1000 }) )
 		});
 	}
 });
@@ -343,6 +331,7 @@ const Info = Backbone.View.extend({
 		ev.preventDefault();
 		let profile = $( ev.currentTarget ).serializeObject();
 		model.set( "profile", profile );
+		mdl.render({ type: "success", body: "Changed", timeout: 1000 });
 	}
 });
 
@@ -371,16 +360,20 @@ const Quickie = Backbone.View.extend({
 	countClick: function( ev ) {
 		ev.preventDefault();
 		if($.trim(ev.currentTarget.dataset.url)=="") {
-			$.sticky("Click count is only available for newly added links");
+			mdl.render({ type: "error", body:"Click count is only available for newly added links", timeout:4*1000})
 			return false;
 		}
+		mdl.render({body:"Getting count"})
 		$.get(`https://www.googleapis.com/urlshortener/v1/url`,{
 			shortUrl: ev.currentTarget.dataset.url,
 			projection: "FULL",
 			key: GOOGLE_API_KEY
 		}).done(r=>{
+			mdl.hide();
 			ev.currentTarget.innerHTML = r.analytics.allTime.shortUrlClicks
-		}).fail(console.error);
+		}).fail(()=>{
+			mdl.render({ type: "error", body:"Couldn't get click count.", timeout: 4*1000})			
+		});
 	},
 	renderQuickie: function( d ) {
 		let self = this;
@@ -388,7 +381,6 @@ const Quickie = Backbone.View.extend({
 		let temp = $( self.template( d ) );
 		temp.data( "raw", d );
 		self.$el.find('.links').append( temp );
-		console.log( d );
 	},
 	changeTypeInfo: function( ev ) {
 		ev.preventDefault();
@@ -411,7 +403,9 @@ const Quickie = Backbone.View.extend({
 		let quickie = $( ev.currentTarget ).serializeObject();
 		$( ev.currentTarget ).find('input').val("");
 		quickie.url = this.toUrl( quickie );
+		mdl.render({body:"Adding link"})
 		self.shortenUrl( quickie.url ).then(r=>{
+			mdl.hide();
 			quickie.short_url = r.id;
 			self.renderQuickie( quickie );
 		});
@@ -462,13 +456,17 @@ const Bookmark = Backbone.View.extend({
 	},
 	clickCount: function( ev ) {
 		ev.preventDefault();
+		mdl.render({body:"Getting count"})
 		$.get(`https://www.googleapis.com/urlshortener/v1/url`,{
 			shortUrl: ev.currentTarget.dataset.url,
 			projection: "FULL",
 			key: GOOGLE_API_KEY
 		}).done(r=>{
+			mdl.hide();
 			ev.currentTarget.innerHTML = r.analytics.allTime.shortUrlClicks
-		}).fail(console.error);
+		}).fail(()=>{
+			mdl.render({ type: "error", body:"Couldn't get count", timeout: 4*1000})
+		});
 	},
 	renderBookmark: function( bm ) {
 		try {
@@ -496,40 +494,65 @@ const Bookmark = Backbone.View.extend({
 		ev.preventDefault();
 		let bookmark = $( ev.currentTarget ).serializeObject();
 		console.log( bookmark );
-		$.sticky( "Getting url details" );
+		mdl.render({body:"Getting url details"})
 		Parse.Cloud.run("og", {
 			url: bookmark.page_url
 		}).then(( res )=>{
 			try {
-
-			let dummy = null;
-			if( res.error ) {
-				$.sticky( res.error.message );
-				dummy = {
-					description: "",favicon:"",image_url:"https://webname.ga/icons/cover.png?i=0",
-					page_url:bookmark.page_url,
-					site_name:"",title:"",type:"website"
+				let dummy = null;
+				if( res.error ) {
+					mdl.render({ type: "error", body:res.error.message, timeout: 5*1000})
+					dummy = {
+						description: "",favicon:"",image_url:"https://webname.ga/icons/cover.png?i=0",
+						page_url:bookmark.page_url,
+						site_name:"",title:"",type:"website"
+					}
+				} else {
+					dummy = res.hybridGraph;
+					dummy.image_url = dummy.image;
+					dummy.page_url = dummy.url;
+					delete dummy.image;
+					delete dummy.url;
 				}
-			} else {
-				dummy = res.hybridGraph;
-				dummy.image_url = dummy.image;
-				dummy.page_url = dummy.url;
-				delete dummy.image;
-				delete dummy.url;
-			}
-			console.log( dummy );
-			if( !dummy.page_url.startsWith("http") ) dummy.page_url = "http://"+dummy.page_url;
-			self.shortenUrl( dummy.page_url ).then(r=>{
-				dummy.short_page_url = r.id;
 				console.log( dummy );
-				self.renderBookmark( dummy );
-			});
+				if( !dummy.page_url.startsWith("http") ) dummy.page_url = "http://"+dummy.page_url;
+				mdl.render({body:"Optimizing link for click count"})
+				self.shortenUrl( dummy.page_url ).then(r=>{
+					dummy.short_page_url = r.id;
+					console.log( dummy );
+					mdl.hide();
+					self.renderBookmark( dummy );
+				});
 			} catch(e) { console.log( e );}
 		}, (  er ) => {
 			console.log( er );
-			$.sticky( "Couldn't get url details" );
+			mdl.render({ type: "error", body:"Couldn't get url details", timeout: 5*1000})
 		});
 		$( ev.currentTarget ).find('input').val("");
 	}
 });
 
+const Mdl = Backbone.View.extend({
+	el: ".spinner-wrapper",
+	initialize: function() {
+		this.$el.on("animationend", ( ev )=> {
+			if($( ev.target ).hasClass('spinner-wrapper')) {
+				this.$el.removeClass('spinner-wrapper-hide')
+				this.$el.hide()
+			}
+		});
+	},
+	render: function( o ) {
+		o = $.extend({ type: "spinner", body: "", timeout: 60*60*1000 }, o);
+		this.$el.find(".type").hide();
+		this.$el.find(".msg").html( o.body );
+		this.tym = setTimeout( ()=> this.hide(), o.timeout );
+		this.$el.show();
+		this.$el.find("."+o.type).show();
+	},
+	hide: function() {
+		clearTimeout( this.tym );
+		this.$el.addClass('spinner-wrapper-hide');
+	}
+});
+mdl = new Mdl();

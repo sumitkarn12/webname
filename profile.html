@@ -34,7 +34,7 @@
 	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<link rel="stylesheet" id="app-theme-link" href="https://www.w3schools.com/lib/w3-theme-blue.css">
 	<link href="https://fonts.googleapis.com/css?family=Raleway:100,200,300,400" rel="stylesheet">
-	<link rel="stylesheet" href="/p/style.css">
+	<link rel="stylesheet" href="/css/style.css">
 
 	<script defer src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
 	<script src="https://npmcdn.com/parse@1.11.0/dist/parse.min.js"></script>
@@ -44,13 +44,15 @@
 </head>
 <body style="margin-bottom: 82px;">
 
-	<div class="bg-color"></div>
+	<div class="flex-center bg">
+		<img src="/icons/icon.png" class="w3-image w3-opacity-max" alt="">
+	</div>
 
-	<div class="w3-row main page">
+	<div class="w3-row profile">
 		<div class="w3-col s12 l4">
 			<div id="profile">
 				<div class="w3-container w3-padding-16">
-					<div class="w3-card">
+					<div class="w3-card w3-white w3-round-large" style="overflow: hidden;">
 						<div class="w3-display-container">
 							<div class="cover"></div>
 							<div class="w3-display-topleft">
@@ -72,9 +74,9 @@
 				</div>
 			</div>
 			<div id="quickie" class="w3-container">
-				<div class="btns"></div>
+				<div class="btns flex-center"></div>
 				<script type="q-tmpl" id="template">
-					<a href="<%= url %>" target="_blank" class="w3-button w3-theme w3-circle w3-card w3-animate-zoom"><i class="fab fa-<%= type %> fa-2x"></i></a>
+					<a href="<%= url %>" target="_blank" class="flex-center w3-button w3-theme w3-circle w3-card w3-animate-zoom"><i class="fab fa-<%= type %> fa-2x"></i></a>
 				</script>
 			</div>
 			<div id="shares" class="w3-padding" style="margin-top:16px;">
@@ -91,16 +93,14 @@
 		<div class="w3-col s12 l8">
 			<div id="bookmark">
 				<script type="q-tmpl" id="template">
-					<div class="w3-col s6 m4 l3 w3-container w3-padding-16 link">
+					<div class="w3-col s12 m6 w3-container w3-padding-16 link w3-animate-zoom">
 						<a href="<%= short_page_url %>" target="_blank">
-							<div class="w3-card w3-display-container w3-animate-zoom" style="overflow:hidden;">
-								<div class="faded-background" style="background-image:url(<%= image_url %>);"></div>
-								<div class="w3-display-topmiddle" style="width:100%;">
-									<img src="<%= image_url %>" class="main-image" alt="" />
-								</div>
-								<div class="w3-display-bottomleft page-url">
-									<div class="title w3-small"><%= title %></div>
-									<div class="w3-tiny"><%= short_page_url %></div>
+							<div class="card w3-round-large w3-border w3-theme">
+								<div class="image" style="background-image:url(<%= image_url %>);"></div>
+								<div class="info w3-padding">
+									<div class="title w3-xlarge"><%= title %></div>
+									<div class="description w3-small"><%= description %></div>
+									<div class="url w3-tiny"><%= short_page_url %></div>
 								</div>
 							</div>
 						</a>
@@ -124,8 +124,22 @@
 	</div>
 
 	<div class="spinner-wrapper w3-theme flex-center">
-		<div class="spinner"></div>
-		<div class="msg"></div>
+		<div class="spinner type"></div>
+		<div class="success type">
+			<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="-263.5 236.5 26 26">
+				<g class="svg-success">
+					<path d="M-256.46 249.65l3.9 3.74 8.02-7.8"/>
+				</g>
+			</svg>
+		</div>
+		<div class="error type">
+			<svg width="64" version="1.1" xmlns="http://www.w3.org/2000/svg" height="64" viewBox="0 0 64 64" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 64 64">
+				<g class="svg-error">
+					<path fill="#1D1D1B" d="M28.941,31.786L0.613,60.114c-0.787,0.787-0.787,2.062,0,2.849c0.393,0.394,0.909,0.59,1.424,0.59   c0.516,0,1.031-0.196,1.424-0.59l28.541-28.541l28.541,28.541c0.394,0.394,0.909,0.59,1.424,0.59c0.515,0,1.031-0.196,1.424-0.59   c0.787-0.787,0.787-2.062,0-2.849L35.064,31.786L63.41,3.438c0.787-0.787,0.787-2.062,0-2.849c-0.787-0.786-2.062-0.786-2.848,0   L32.003,29.15L3.441,0.59c-0.787-0.786-2.061-0.786-2.848,0c-0.787,0.787-0.787,2.062,0,2.849L28.941,31.786z"/>
+				</g>
+			</svg>
+		</div>
+		<div class="msg w3-padding"></div>
 	</div>
 
 	<div class="w3-theme w3-row w3-bottom">
@@ -143,6 +157,6 @@
 		</div>
 	</div>
 
-	<script src="/p/app.js"></script>
+	<script src="/js/profile.js"></script>
 </body>
 </html>

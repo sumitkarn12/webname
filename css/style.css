@@ -1,0 +1,88 @@
+::-webkit-scrollbar { width: 6px; } 
+::-webkit-scrollbar-thumb { background: #000; box-shadow: 0 0 15px 5px #f1c40f; } 
+body { font-family: 'Raleway', Verdana; background: linear-gradient(to right, #E1eec3, #f05053); }
+a { text-decoration: none;}
+.flex-center { display: flex; justify-content: center; align-items: center;  }
+.page { display: none; }
+
+#topbar { z-index: 9; }
+#topbar .brand-icon {width: 52px; margin-left: 16px;}
+.bg { position: fixed; top: 0; left: 0; height: 100vh; width: 100%; z-index: -1; }
+.details .container { width: 354px;margin-top: 36px; }
+.details h5 { margin: 0; line-height: 1; }
+.details h1 { margin: 0; line-height: 1; font-weight: 100; }
+.details .anim { overflow: hidden; }
+.details .anim>div { height:450px; width: 354px; position: relative; }
+.details .anim>div>img { position: absolute; }
+.details { margin-bottom: 60px;  }
+.details .w3-animate-left { position: relative; animation:animateleft 1s;  }
+.details .w3-animate-right { position: relative; animation:animateright 1s;  }
+.details .w3-animate-bottom { position: relative; animation:animatebottom 2s;  }
+.details .first-image-animate { animation: firstimageanimate 6s infinite alternate; }
+.details .last-image-animate { animation: lastimageanimate 6s infinite alternate; }
+@keyframes firstimageanimate {
+	0% { left:0px; z-index: -1; }
+	25%{left:0px; z-index: -1; }
+	50%{ left:-210px; z-index: 1; }
+	75%{left:0px; z-index: 1;}
+	100%{left:0px; z-index: 1;}
+}
+@keyframes lastimageanimate{
+	0%{right:0px; z-index: 1; transform: scale(1,1); }
+	25%{right:0px; z-index: 1; transform: scale(1,1); }
+	50%{ right:-210px; z-index: -1; transform: scale(1.1,1.1); }
+	75%{right:0px; z-index: -1;  transform: scale(1,1); }
+	100%{right:0px; z-index: -1;  transform: scale(1,1); }
+}
+
+.card { max-width: 540px; margin:64px auto; }
+.card li { font-family: sans-serif; font-weight: bold; }
+.card li.w3-small { font-family: "Raleway"; font-weight: 400; }
+
+/*style for profile*/
+.profile #profile .w3-display-container { height: 220px; width: 100%; overflow: hidden; }
+.profile #profile .w3-display-container .cover { width: 100%; height: 220px; background-size: cover; background-position: center; filter: blur(7px); transform: scale(1.2,1.2); }
+.profile #profile .w3-display-container .brand-logo { width: 84px; margin-top: -17px; }
+.profile #profile .w3-display-container .dp { height: 150px; width: 150px; }
+.profile #profile .contact { display: flex; margin-top: 16px; }
+.profile #profile .call,#profile .email { display: none; }
+.profile #quickie .btns { justify-content: space-around; flex-wrap: wrap; }
+.profile #quickie .btns a { margin:4px; width: 52px; height: 52px; }
+.profile #bookmark .card { width: 100%; margin: 0px; overflow: hidden; }
+.profile #bookmark .card .image { overflow: hidden; height: 150px; background-size: cover; background-position: center; }
+.profile #bookmark .card .info { height: 90px; overflow: hidden; background-size: cover; background-position: center; }
+.profile #bookmark .card .title, .profile #bookmark .card .description, .profile #bookmark .card .url { text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+.profile #shares .btns { flex-direction: column; }
+.profile #shares .btns .w3-button { display: block; width: 100%; margin: 4px; }
+
+.spinner-wrapper .type { display: none; }
+/*spinner styles*/
+.spinner-wrapper { height: 100vh; width: 100%; position: fixed; top: 0; left: 0; z-index: 1; flex-direction: column; }
+.spinner-wrapper-hide { animation: sw-hide 0.5s; }
+.spinner { width: 100px; height: 100px; background-color: #fff; margin: 100px auto; animation: sk-rotateplane 1.2s infinite ease-in-out; }
+@keyframes sk-rotateplane { 0% { transform: perspective(120px) rotateX(0deg) rotateY(0deg); } 50% { transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg); } 100% { transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg); } }
+@keyframes sw-hide { 0% { transform: scale(1,1); opacity: 1; } 100% { transform: scale(2,2); opacity: 0; } }
+
+/*success styles*/
+.spinner-wrapper .success {transform: scale(5,5);}
+.svg-success { stroke-width: 2px; stroke: green; fill: none; }
+.svg-success path { stroke-dasharray: 17px, 17px; stroke-dashoffset: 0px; animation: checkmark 4s infinite ease-out; }
+@keyframes checkmark { 0% { stroke-dashoffset: 17px; } 10% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 0; } }
+
+/*success styles*/
+.svg-error path { fill:red; }
+.error { animation: rotatemark 4s infinite ease; }
+@keyframes rotatemark { 0% { transform: rotate(360deg); } 10% { transform: rotate(0deg); } 100% { transform: rotate(0deg); } }
+
+
+/*create style*/
+#auth { background: #8b9dc3; background-image: url(/icons/icon.png); background-repeat: no-repeat; background-position: center; background-size: contain; height: 100vh; display: flex; justify-content: center; align-items: center; }
+#auth .login-btn { background: #3b5998; color: #fff; width: 100%; display: flex; justify-content: space-evenly; align-items: center; }
+
+.create .spacer { height: 72px; }
+.create #quickie .link { height: 52px; overflow: hidden; cursor: ns-resize; }
+.create #quickie .link .username { height: 100%; vertical-align: middle; padding-left: 52px; }
+.create #quickie .link .remove { height: 52px; }
+.create #bookmark .page-url { overflow: hidden; text-overflow: ellipsis; width: 100%; height: 22px; }
+.create #bookmark .remove>button { width: 36px; height: 36px;background: #ff00006b; }
+
