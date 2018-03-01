@@ -77,7 +77,11 @@
 					<a href="<%= url %>" target="_blank" class="w3-button w3-theme w3-circle w3-card w3-animate-zoom"><i class="fab fa-<%= type %> fa-2x"></i></a>
 				</script>
 			</div>
-			<div id="shares" class="w3-padding">
+			<div id="shares" class="w3-padding" style="margin-top:16px;">
+				<form id="copy" class="w3-tiny w3-display-container w3-round" style="overflow: hidden; margin: 4px 0;">
+					<input type="text" class="w3-input" style="border:0;" />
+					<button class="w3-button w3-display-right w3-border-left">Copy</button>
+				</form>
 				<div class="btns flex-center">
 					<a target="_blank" class="w3-button w3-round w3-tiny w3-theme fb-share">Share on facebook</a>
 					<a target="_blank" class="w3-button w3-round w3-tiny w3-theme tweet">Tweet to twitter</a>

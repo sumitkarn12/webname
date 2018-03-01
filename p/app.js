@@ -27,6 +27,15 @@ const Profile = Backbone.View.extend({
 	initialize: function() {
 		model.on("change:profile", ( m,v ) => this.renderProfile( v ) );
 		model.on("change:image", (m,v)=>this.renderDP( v ) );
+		$("#shares #copy").submit(e=>{
+			e.preventDefault();
+			$(e.currentTarget).find("input").select();
+			let fa = document.execCommand( "copy" );
+			if( fa )
+				mdl.render({ body: "Copied", timeout: 2000 });
+			else
+				mdl.render({ body: "Something went wrong", timeout: 2000 });
+		});
 	},
 	renderDP: function( image ) {
 		let u = null;
@@ -75,6 +84,7 @@ const Profile = Backbone.View.extend({
 			this.$el.find(".email").show();
 		}
 		this.updateMeta( profile );
+		$("#shares #copy input").val(location.href);
 		$("#shares .fb-share").attr("href", this.fbShareUrl.replace("{href}", location.href) );
 		$("#shares .tweet").attr("href", this.tweetUrl.replace("{text}", `I found this webname. ${location.href}`));
 	}
@@ -168,6 +178,7 @@ var mdl = new Mdl();
 
 mdl.render({body: "Smile! Your're about to see a magic", timeout: 10*60*1000});
 let path = location.pathname.replace(/\//g,"");
+path = "sanu"
 let q = new Parse.Query( Parse.User );
 q.equalTo( "username", path );
 q.first().then(( u )=>{
