@@ -22,6 +22,8 @@ const Model = Backbone.Model.extend();
 let model = new Model();
 const Profile = Backbone.View.extend({
 	el: "#profile",
+	fbShareUrl : "https://www.facebook.com/dialog/share?app_id=145634995501895&display=popup&href={href}",
+	tweetUrl : "https://twitter.com/intent/tweet?text={text}",
 	initialize: function() {
 		model.on("change:profile", ( m,v ) => this.renderProfile( v ) );
 		model.on("change:image", (m,v)=>this.renderDP( v ) );
@@ -73,6 +75,8 @@ const Profile = Backbone.View.extend({
 			this.$el.find(".email").show();
 		}
 		this.updateMeta( profile );
+		$("#shares .fb-share").attr("href", this.fbShareUrl.replace("{href}", location.href) );
+		$("#shares .tweet").attr("href", this.tweetUrl.replace("{text}", `I found this webname. ${location.href}`));
 	}
 });
 const Quickie = Backbone.View.extend({

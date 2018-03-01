@@ -424,14 +424,14 @@ const Quickie = Backbone.View.extend({
 	toUrl: function( o ) {
 		switch( o.type ) {
 			case "facebook" : return `https://www.facebook.com/${o.uid}`;
-			case "twitter" : return `https://www.twitter.com/${o.uid}`;
+			case "twitter" : return `https://twitter.com/intent/follow?screen_name=${o.uid}`;
 			case "instagram" : return `https://www.instagram.com/_u/${o.uid}`;
 			case "facebook-messenger" : return `https://m.me/${o.uid}`;
 			case "youtube" : return `https://www.youtube.com/${o.uid}`;
 			case "google-plus" : return `https://plus.google.com/+${o.uid}`;
 			case "linkedin" : return `https://www.linkedin.com/in/${o.uid}`;
 			case "github" : return `https://www.github.com/${o.uid}`;
-			case "whatsapp" : return `https://api.whatsapp.com/send?phone=${o.uid}&text=${encodeURIComponent("Sending hi from "+location.href)}`;
+			case "whatsapp" : return `https://api.whatsapp.com/send?phone=${o.uid}&text=${encodeURIComponent(location.href)}`;
 			default: return o.uid;
 		}
 	}

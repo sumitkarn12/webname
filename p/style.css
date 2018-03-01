@@ -17,6 +17,8 @@ a { text-decoration: none; }
 #bookmark .page-url { overflow: hidden; text-overflow: ellipsis; width: 100%; padding: 4px 8px; color: #fff; background: #000000a1  }
 #bookmark .link .main-image { width: 100%; }
 #bookmark .link .title { width: 100%; }
+#shares .btns { flex-direction: column; }
+#shares .btns .w3-button { display: block; width: 100%; margin: 4px; }
 
 .spinner-wrapper { height: 100vh; width: 100%; position: fixed; top: 0; left: 0; z-index: 1; flex-direction: column; }
 .spinner-wrapper-hide { animation: sw-hide 0.5s; }
