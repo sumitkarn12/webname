@@ -178,7 +178,6 @@ var mdl = new Mdl();
 
 mdl.render({body: "Smile! Your're about to see a magic", timeout: 10*60*1000});
 let path = location.pathname.replace(/\//g,"");
-path = "sanu"
 let q = new Parse.Query( Parse.User );
 q.equalTo( "username", path );
 q.first().then(( u )=>{
