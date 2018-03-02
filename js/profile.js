@@ -135,7 +135,6 @@ const Bookmark = Backbone.View.extend({
 						let ht = ev.target.height;
 						if( wd <= ht ) {
 							tmpl.find(".card").css("display", "flex");
-							tmpl.find(".card .image").css("min-width", "150px");
 						}
 					}
 					img.src = dummy.image_url
