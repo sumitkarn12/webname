@@ -485,44 +485,47 @@ const Bookmark = Backbone.View.extend({
 		g.set( "longUrl", long_url );
 		return g.save();
 	},
+	openGraph: function( url ) {
+		return new Promise(( resolve, reject ) => {
+			Parse.Cloud.run("opengraph", { url :url }).then( resolve ).catch( reject );
+		});
+	},
+	updateView: function( dummy ) {
+		let self = this;
+		console.log( dummy );
+		if( !dummy.page_url.startsWith("http") ) dummy.page_url = "http://"+dummy.page_url;
+		mdl.render({body:"Optimizing link for click count"})
+		this.shortenUrl( dummy.page_url ).then(r=>{
+			dummy.short_page_url = r.id;
+			console.log( "After shortening: ", dummy );
+			mdl.hide();
+			self.renderBookmark( dummy );
+		});
+	},
 	addBookmark: function( ev ) {
 		let self = this;
 		ev.preventDefault();
 		let bookmark = $( ev.currentTarget ).serializeObject();
 		console.log( bookmark );
-		mdl.render({body:"Getting url details"})
-		Parse.Cloud.run("og", {
-			url: bookmark.page_url
-		}).then(( res )=>{
-			try {
-				let dummy = null;
-				if( res.error ) {
-					mdl.render({ type: "error", body:res.error.message, timeout: 5*1000})
-					dummy = {
-						description: "",favicon:"",image_url:"https://webname.ga/icons/cover.png?i=0",
-						page_url:bookmark.page_url,
-						site_name:"",title:"",type:"website"
-					}
-				} else {
-					dummy = res.hybridGraph;
-					dummy.image_url = dummy.image;
-					dummy.page_url = dummy.url;
-					delete dummy.image;
-					delete dummy.url;
-				}
-				console.log( dummy );
-				if( !dummy.page_url.startsWith("http") ) dummy.page_url = "http://"+dummy.page_url;
-				mdl.render({body:"Optimizing link for click count"})
-				self.shortenUrl( dummy.page_url ).then(r=>{
-					dummy.short_page_url = r.id;
-					console.log( dummy );
-					mdl.hide();
-					self.renderBookmark( dummy );
-				});
-			} catch(e) { console.log( e );}
-		}, (  er ) => {
-			console.log( er );
+		mdl.render({body:"Getting url details"});
+		let dummy = {
+			description: "",
+			image_url:"https://webname.ga/icons/cover.png?i=0",
+			page_url:bookmark.page_url,
+			title:bookmark.page_url,
+		}
+		this.openGraph( bookmark.page_url ).then( result => {
+			console.warn( result)
+			if( result.success ) {
+				dummy.title = result.data.ogTitle;
+				dummy.description = result.data.ogDescription;
+				dummy.image_url = result.data.ogImage.url;
+				self.updateView( dummy );
+			}
+		}).catch( error => {
+			console.log( error );
 			mdl.render({ type: "error", body:"Couldn't get url details", timeout: 5*1000})
+			self.updateView( dummy );
 		});
 		$( ev.currentTarget ).find('input').val("");
 	}
