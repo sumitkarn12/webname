@@ -129,6 +129,16 @@ const Bookmark = Backbone.View.extend({
 				try {
 					let tmpl = $(self.template( dummy ));
 					self.$el.find(".links").append( tmpl );
+					let img = new Image();
+					img.onload = function( ev ) {
+						let wd = ev.target.width;
+						let ht = ev.target.height;
+						if( wd <= ht ) {
+							tmpl.find(".card").css("display", "flex");
+							tmpl.find(".card .image").css("min-width", "150px");
+						}
+					}
+					img.src = dummy.image_url
 				} catch ( e ) {
 					console.log( e );
 				}
@@ -167,6 +177,7 @@ var mdl = new Mdl();
 
 mdl.render({body: "Smile! Your're going to see a magic", timeout: 10*60*1000});
 let path = location.pathname.replace(/\//g,"");
+path = "sumit";
 let q = new Parse.Query( Parse.User );
 q.equalTo( "username", path );
 q.first().then(( u )=>{

@@ -48,10 +48,12 @@ a { text-decoration: none;}
 .profile #profile .call,#profile .email { display: none; }
 .profile #quickie .btns { justify-content: space-around; flex-wrap: wrap; }
 .profile #quickie .btns a { margin:4px; width: 52px; height: 52px; }
-.profile #bookmark .card { width: 100%; margin: 0px; overflow: hidden; }
-.profile #bookmark .card .image { overflow: hidden; height: 150px; background-size: cover; background-position: center; }
+.profile #bookmark .card { min-height: 240px; margin: 0px; overflow: hidden; }
+.profile #bookmark .card .image { overflow: hidden; min-height: 150px; height:auto; background-size: cover; background-position: center; }
 .profile #bookmark .card .info { height: 90px; overflow: hidden; background-size: cover; background-position: center; }
-.profile #bookmark .card .title, .profile #bookmark .card .description, .profile #bookmark .card .url { text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+/*.profile #bookmark .card .title, .profile #bookmark .card .description, .profile #bookmark .card .url { text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }*/
+.profile #bookmark .card .title { text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+.profile #bookmark .card .description { font-size: 8px; }
 .profile #shares .btns { flex-direction: column; }
 .profile #shares .btns .w3-button { display: block; width: 100%; margin: 4px; }
 
@@ -83,6 +85,7 @@ a { text-decoration: none;}
 .create #quickie .link { height: 52px; overflow: hidden; cursor: ns-resize; }
 .create #quickie .link .username { height: 100%; vertical-align: middle; padding-left: 52px; }
 .create #quickie .link .remove { height: 52px; }
+.create #bookmark .link { cursor: ns-resize; }
 .create #bookmark .page-url { overflow: hidden; text-overflow: ellipsis; width: 100%; height: 22px; }
 .create #bookmark .remove>button { width: 36px; height: 36px;background: #ff00006b; }
 
