@@ -81,13 +81,13 @@
 					<div class="w3-container w3-padding-16">
 						<form class="w3-tiny">
 							<label>Name</label>
-							<input type="text" name="name" class="w3-input" required="" pattern="[A-Za-z ]{3,32}">
+							<input type="text" name="name" class="w3-input" required="" pattern="[A-Za-z ]{3,32}" autocomplete="name">
 							<label>About</label>
-							<input type="text" class="w3-input" name="about" />
+							<input type="text" class="w3-input" name="about" autocomplete="about" />
 							<label>Mobile</label>
-							<input type="text" class="w3-input" name="mobile" />
+							<input type="tel" class="w3-input" name="mobile" autocomplete="tel" />
 							<label>Email</label>
-							<input type="email" class="w3-input" name="email" />
+							<input type="email" class="w3-input" name="email" autocomplete="email" />
 							<div class="w3-section"></div>
 							<button class="w3-button w3-theme" style="width: 100%;"><i class="fas fa-check"></i></button>
 						</form>
