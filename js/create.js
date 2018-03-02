@@ -515,7 +515,7 @@ const Bookmark = Backbone.View.extend({
 			title:bookmark.page_url,
 		}
 		this.openGraph( bookmark.page_url ).then( result => {
-			console.warn( result)
+			console.log( result)
 			if( result.success ) {
 				dummy.title = result.data.ogTitle;
 				dummy.description = result.data.ogDescription;
