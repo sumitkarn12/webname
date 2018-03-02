@@ -1,2 +1,3 @@
 # Redirects
+/create	/create.html	200
 /*	/profile.html	200
