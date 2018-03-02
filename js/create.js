@@ -48,13 +48,11 @@ window.fbAsyncInit = function() {
 	});
 	if( auth == null ) auth = new Auth();
 	mdl.render({ body: "Checking authentication" });
-	auth.checkLogin().then( response => {
-		if( response.status == "connected" && Parse.User.current() != null ) {
-			auth.getProfile().then( prof => auth.afterLogin( prof ) );
-		} else {
-			auth.render();
-		}
-	});
+	if( Parse.User.current() ) {
+		auth.afterLogin();
+	} else {
+		auth.render();
+	}
 };
 
 const Auth = Backbone.View.extend({
@@ -70,28 +68,21 @@ const Auth = Backbone.View.extend({
 			},
 			error: function(user, error) {
 				mdl.hide();
-				console.log("User cancelled the Facebook login or did not fully authorize.");
 				mdl.render({ type: "error", body: "User cancelled the Facebook login or did not fully authorize.", timeout:3000 });
 			}
 		});
 	},
 	getProfile: function() {
-		return new Promise(( resolve ) => {
-			FB.api("/me?fields=id,name,email,picture,cover", function( response ) {
-				resolve( response );
-			});
+		let self = this;
+		FB.api("/me?fields=id,name,email,picture,cover", function( response ) {
+			fbProfile = response;
+			Parse.User.current().set( "email", fbProfile.email );
 		});
 	},
-	checkLogin: function() {
-		return new Promise(( resolve )=>{
-			FB.getLoginStatus( resolve );
-		});
-	},
-	afterLogin: function( prof ) {
+	afterLogin: function() {
 		$(".page").hide();
 		$(".main-page").fadeIn();
 		mdl.hide();
-		fbProfile = prof;	
 		if( username == null ) username = new Username();
 		username.render();
 		model = new Model();
@@ -122,9 +113,10 @@ const Auth = Backbone.View.extend({
 		} else {
 			model.set( "image", fbProfile.picture.data.url );
 		}
-		Parse.User.current().set("email", fbProfile.email);
+		this.getProfile();
 	},
 	render: function() {
+		mdl.hide();
 		$( ".page" ).hide();
 		this.$el.show();
 		return this;
