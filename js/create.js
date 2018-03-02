@@ -64,7 +64,7 @@ const Auth = Backbone.View.extend({
 		mdl.render({ body: "Waiting for auth confirmation" });
 		Parse.FacebookUtils.logIn("email,public_profile", {
 			success: function(user) {
-				self.getProfile().then( prof => self.afterLogin( prof ) );
+				self.getProfile().then(r=>self.afterLogin())
 			},
 			error: function(user, error) {
 				mdl.hide();
@@ -73,10 +73,12 @@ const Auth = Backbone.View.extend({
 		});
 	},
 	getProfile: function() {
-		let self = this;
-		FB.api("/me?fields=id,name,email,picture,cover", function( response ) {
-			fbProfile = response;
-			Parse.User.current().set( "email", fbProfile.email );
+		return new Promise(( resolve )=>{
+			FB.api("/me?fields=id,name,email,picture,cover", function( response ) {
+				fbProfile = response;
+				Parse.User.current().set( "email", fbProfile.email );
+				resolve(response)
+			});
 		});
 	},
 	afterLogin: function() {
