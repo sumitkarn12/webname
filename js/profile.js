@@ -3,7 +3,7 @@ const Model = Backbone.Model.extend();
 let model = new Model();
 const Profile = Backbone.View.extend({
 	el: "#profile",
-	fbShareUrl : "https://www.facebook.com/dialog/share?app_id=145634995501895&display=popup&href={href}",
+	fbShareUrl : "https://www.facebook.com/dialog/share?app_id=1778142652491392&display=popup&href={href}&redirect_uri={href}",
 	tweetUrl : "https://twitter.com/intent/tweet?text={text}",
 	initialize: function() {
 		model.on("change:profile", ( m,v ) => this.renderProfile( v ) );
@@ -66,8 +66,8 @@ const Profile = Backbone.View.extend({
 		}
 		this.updateMeta( profile );
 		$("#shares #copy input").val(location.href);
-		$("#shares .fb-share").attr("href", this.fbShareUrl.replace("{href}", location.href) );
-		$("#shares .tweet").attr("href", this.tweetUrl.replace("{text}", `I found this webname. ${location.href}`));
+		$("#shares .fb-share").attr("href", this.fbShareUrl.replace( /{href}/g, encodeURIComponent( location.href ) ) );
+		$("#shares .tweet").attr("href", this.tweetUrl.replace(/{text}/g, `${location.href} | My new web address`));
 	}
 });
 const Quickie = Backbone.View.extend({
