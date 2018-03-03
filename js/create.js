@@ -157,7 +157,7 @@ const Topbar = Backbone.View.extend({
 
 const Username = Backbone.View.extend({
 	el: "#username",
-	sendUrl : "http://www.facebook.com/dialog/send?app_id=1778142652491392&link={href}&redirect_uri={href}&display=page",
+	sendUrl : "http://www.facebook.com/dialog/send?app_id=1778142652491392&link={href}&redirect_uri={href}",
 	fbShareUrl : "https://www.facebook.com/dialog/share?app_id=1778142652491392&display=page&href={href}&redirect_uri={href}",
 	tweetUrl : "https://twitter.com/intent/tweet?text={href}",
 	render: function() {

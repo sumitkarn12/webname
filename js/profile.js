@@ -3,7 +3,7 @@ const Model = Backbone.Model.extend();
 let model = new Model();
 const Profile = Backbone.View.extend({
 	el: "#profile",
-	sendUrl : "http://www.facebook.com/dialog/send?app_id=1778142652491392&link={href}&redirect_uri={href}&display=page",
+	sendUrl : "http://www.facebook.com/dialog/send?app_id=1778142652491392&link={href}&redirect_uri={href}",
 	fbShareUrl : "https://www.facebook.com/dialog/share?app_id=1778142652491392&display=page&href={href}&redirect_uri={href}",
 	tweetUrl : "https://twitter.com/intent/tweet?text={text}",
 	initialize: function() {
