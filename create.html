@@ -19,6 +19,15 @@
 	<meta property="og:type" content="website"/>
 	<meta property="og:url" content="https://webname.ga"/>
 
+	<script type="application/ld+json">
+		{
+			"@context": "http://schema.org",
+			"@type": "Organization",
+			"url": "https://webname.ga",
+			"logo": "https://webname.ga//icons/android-chrome-512x512.png"
+		}
+	</script>
+
 	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<link rel="stylesheet" id="app-theme-link" href="https://www.w3schools.com/lib/w3-theme-blue.css">
 	<link href="https://fonts.googleapis.com/css?family=Raleway:100,200,300,400" rel="stylesheet">
@@ -81,13 +90,13 @@
 					<div class="w3-container w3-padding-16">
 						<form class="w3-tiny">
 							<label>Name</label>
-							<input type="text" name="name" class="w3-input" required="" pattern="[A-Za-z ]{3,32}" autocomplete="name">
+							<input type="text" name="name" class="w3-input" required="" pattern="[A-Za-z ]{3,32}" autocomplete="name" placeholder="John Doe" />
 							<label>About</label>
-							<input type="text" class="w3-input" name="about" autocomplete="about" />
+							<input type="text" class="w3-input" name="about" autocomplete="about" placeholder="I'm excited to share links here"/>
 							<label>Mobile</label>
-							<input type="tel" class="w3-input" name="mobile" autocomplete="tel" />
+							<input type="tel" class="w3-input" name="mobile" pattern="^\+\d+" autocomplete="tel"  placeholder="+91 965 012 3456"/>
 							<label>Email</label>
-							<input type="email" class="w3-input" name="email" autocomplete="email" />
+							<input type="email" class="w3-input" name="email" autocomplete="email"  placeholder="john.doe@xyz.com"/>
 							<div class="w3-section"></div>
 							<button class="w3-button w3-theme" style="width: 100%;"><i class="fas fa-check"></i></button>
 						</form>
@@ -263,8 +272,8 @@
 		<div class="msg w3-padding"></div>
 	</div>
 
-
 	<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+	<script src="/js/common.js"></script>
 	<script src="/js/create.js"></script>
 </body>
 </html>

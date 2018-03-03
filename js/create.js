@@ -1,39 +1,9 @@
 // Fri Mar  2 20:29:40 2018
 
-
-let auth, creator, username, dp, info, quickie, bookmark, topbar, theme, mdl;
+let auth, creator, username, dp, info, quickie, bookmark, topbar, theme;
 let model, fbProfile = null;
 
-Parse.initialize( "1e3bc14f-0975-4cb6-9872-bff78542f22b" );
-Parse.serverURL = "https://parse.buddy.com/parse";
-
 let GOOGLE_API_KEY = "AIzaSyDypHKQ7C0LtLgv9fkd0VJcEdAvJjrdNEQ";
-
-$.fn.serializeObject = function() {
-	var o = {};
-	var a = this.serializeArray();
-	$.each(a, function() {
-		if (o[this.name]) {
-			if (!o[this.name].push) {
-				o[this.name] = [o[this.name]];
-			}
-			o[this.name].push(this.value || '');
-		} else {
-			o[this.name] = this.value || '';
-		}
-	});
-	return o;
-};
-
-if( Parse.User.current() != null ) { Parse.User.current().fetch(); }
-fetch("/gradients.json").then(res=>res.json()).then(json=>{
-	let index = Math.floor(Math.random()*json.length);
-	let colors = json[index].colors;
-	console.log( colors[0], colors[colors.length-1] );
-	$("body").css({
-		"background": `linear-gradient( ${colors[0]}, ${colors[colors.length-1]})`
-	});
-});
 
 const Model = Backbone.Model.extend();
 const Goog = Backbone.Model.extend({
@@ -75,12 +45,30 @@ const Auth = Backbone.View.extend({
 		});
 	},
 	getProfile: function() {
+		let self = this;
 		return new Promise(( resolve )=>{
-			FB.api("/me?fields=id,name,email,picture,cover", function( response ) {
-				fbProfile = response;
-				Parse.User.current().set( "email", fbProfile.email );
-				resolve(response)
+			FB.getLoginStatus(( loginStatus )=>{
+				if( loginStatus.status == "connected" )
+					FB.api("/me?fields=id,name,email,picture,cover", async function( response ) {
+						fbProfile = response;
+						let u = Parse.User.current();
+						let location = await self.getLocation();
+						u.set("location", location );
+						if( u.getEmail() != fbProfile.email ) {
+							u.setEmail( fbProfile.email );
+							u.save().then(()=>{
+								console.log( "User private email updated" );
+								console.log( u.toJSON() );
+							}).catch(console.warn);
+						}
+						resolve(response)
+					});
 			});
+		});
+	},
+	getLocation: function() {
+		return new Promise(( resolve ) => {
+			$.getJSON('//freegeoip.net/json/', resolve );
 		});
 	},
 	afterLogin: function() {
@@ -500,6 +488,11 @@ const Bookmark = Backbone.View.extend({
 			console.log( "After shortening: ", dummy );
 			mdl.hide();
 			self.renderBookmark( dummy );
+		}).catch(()=>{
+			mdl.render({ type: "error", body: "Sorry! URL couldn't be optimized for click count.", timeout: 3*1000 });
+			dummy.short_page_url = dummy.page_url;
+			console.log( "After shortening: ", dummy );
+			self.renderBookmark( dummy );
 		});
 	},
 	addBookmark: function( ev ) {
@@ -515,7 +508,7 @@ const Bookmark = Backbone.View.extend({
 			title:bookmark.page_url,
 		}
 		this.openGraph( bookmark.page_url ).then( result => {
-			console.log( result)
+			console.log( result);
 			if( result.success ) {
 				dummy.title = result.data.ogTitle;
 				dummy.description = result.data.ogDescription;
@@ -531,27 +524,3 @@ const Bookmark = Backbone.View.extend({
 	}
 });
 
-const Mdl = Backbone.View.extend({
-	el: ".spinner-wrapper",
-	initialize: function() {
-		this.$el.on("animationend", ( ev )=> {
-			if($( ev.target ).hasClass('spinner-wrapper')) {
-				this.$el.removeClass('spinner-wrapper-hide')
-				this.$el.hide()
-			}
-		});
-	},
-	render: function( o ) {
-		o = $.extend({ type: "spinner", body: "", timeout: 60*60*1000 }, o);
-		this.$el.find(".type").hide();
-		this.$el.find(".msg").html( o.body );
-		this.tym = setTimeout( ()=> this.hide(), o.timeout );
-		this.$el.show();
-		this.$el.find("."+o.type).show();
-	},
-	hide: function() {
-		clearTimeout( this.tym );
-		this.$el.addClass('spinner-wrapper-hide');
-	}
-});
-mdl = new Mdl();

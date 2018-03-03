@@ -1,15 +1,4 @@
 
-Parse.initialize( "1e3bc14f-0975-4cb6-9872-bff78542f22b" );
-Parse.serverURL = "https://parse.buddy.com/parse";
-
-fetch("/gradients.json").then(res=>res.json()).then(json=>{
-	let index = Math.floor(Math.random()*json.length);
-	let colors = json[index].colors;
-	$(".bg").css({
-		"background": `linear-gradient( ${colors[0]}, ${colors[colors.length-1]})`,
-		"background-attachment": `fixed`
-	});
-});
 const Model = Backbone.Model.extend();
 let model = new Model();
 const Profile = Backbone.View.extend({
@@ -145,45 +134,20 @@ const Bookmark = Backbone.View.extend({
 		}
 	}
 });
-const Mdl = Backbone.View.extend({
-	el: ".spinner-wrapper",
-	initialize: function() {
-		this.$el.on("animationend", ( ev )=> {
-			if($( ev.target ).hasClass('spinner-wrapper')) {
-				this.$el.removeClass('spinner-wrapper-hide')
-				this.$el.hide()
-			}
-		});
-	},
-	render: function( o ) {
-		o = $.extend({ type: "spinner", body: "", timeout: 60*60*1000 }, o);
-		this.$el.find(".type").hide();
-		this.$el.find(".msg").html( o.body );
-		this.tym = setTimeout( ()=> this.hide(), o.timeout );
-		this.$el.show();
-		this.$el.find("."+o.type).show();
-	},
-	hide: function() {
-		clearTimeout( this.tym );
-		this.$el.addClass('spinner-wrapper-hide');
-	}
-});
 
 let profile = new Profile();
 let quickie = new Quickie();
 let bookmark = new Bookmark();
-var mdl = new Mdl();
 
-mdl.render({body: "Smile! Your're going to see a magic", timeout: 10*60*1000});
+mdl.render({body: "Painting with some colors to make it beautiful 😋", timeout: 10*60*1000});
 let path = location.pathname.replace(/\//g,"");
 let q = new Parse.Query( Parse.User );
 q.equalTo( "username", path );
 q.first().then(( u )=>{
-	console.log( u );
 	if( u == null ) {
 		mdl.render({
 			type: "error",
-			body: "The user you are looking for, could not be found. Please recheck link given to you.<br/>However you can create your own by clicking <a href='/create'>here</a>"
+			body: "Sorry to say, but we couldn't find this person. <br/><br/>However you can also create your own by clicking <a href='/create'><b>here</b></a>"
 		});
 	} else {
 		model.set( "image", u.get( "image" ) );
@@ -199,9 +163,3 @@ q.first().then(( u )=>{
 		}
 	}
 }, console.error );
-
-$( window ).on('resize', function(event) {
-	event.preventDefault();
-	let w = bookmark.$el.find(".link .w3-card").first().width();
-	bookmark.$el.find(".link .faded-background").height( w );
-});
