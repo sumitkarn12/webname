@@ -157,8 +157,9 @@ const Topbar = Backbone.View.extend({
 
 const Username = Backbone.View.extend({
 	el: "#username",
-	facebookShareUrl: `https://www.facebook.com/sharer/sharer.php?u=`,
-	twitterShareUrl: `https://twitter.com/home?status=`,
+	sendUrl : "http://www.facebook.com/dialog/send?app_id=1778142652491392&link={href}&redirect_uri={href}&display=page",
+	fbShareUrl : "https://www.facebook.com/dialog/share?app_id=1778142652491392&display=page&href={href}&redirect_uri={href}",
+	tweetUrl : "https://twitter.com/intent/tweet?text={href}",
 	render: function() {
 		this.$el.find('input').val( Parse.User.current().get("username") );
 		this.updateShareLink( Parse.User.current().get("username") );
@@ -167,30 +168,19 @@ const Username = Backbone.View.extend({
 	events: {
 		"submit form": "updateUsername",
 		"keyup input": "inputKeyUp",
-		"click #sharer .close": "closeSharer",
 		"click .copy-share-link": "copyShareLink"
-	},
-	openSharer: function() {
-		this.$el.find("#sharer").show();
-	},
-	closeSharer: function() {
-		this.$el.find("#sharer").hide();
 	},
 	updateUsername: function( ev ) {
 		ev.preventDefault();
 		var self = this;
 		let username = this.$el.find('input').val().toLowerCase();
-		if( username.length < 4 ) {
-			mdl.render({ type: "error", body: "Username is too short", timeout: 3*1000 });
-			return false;
-		}
 		let user = Parse.User.current();
 		if( user.get("username").toLowerCase() != username ) {
 			user.set("username", username);
 			mdl.render({ body: "Updating username" });
 			user.save().then(function( user ) {
 				mdl.hide();
-				self.openSharer();
+				self.updateShareLink( username );
 			}, function( user, error ) {
 				mdl.render({ type: "error", body: error.message, timeout: 4000 });
 				console.log( user, error );
@@ -199,16 +189,12 @@ const Username = Backbone.View.extend({
 			mdl.render({ type: "success", body: "No need to change", timeout: 4*1000 });
 		}
 	},
-	inputKeyUp: function( ev ) {
-		this.updateShareLink( ev.currentTarget.value );
-	},
 	updateShareLink: function( username ) {
 		this.$el.find('.share-link').text( `${location.origin}/${username}` );
-		this.$el.find('#sharer .share-on-facebook').attr("href", this.facebookShareUrl+`${location.origin}/${username}`);
-		this.$el.find('#sharer .share-on-twitter').attr("href", this.twitterShareUrl+`${location.origin}/${username}`);
-		$('.preview').attr({
-			href: `${location.origin}/${username}`
-		});
+		this.$el.find('#sharer .facebook').attr("href", this.fbShareUrl.replace(/{href}/g, encodeURIComponent(`${location.origin}/${username}`)));
+		this.$el.find('#sharer .messenger').attr("href",  this.sendUrl.replace(/{href}/g, encodeURIComponent(`${location.origin}/${username}`)));
+		this.$el.find('#sharer .twitter').attr("href",  this.tweetUrl.replace(/{href}/g, encodeURIComponent(`${location.origin}/${username}`)));
+		$('.preview').attr({ href: `${location.origin}/${username}` });
 	},
 	copyShareLink: function() {
 		let ta = document.createElement( "textarea" );
@@ -253,17 +239,20 @@ const DP = Backbone.View.extend({
 		});
 	},
 	render: function() {
+		console.log( model.get("image") );
 		let u = null;
 		if( model.get("image").type == "file" ) {
 			u = model.get("image").data.url()
 		} else {
 			u = model.get("image").data
 		}
-		this.croppie.bind({ url: u, points: [ 0,0,640,640 ] });
+		this.croppie.bind({ url: u, points: [ 0,0,320,320 ] });
 		return this;
 	},
 	events: {
-		"click .change-picture": "updateProfilePicture",
+		"click .remove": "removeProfilePicture",
+		"click .change": "updateProfilePicture",
+		"click .from-facebook": "fromFacebook",
 		"click .profile-image": "removeProfilePicture",
 		"change .picture-selector": "changePicture"
 	},
@@ -279,8 +268,15 @@ const DP = Backbone.View.extend({
 	},
 	removeProfilePicture: function( ev ) {
 		ev.preventDefault();
+		model.set("image", {type: "url", url: "https://source.unsplash.com/random/320x320"})
+		this.croppie.bind({ url: model.get("image").url, points: [ 0,0,320,320 ] });
+		mdl.render({ type: "success", body: 'Click <i class="fas fa-check"></i> to reset image', timeout: 2000 });
+	},
+	fromFacebook: function( ev ) {
+		ev.preventDefault();
 		model.set( "image", fbProfile.picture.data.url );
-		mdl.render({ type: "success", body: "Changed to default Profile picture", timeout: 2000 });
+		this.croppie.bind({ url: model.get("image").url, points: [ 0,0,320,320 ] });
+		mdl.render({ type: "success", body: 'Click <i class="fas fa-check"></i> to reset image', timeout: 2000 });
 	},
 	updateProfilePicture: function( ev ) {
 		let self = this;
@@ -288,7 +284,7 @@ const DP = Backbone.View.extend({
 		this.croppie.result({
 			type:"base64",
 			quality: 0.5,
-			size: { width:640, height: 640 },
+			size: { width:320, height: 320 },
 			format: "png"
 		}).then(r=>{
 			let parseProfilePicFile = new Parse.File(fbProfile.id+".jpg", { base64: r });
@@ -307,20 +303,20 @@ const DP = Backbone.View.extend({
 const Info = Backbone.View.extend({
 	el: "#info",
 	render: function() {
-		this.$el.find("[name=name]").val( model.get("profile").name );
-		this.$el.find("[name=about]").val( model.get("profile").about );
-		this.$el.find("[name=mobile]").val( model.get("profile").mobile );
-		this.$el.find("[name=email]").val( model.get("profile").email );
+		this.$el.find("#name").val( model.get("profile").name );
+		this.$el.find("#about").val( model.get("profile").about );
+		this.$el.find("#mobile").val( model.get("profile").mobile );
+		this.$el.find("#email").val( model.get("profile").email );
 		return this;
 	},
 	events: {
-		"submit form": "updateInfo"
+		"keyup input" : "updateInfo"
 	},
 	updateInfo: function( ev ) {
 		ev.preventDefault();
-		let profile = $( ev.currentTarget ).serializeObject();
-		model.set( "profile", profile );
-		mdl.render({ type: "success", body: "Changed<br/><br/>Do not forget to save your changes", timeout: 1000 });
+		let prof = model.get("profile");
+		prof[ev.currentTarget.id] = ev.currentTarget.value;
+		model.set("profile", prof);
 	}
 });
 
@@ -375,7 +371,7 @@ const Quickie = Backbone.View.extend({
 		ev.preventDefault();
 		let type = ev.currentTarget.value;
 		switch ( type ) {
-			case "whatsapp": this.$el.find('.info').text( "Enter mobile with ISD code" ); break;
+			case "whatsapp": this.$el.find('.info').text( "Enter mobile with ISD code. e.g., +919650123123" ); break;
 			case "facebook": this.$el.find('.info').text( "Enter facebook userid" ); break;
 			case "instagram": this.$el.find('.info').text( "Enter instagram userid" ); break;
 			default: this.$el.find('.info').text( "Enter userid only" ); break;

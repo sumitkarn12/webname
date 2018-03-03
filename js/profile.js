@@ -3,7 +3,8 @@ const Model = Backbone.Model.extend();
 let model = new Model();
 const Profile = Backbone.View.extend({
 	el: "#profile",
-	fbShareUrl : "https://www.facebook.com/dialog/share?app_id=1778142652491392&display=popup&href={href}&redirect_uri={href}",
+	sendUrl : "http://www.facebook.com/dialog/send?app_id=1778142652491392&link={href}&redirect_uri={href}&display=page",
+	fbShareUrl : "https://www.facebook.com/dialog/share?app_id=1778142652491392&display=page&href={href}&redirect_uri={href}",
 	tweetUrl : "https://twitter.com/intent/tweet?text={text}",
 	initialize: function() {
 		model.on("change:profile", ( m,v ) => this.renderProfile( v ) );
@@ -67,6 +68,7 @@ const Profile = Backbone.View.extend({
 		this.updateMeta( profile );
 		$("#shares #copy input").val(location.href);
 		$("#shares .fb-share").attr("href", this.fbShareUrl.replace( /{href}/g, encodeURIComponent( location.href ) ) );
+		$("#shares .send").attr("href", this.sendUrl.replace( /{href}/g, encodeURIComponent( location.href ) ) );
 		$("#shares .tweet").attr("href", this.tweetUrl.replace(/{text}/g, encodeURIComponent(`${location.href} | My new web address`)));
 	}
 });
@@ -152,6 +154,7 @@ q.first().then(( u )=>{
 	} else {
 		model.set( "image", u.get( "image" ) );
 		model.set( "profile", u.get( "profile" ) );
+		console.log( u );
 		model.set( "favbtns", u.get( "favbtns" ) );
 		model.set( "bookmarks", u.get( "links" ) );
 		$("#app-theme-link").attr("href", u.get("theme"))

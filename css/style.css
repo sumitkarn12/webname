@@ -18,8 +18,8 @@ a { text-decoration: none;}
 .details .w3-animate-left { position: relative; animation:animateleft 1s;  }
 .details .w3-animate-right { position: relative; animation:animateright 1s;  }
 .details .w3-animate-bottom { position: relative; animation:animatebottom 2s;  }
-.details .first-image-animate { animation: firstimageanimate 6s infinite alternate; }
-.details .last-image-animate { animation: lastimageanimate 6s infinite alternate; }
+.details .first-image-animate { will-change: z-index left; animation: firstimageanimate 6s infinite alternate; }
+.details .last-image-animate { will-change: transform z-index right; animation: lastimageanimate 6s infinite alternate; }
 @keyframes firstimageanimate {
 	0% { left:0px; z-index: -1; }
 	25%{left:0px; z-index: -1; }
@@ -60,22 +60,21 @@ a { text-decoration: none;}
 .spinner-wrapper .type { display: none; }
 /*spinner styles*/
 .spinner-wrapper { height: 100vh; width: 100%; position: fixed; top: 0; left: 0; z-index: 1; flex-direction: column; }
-.spinner-wrapper-hide { animation: sw-hide 0.5s; }
-.spinner { width: 100px; height: 100px; background-color: #fff; margin: 100px auto; animation: sk-rotateplane 1.2s infinite ease-in-out; }
+.spinner-wrapper-hide { will-change: transform opacity; animation: sw-hide 0.5s; }
+.spinner { width: 100px; height: 100px; background-color: #fff; margin: 100px auto; will-change: transform; animation: sk-rotateplane 1.2s infinite ease-in-out; }
 @keyframes sk-rotateplane { 0% { transform: perspective(120px) rotateX(0deg) rotateY(0deg); } 50% { transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg); } 100% { transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg); } }
 @keyframes sw-hide { 0% { transform: scale(1,1); opacity: 1; } 100% { transform: scale(2,2); opacity: 0; } }
 
 /*success styles*/
 .spinner-wrapper .success {transform: scale(5,5);}
 .svg-success { stroke-width: 2px; stroke: green; fill: none; }
-.svg-success path { stroke-dasharray: 17px, 17px; stroke-dashoffset: 0px; animation: checkmark 4s infinite ease-out; }
+.svg-success path { stroke-dasharray: 17px, 17px; stroke-dashoffset: 0px; will-change: stroke-dashoffset; animation: checkmark 4s infinite ease-out; }
 @keyframes checkmark { 0% { stroke-dashoffset: 17px; } 10% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 0; } }
 
 /*success styles*/
 .svg-error path { fill:red; }
-.error { animation: rotatemark 4s infinite ease; }
+.error { will-change: transform; animation: rotatemark 4s infinite ease; }
 @keyframes rotatemark { 0% { transform: rotate(360deg); } 10% { transform: rotate(0deg); } 100% { transform: rotate(0deg); } }
-
 
 /*create style*/
 #auth { background: #8b9dc3; background-image: url(/icons/icon.png); background-repeat: no-repeat; background-position: center; background-size: contain; height: 100vh; display: flex; justify-content: center; align-items: center; }
