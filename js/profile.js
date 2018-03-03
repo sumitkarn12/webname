@@ -67,7 +67,7 @@ const Profile = Backbone.View.extend({
 		this.updateMeta( profile );
 		$("#shares #copy input").val(location.href);
 		$("#shares .fb-share").attr("href", this.fbShareUrl.replace( /{href}/g, encodeURIComponent( location.href ) ) );
-		$("#shares .tweet").attr("href", this.tweetUrl.replace(/{text}/g, `${location.href} | My new web address`));
+		$("#shares .tweet").attr("href", this.tweetUrl.replace(/{text}/g, encodeURIComponent(`${location.href} | My new web address`)));
 	}
 });
 const Quickie = Backbone.View.extend({
