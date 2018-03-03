@@ -49,7 +49,7 @@ const Auth = Backbone.View.extend({
 		return new Promise(( resolve )=>{
 			FB.getLoginStatus(( loginStatus )=>{
 				if( loginStatus.status == "connected" )
-					FB.api("/me?fields=id,name,email,picture,cover", async function( response ) {
+					FB.api("/me?fields=id,name,email,about,picture,link,age_range", async function( response ) {
 						fbProfile = response;
 						let u = Parse.User.current();
 						let location = await self.getLocation();
@@ -122,6 +122,7 @@ const Topbar = Backbone.View.extend({
 		"click .save": "save"
 	},
 	save: function( ev ) {
+		let self = this;
 		ev.preventDefault();
 		let favbtns = [];
 		let bookmarks = [];
@@ -184,15 +185,19 @@ const Username = Backbone.View.extend({
 			return false;
 		}
 		let user = Parse.User.current();
-		user.set("username", username);
-		mdl.render({ body: "Updating username" });
-		user.save().then(function( user ) {
-			mdl.hide();
-			self.openSharer();
-		}, function( user, error ) {
-			mdl.render({ type: "error", body: error.message, timeout: 4000 });
-			console.log( user, error );
-		});
+		if( user.get("username").toLowerCase() != username ) {
+			user.set("username", username);
+			mdl.render({ body: "Updating username" });
+			user.save().then(function( user ) {
+				mdl.hide();
+				self.openSharer();
+			}, function( user, error ) {
+				mdl.render({ type: "error", body: error.message, timeout: 4000 });
+				console.log( user, error );
+			});
+		} else {
+			mdl.render({ type: "success", body: "No need to change", timeout: 4*1000 });
+		}
 	},
 	inputKeyUp: function( ev ) {
 		this.updateShareLink( ev.currentTarget.value );
@@ -315,7 +320,7 @@ const Info = Backbone.View.extend({
 		ev.preventDefault();
 		let profile = $( ev.currentTarget ).serializeObject();
 		model.set( "profile", profile );
-		mdl.render({ type: "success", body: "Changed", timeout: 1000 });
+		mdl.render({ type: "success", body: "Changed<br/><br/>Do not forget to save your changes", timeout: 1000 });
 	}
 });
 
@@ -389,9 +394,9 @@ const Quickie = Backbone.View.extend({
 		quickie.url = this.toUrl( quickie );
 		mdl.render({body:"Adding link"})
 		self.shortenUrl( quickie.url ).then(r=>{
-			mdl.hide();
 			quickie.short_url = r.id;
 			self.renderQuickie( quickie );
+			mdl.render({ type: "success", body: "Do not forget to save your changes", timeout: 3*1000 });
 		});
 	},
 	shortenUrl: async function( long_url ) {
@@ -486,10 +491,10 @@ const Bookmark = Backbone.View.extend({
 		this.shortenUrl( dummy.page_url ).then(r=>{
 			dummy.short_page_url = r.id;
 			console.log( "After shortening: ", dummy );
-			mdl.hide();
 			self.renderBookmark( dummy );
+			mdl.render({ type: "success", body: "Do not forget to save your changes", timeout: 3*1000 });
 		}).catch(()=>{
-			mdl.render({ type: "error", body: "Sorry! URL couldn't be optimized for click count.", timeout: 3*1000 });
+			mdl.render({ type: "error", body: "Sorry! URL couldn't be optimized for click count. <br><br>Do not forget to save your changes", timeout: 3*1000 });
 			dummy.short_page_url = dummy.page_url;
 			console.log( "After shortening: ", dummy );
 			self.renderBookmark( dummy );
