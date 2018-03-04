@@ -1,6 +1,6 @@
 ::-webkit-scrollbar { width: 6px; } 
 ::-webkit-scrollbar-thumb { background: #000; box-shadow: 0 0 15px 5px #f1c40f; } 
-body { font-family: 'Raleway', Verdana; background: linear-gradient(to right, #E1eec3, #f05053); }
+body { font-family: 'Raleway', Verdana; background: linear-gradient(to right, #E1eec3, #f05053); margin-bottom: 82px; }
 a { text-decoration: none;}
 .flex-center { display: flex; justify-content: center; align-items: center;  }
 .page { display: none; }
