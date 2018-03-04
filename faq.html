@@ -1,102 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>webname | My presence on web</title>
-	<meta name="viewport" content="width=device-width,initial-scale=1.0">
-	<meta name="description" content="One link for all your links"/>
+	<head>
+		<title>webname | My presence on web</title>
 
-	<link rel="alternate" href="https://webname.ga/" hreflang="x-default" />
-	<link rel="canonical" href="https://webname.ga" />
+		<meta name="description" content="Some common asked questions which will help you to manage your links"/>
+		<meta property="og:description" content="Some common asked questions which will help you to manage your links"/>
 
-	<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
-	<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
-	<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
-	<link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#000000">
-	<meta name="apple-mobile-web-app-title" content="webname.ga">
+		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
+		<link rel="stylesheet" id="app-theme-link" href="https://www.w3schools.com/lib/w3-theme-blue.css">
+		<link href="https://fonts.googleapis.com/css?family=Raleway:100,200,300,400" rel="stylesheet">
+		<link rel="stylesheet" href="/css/style.css">
 
-	<script type="application/ld+json">
-		{
-			"@context": "http://schema.org",
-			"@type": "Organization",
-			"url": "https://webname.ga",
-			"logo": "https://webname.ga//icons/android-chrome-512x512.png"
-		}
-	</script>
-	
-
-	<link rel="manifest" href="/manifest.json" />
-	<meta name="application-name" content="webname" />
-	<meta name="theme-color" content="#2196f3" />
-	<meta name="msapplication-TileColor" content="#2196f3">
-	<link rel="shortcut icon" href="/favicon.ico" />
-
-	<!-- og tags -->
-	<meta property="og:image" content="https://webname.ga/icons/cover.png?i=0"/>
-	<meta property="og:title" content="webname | My presence on web"/>
-	<meta property="og:description" content="One link for all your links"/>
-	<meta property="og:site_name" content="webname.ga"/>
-	<meta property="og:type" content="website"/>
-	<meta property="og:url" content="https://webname.ga/faq"/>
-	<meta property="fb:app_id" content="1778142652491392"/>
-	<meta name="twitter:card" content="summary_large_image">
-
-	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
-	<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue.css">
-	<link href="https://fonts.googleapis.com/css?family=Raleway:100,200,300,400" rel="stylesheet">
-	<link rel="stylesheet" href="/css/style.css">
-</head>
-<body>
-	<div class="w3-card-4 w3-theme w3-top" id="topbar">
-		<div class="w3-xlarge w3-theme">
-			<img src="/icons/icon.png" class="brand-icon" alt=""/>
-			<a href="/" class="w3-button">WEBNAME</a>
-			<a href="/create" class="w3-button w3-right">Create</a>
+		<script src="https://npmcdn.com/parse@1.11.0/dist/parse.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js"></script>
+	</head>
+	<body>
+		<div class="w3-card-4 w3-theme w3-top" id="topbar">
+			<div class="w3-xlarge w3-theme">
+				<img src="/icons/icon.png" class="brand-icon" alt=""/>
+				<a href="/" class="w3-button">WEBNAME</a>
+				<a href="/create" class="w3-button w3-right">Create</a>
+			</div>
 		</div>
-	</div>
 
-	<br>
-	
-	<div class="flex-center bg">
-		<img src="/icons/icon.png" class="w3-image w3-opacity-max" alt="">
-	</div>
+		<br>
 
-	<ol class="w3-ul w3-border w3-card w3-white card">
-		<li>What is <a href="https://webname.ga">webname</a>?</li>
-		<li class="w3-small">It allows you to create single landing page for all your links/social media links. Use it in Instagram bios or places where you're restricted to one link.</li>
-
-		<li>How do others view my page?</li>
-		<li class="w3-small">You can share your page link with others like <a target="_blank" href="https://webname.ga/sumit">https://webname.ga/sumit</a>. The perfect place for this is your Instagram/Twitter bios, or even in YouTube descriptions.</li>
-
-		<li>Will my email be displayed publicly?</li>
-		<li class="w3-small">It's upto you. If you want to share, then you can do so.</li>
-
-		<li>What is a profile image?</li>
-		<li class="w3-small">You can include a profile image, similar to other social networks. The URL must be to an image file. You can upload your image to <a target="_blank" href="https://ctrlq.org/images/">https://ctrlq.org/images/</a> and get a link from there.</li>
-
-		<li>How to get image url?</li>
-		<li class="w3-small">You can use any image hosting service like <a target="_blank" href="https://ctrlq.org/images/">https://ctrlq.org/images/</a>.</li>
-
-		<li>Can I add other links that aren't currently on the list of social networks?</li>
-		<li class="w3-small">Definitely.</li>
-
-		<li>I'm having problems with the site, where can I get help?</li>
-		<li class="w3-small">Contact <a href="mailto:sumitkarn123@yahoo.com">sumitkarn123@yahoo.com</a>.</li>
-
-		<li>Can I change my username address?</li>
-		<li class="w3-small">Sure</li>
-
-		<li>I would like to delete my account, how do I do this?</li>
-		<li class="w3-small">You can remove all your data by contacting <a href="mailto:sumitkarn123@yahoo.com">sumitkarn123@yahoo.com</a>.</li>
-	</ol>
-
-	<div class="w3-theme w3-row w3-bottom">
-		<div class="w3-padding w3-center w3-col s6 w3-tiny">
-			<a href="/privacypolicy">Privacy Policy</a>
+		<div class="flex-center bg">
+			<img src="/icons/icon.png" class="w3-image w3-opacity-max" alt="">
 		</div>
-		<div class="w3-padding w3-center w3-col s6 w3-tiny">
-			<a href="/terms-and-conditions">Terms and Conditions</a>
-		</div>
-	</div>
-</body>
+
+		<ol class="w3-ul w3-border w3-card w3-white card">
+			<li>What is <a href="https://webname.ga">webname</a>?</li>
+			<li class="w3-small">It allows you to create single landing page for all your links/social media links. Use it in Instagram bios or places where you're restricted to one link.</li>
+
+			<li>How do others view my page?</li>
+			<li class="w3-small">You can share your page link with others like <a target="_blank" href="https://webname.ga/sumit">https://webname.ga/sumit</a>. The perfect place for this is your Instagram/Twitter bios, or even in YouTube descriptions.</li>
+
+			<li>Will my email be displayed publicly?</li>
+			<li class="w3-small">It's upto you. If you want to share, then you can do so.</li>
+
+			<li>What is a profile image?</li>
+			<li class="w3-small">You can include a profile image, similar to other social networks. The URL must be to an image file. You can upload your image to <a target="_blank" href="https://ctrlq.org/images/">https://ctrlq.org/images/</a> and get a link from there.</li>
+
+			<li>How to get image url?</li>
+			<li class="w3-small">You can use any image hosting service like <a target="_blank" href="https://ctrlq.org/images/">https://ctrlq.org/images/</a>.</li>
+
+			<li>Can I add other links that aren't currently on the list of social networks?</li>
+			<li class="w3-small">Definitely.</li>
+
+			<li>I'm having problems with the site, where can I get help?</li>
+			<li class="w3-small">Contact <a href="mailto:sumitkarn123@yahoo.com">sumitkarn123@yahoo.com</a>.</li>
+
+			<li>Can I change my username address?</li>
+			<li class="w3-small">Sure</li>
+
+			<li>I would like to delete my account, how do I do this?</li>
+			<li class="w3-small">You can remove all your data by contacting <a href="mailto:sumitkarn123@yahoo.com">sumitkarn123@yahoo.com</a>.</li>
+		</ol>
+	</body>
 </html>

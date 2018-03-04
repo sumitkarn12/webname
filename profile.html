@@ -1,172 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>webname | My presence on web</title>
-	<meta name="viewport" content="width=device-width,initial-scale=1.0">
-	<meta name="description" content="One link for all your links"/>
+	<head>
+		<title>webname | My presence on web</title>
 
-	<link rel="alternate" href="https://webname.ga/" hreflang="x-default" />
+		<meta name="description" content="One link for all your links"/>
+		<meta property="og:description" content="One link for all your links"/>
 
-	<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
-	<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
-	<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
-	<link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#000000">
-	<meta name="apple-mobile-web-app-title" content="webname.ga">
+		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
+		<link rel="stylesheet" id="app-theme-link" href="https://www.w3schools.com/lib/w3-theme-blue.css">
+		<link href="https://fonts.googleapis.com/css?family=Raleway:100,200,300,400" rel="stylesheet">
+		<link rel="stylesheet" href="/css/style.css">
 
-	<link rel="manifest" href="/manifest.json" />
-	<meta name="application-name" content="webname" />
-	<meta name="theme-color" content="#2196f3" />
-	<meta name="msapplication-TileColor" content="#2196f3">
-	<meta name="msapplication-config" content="/browserconfig.xml">
-	<link rel="shortcut icon" href="/favicon.ico" />
+		<script src="https://npmcdn.com/parse@1.11.0/dist/parse.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js"></script>
+	</head>
+	<body style="margin-bottom: 82px;">
 
-	<!-- og tags -->
-	<meta property="og:image" content="https://webname.ga/icons/cover.png?i=0"/>
-	<meta property="og:title" content="webname | My presence on web"/>
-	<meta property="og:description" content="One link for all your links"/>
-	<meta property="og:site_name" content="webname.ga"/>
-	<meta property="og:type" content="website"/>
-	<meta property="og:url" content="https://webname.ga"/>
-	<meta property="fb:app_id" content="1778142652491392"/>
-	<meta name="twitter:card" content="summary_large_image">
-
-	<script type="application/ld+json">
-		{
-			"@context": "http://schema.org",
-			"@type": "Organization",
-			"url": "https://webname.ga",
-			"logo": "https://webname.ga//icons/android-chrome-512x512.png"
-		}
-	</script>
-	
-	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
-	<link rel="stylesheet" id="app-theme-link" href="https://www.w3schools.com/lib/w3-theme-blue.css">
-	<link href="https://fonts.googleapis.com/css?family=Raleway:100,200,300,400" rel="stylesheet">
-	<link rel="stylesheet" href="/css/style.css">
-
-	<script defer src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
-	<script src="https://npmcdn.com/parse@1.11.0/dist/parse.min.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js"></script>
-</head>
-<body style="margin-bottom: 82px;">
-
-	<div class="flex-center bg">
-		<img src="/icons/icon.png" class="w3-image w3-opacity-max" alt="">
-	</div>
-
-	<div class="w3-row profile">
-		<div class="w3-col s12 l4">
-			<div id="profile">
-				<div class="w3-container w3-padding-16">
-					<div class="w3-card w3-white w3-round-large" style="overflow: hidden;">
-						<div class="w3-display-container">
-							<div class="cover"></div>
-							<div class="w3-display-topleft">
-								<a href="/create" target="_blank">
-									<img src="/icons/icon.png" class="brand-logo" alt="webname brand logo" />
-								</a>
-							</div>
-							<div class="w3-display-middle">
-								<img src="" alt="" class="w3-image dp w3-circle w3-card-4" />
-							</div>
-						</div>
-						<div class="w3-xlarge w3-text-theme name w3-padding"></div>
-						<div class="w3-small w3-text-gray about w3-container"></div>
-						<div class="contact">
-							<a href="#" class="w3-button w3-theme w3-border-right call" style="width: 100%;">Call</a>
-							<a href="#" class="w3-border-left w3-button w3-theme email" style="width: 100%;">Email</a>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div id="quickie" class="w3-container">
-				<div class="btns flex-center"></div>
-				<script type="q-tmpl" id="template">
-					<a href="<%= url %>" target="_blank" class="flex-center w3-button w3-theme w3-circle w3-card w3-animate-zoom"><i class="fab fa-<%= type %> fa-2x"></i></a>
-				</script>
-			</div>
-			<div id="shares" class="w3-padding" style="margin-top:16px;">
-				<form id="copy" class="w3-tiny w3-display-container w3-round" style="overflow: hidden; margin: 4px 0;">
-					<input type="text" class="w3-input" style="border:0;" readonly="" />
-					<button class="w3-button w3-display-right w3-border-left">Copy</button>
-				</form>
-				<div class="btns flex-center">
-					<a target="_blank" class="w3-button w3-round w3-tiny w3-theme fb-share">Share on facebook</a>
-					<a target="_blank" class="w3-button w3-round w3-tiny w3-theme send">Send via Messenger</a>
-					<a target="_blank" class="w3-button w3-round w3-tiny w3-theme tweet">Tweet to twitter</a>
-				</div>
-			</div>
+		<div class="flex-center bg">
+			<img src="/icons/icon.png" class="w3-image w3-opacity-max" alt="">
 		</div>
-		<div class="w3-col s12 l8">
-			<div id="bookmark">
-				<script type="q-tmpl" id="template">
-					<div class="w3-col s12 m6 w3-container w3-padding-16 link w3-animate-zoom">
-						<a href="<%= short_page_url %>" target="_blank">
-							<div class="card w3-round-large w3-border w3-theme">
-								<div class="image" style="background-image:url(<%= image_url %>);"></div>
-								<div class="info w3-padding">
-									<div class="title w3-large"><%= title %></div>
-									<div class="description"><%= description %></div>
+
+		<div class="w3-row profile">
+			<div class="w3-col s12 l4">
+				<div id="profile">
+					<div class="w3-container w3-padding-16">
+						<div class="w3-card w3-white w3-round-large" style="overflow: hidden;">
+							<div class="w3-display-container">
+								<div class="cover"></div>
+								<div class="w3-display-topleft">
+									<a href="/create" target="_blank">
+										<img src="/icons/icon.png" class="brand-logo" alt="webname brand logo" />
+									</a>
+								</div>
+								<div class="w3-display-middle">
+									<img src="" alt="" class="w3-image dp w3-circle w3-card-4" />
 								</div>
 							</div>
-						</a>
+							<div class="w3-xlarge w3-text-theme name w3-padding"></div>
+							<div class="w3-small w3-text-gray about w3-container"></div>
+							<div class="contact">
+								<a href="#" class="w3-button w3-theme w3-border-right call" style="width: 100%;">Call</a>
+								<a href="#" class="w3-border-left w3-button w3-theme email" style="width: 100%;">Email</a>
+							</div>
+						</div>
 					</div>
-				</script>
-				<div class="links w3-row">
-					<div class="w3-col s12 w3-container w3-padding-16 w3-animate-right w3-opacity">
-						<a href="/" style="text-decoration: none; display: block;">
-							<div style="min-height:110px;" class="dummy-image">
-								<img src="icons/cover.png" class="w3-opacity" style="width: 100%;" alt="webname template image">
-							</div>
-							<div class="w3-white w3-display-bottom w3-container">
-								<h3>Do you know?</h3>
-								<p>You can also create a profile like this for free. Click here to know more</p>
-							</div>
-						</a>
+				</div>
+				<div id="quickie" class="w3-container">
+					<div class="btns flex-center"></div>
+					<script type="q-tmpl" id="template">
+						<a href="<%= url %>" target="_blank" class="flex-center w3-button w3-theme w3-circle w3-card w3-animate-zoom"><i class="fab fa-<%= type %> fa-2x"></i></a>
+					</script>
+				</div>
+				<div id="shares" class="w3-padding" style="margin-top:16px;">
+					<form id="copy" class="w3-tiny w3-display-container w3-round" style="overflow: hidden; margin: 4px 0;">
+						<input type="text" class="w3-input" style="border:0;" readonly="" />
+						<button class="w3-button w3-display-right w3-border-left">Copy</button>
+					</form>
+					<div class="btns flex-center">
+						<a target="_blank" class="w3-button w3-round w3-tiny w3-theme fb-share">Share on facebook</a>
+						<a target="_blank" class="w3-button w3-round w3-tiny w3-theme send">Send via Messenger</a>
+						<a target="_blank" class="w3-button w3-round w3-tiny w3-theme tweet">Tweet to twitter</a>
+					</div>
+				</div>
+			</div>
+			<div class="w3-col s12 l8">
+				<div id="bookmark">
+					<script type="q-tmpl" id="template">
+						<div class="w3-col s12 m6 w3-container w3-padding-16 link w3-animate-zoom">
+							<a href="<%= short_page_url %>" target="_blank">
+								<div class="card w3-round-large w3-border w3-theme">
+									<div class="image" style="background-image:url(<%= image_url %>);"></div>
+									<div class="info w3-padding">
+										<div class="title w3-large"><%= title %></div>
+										<div class="description"><%= description %></div>
+									</div>
+								</div>
+							</a>
+						</div>
+					</script>
+					<div class="links w3-row">
+						<div class="w3-col s12 w3-container w3-padding-16 w3-animate-right w3-opacity">
+							<a href="/" style="text-decoration: none; display: block;">
+								<div style="min-height:110px;" class="dummy-image">
+									<img src="icons/cover.png" class="w3-opacity" style="width: 100%;" alt="webname template image">
+								</div>
+								<div class="w3-white w3-display-bottom w3-container">
+									<h3>Do you know?</h3>
+									<p>You can also create a profile like this for free. Click here to know more</p>
+								</div>
+							</a>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 
-	<div class="spinner-wrapper w3-theme flex-center">
-		<div class="spinner type"></div>
-		<div class="success type">
-			<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="-263.5 236.5 26 26">
-				<g class="svg-success">
-					<path d="M-256.46 249.65l3.9 3.74 8.02-7.8"/>
-				</g>
-			</svg>
+		<div class="spinner-wrapper w3-theme flex-center">
+			<div class="spinner type"></div>
+			<div class="success type">
+				<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="-263.5 236.5 26 26">
+					<g class="svg-success">
+						<path d="M-256.46 249.65l3.9 3.74 8.02-7.8"/>
+					</g>
+				</svg>
+			</div>
+			<div class="error type">
+				<svg width="64" version="1.1" xmlns="http://www.w3.org/2000/svg" height="64" viewBox="0 0 64 64" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 64 64">
+					<g class="svg-error">
+						<path fill="#1D1D1B" d="M28.941,31.786L0.613,60.114c-0.787,0.787-0.787,2.062,0,2.849c0.393,0.394,0.909,0.59,1.424,0.59   c0.516,0,1.031-0.196,1.424-0.59l28.541-28.541l28.541,28.541c0.394,0.394,0.909,0.59,1.424,0.59c0.515,0,1.031-0.196,1.424-0.59   c0.787-0.787,0.787-2.062,0-2.849L35.064,31.786L63.41,3.438c0.787-0.787,0.787-2.062,0-2.849c-0.787-0.786-2.062-0.786-2.848,0   L32.003,29.15L3.441,0.59c-0.787-0.786-2.061-0.786-2.848,0c-0.787,0.787-0.787,2.062,0,2.849L28.941,31.786z"/>
+					</g>
+				</svg>
+			</div>
+			<div class="msg w3-padding"></div>
 		</div>
-		<div class="error type">
-			<svg width="64" version="1.1" xmlns="http://www.w3.org/2000/svg" height="64" viewBox="0 0 64 64" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 64 64">
-				<g class="svg-error">
-					<path fill="#1D1D1B" d="M28.941,31.786L0.613,60.114c-0.787,0.787-0.787,2.062,0,2.849c0.393,0.394,0.909,0.59,1.424,0.59   c0.516,0,1.031-0.196,1.424-0.59l28.541-28.541l28.541,28.541c0.394,0.394,0.909,0.59,1.424,0.59c0.515,0,1.031-0.196,1.424-0.59   c0.787-0.787,0.787-2.062,0-2.849L35.064,31.786L63.41,3.438c0.787-0.787,0.787-2.062,0-2.849c-0.787-0.786-2.062-0.786-2.848,0   L32.003,29.15L3.441,0.59c-0.787-0.786-2.061-0.786-2.848,0c-0.787,0.787-0.787,2.062,0,2.849L28.941,31.786z"/>
-				</g>
-			</svg>
-		</div>
-		<div class="msg w3-padding"></div>
-	</div>
 
-	<div class="w3-theme w3-row w3-bottom">
-		<div class="w3-padding w3-center w3-col s12">
-			<a href="/create" class="edit-profile">Like this? Click here to create yours.</a>
-		</div>
-		<div class="w3-padding w3-center w3-col s4 w3-tiny">
-			<a href="/privacypolicy">Privacy Policy</a>
-		</div>
-		<div class="w3-padding w3-center w3-col s4 w3-tiny">
-			<a href="/terms-and-conditions">Terms and Conditions</a>
-		</div>
-		<div class="w3-padding w3-center w3-col s4 w3-tiny">
-			<a href="/faq">FAQs</a>
-		</div>
-	</div>
-
-	<script src="/js/common.js"></script>
-	<script src="/js/profile.js"></script>
-</body>
+		<script src="/js/common.js"></script>
+		<script src="/js/profile.js"></script>
+	</body>
 </html>

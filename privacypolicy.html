@@ -1,109 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>webname | My presence on web</title>
-	<meta name="viewport" content="width=device-width,initial-scale=1.0">
-	<meta name="description" content="One link for all your links"/>
+	<head>
+		<title>webname | My presence on web</title>
 
-	<link rel="alternate" href="https://webname.ga/" hreflang="x-default" />
-	<link rel="canonical" href="https://webname.ga" />
+		<meta name="description" content="Some common asked questions which will help you to manage your links"/>
+		<meta property="og:description" content="Some common asked questions which will help you to manage your links"/>
 
-	<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
-	<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
-	<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
-	<link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#000000">
-	<meta name="apple-mobile-web-app-title" content="webname.ga">
+		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
+		<link rel="stylesheet" id="app-theme-link" href="https://www.w3schools.com/lib/w3-theme-blue.css">
+		<link href="https://fonts.googleapis.com/css?family=Raleway:100,200,300,400" rel="stylesheet">
+		<link rel="stylesheet" href="/css/style.css">
 
-	<script type="application/ld+json">
-		{
-			"@context": "http://schema.org",
-			"@type": "Organization",
-			"url": "https://webname.ga",
-			"logo": "https://webname.ga//icons/android-chrome-512x512.png"
-		}
-	</script>
-	
-
-	<link rel="manifest" href="/manifest.json" />
-	<meta name="application-name" content="webname" />
-	<meta name="theme-color" content="#2196f3" />
-	<meta name="msapplication-TileColor" content="#2196f3">
-	<link rel="shortcut icon" href="/favicon.ico" />
-
-	<!-- og tags -->
-	<meta property="og:image" content="https://webname.ga/icons/cover.png?i=0"/>
-	<meta property="og:title" content="webname | My presence on web"/>
-	<meta property="og:description" content="One link for all your links"/>
-	<meta property="og:site_name" content="webname.ga"/>
-	<meta property="og:type" content="website"/>
-	<meta property="og:url" content="https://webname.ga/faq"/>
-	<meta property="fb:app_id" content="1778142652491392"/>
-	<meta name="twitter:card" content="summary_large_image">
-
-	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
-	<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue.css">
-	<link href="https://fonts.googleapis.com/css?family=Raleway:100,200,300,400" rel="stylesheet">
-	<link rel="stylesheet" href="/css/style.css">
-</head>
-<body>
-	<div class="w3-card-4 w3-theme w3-top" id="topbar">
-		<div class="w3-xlarge w3-theme">
-			<img src="/icons/icon.png" class="brand-icon" alt=""/>
-			<a href="/" class="w3-button">WEBNAME</a>
-			<a href="/create" class="w3-button w3-right">Create</a>
+		<script src="https://npmcdn.com/parse@1.11.0/dist/parse.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js"></script>
+	</head>
+	<body>
+		<div class="w3-card-4 w3-theme w3-top" id="topbar">
+			<div class="w3-xlarge w3-theme">
+				<img src="/icons/icon.png" class="brand-icon" alt=""/>
+				<a href="/" class="w3-button">WEBNAME</a>
+				<a href="/create" class="w3-button w3-right">Create</a>
+			</div>
 		</div>
-	</div>
 
-	<br>
-	
-	<div class="flex-center bg">
-		<img src="/icons/icon.png" class="w3-image w3-opacity-max" alt="">
-	</div>
-
-	<div class="w3-card w3-container w3-white card">
-		<h3>PRIVACY POLICY</h3>
-		<p><i>webname.ga</i> collects and uses Users personal information to deliver the personilised user experience.</p>
-
-		<h3>HOW <i>webname.ga</i> PROTECT YOUR INFORMATION</h3>
-		<p><i>webname.ga</i> adopt appropriate data collection, storage and processing practices and security measures to protect against unauthorized access, alteration, disclosure or destruction of your personal information, username, password, transaction information and data stored on our Site.</p>
-
-		<h3>THIRD PARTY WEBSITES</h3>
-		<p>Users may find advertising or other content on our Site that link to the sites and services of our partners, suppliers, advertisers, sponsors, licensors and other third parties. <i>webname.ga</i> do not control the content or links that appear on these sites and are not responsible for the practices employed by websites linked to or from our Site. In addition, these sites or services, including their content and links, may be constantly changing. These sites and services may have their own privacy policies and customer service policies. Browsing and interaction on any other website, including websites which have a link to our Site, is subject to that website's own terms and policies.</p>
-
-		<h3>CHANGES TO THIS PRIVACY POLICY</h3>
-		<p><i>webname.ga</i> has the discretion to update this privacy policy at any time. When <i>webname.ga</i> do, post a notification on the main page of our Site,revise the updated date at the bottom of this page,. <i>webname.ga</i> encourage Users to frequently check this page for any changes to stay informed about how <i>webname.ga</i> are helping to protect the personal information <i>webname.ga</i> collect. You acknowledge and agree that it is your responsibility to review this privacy policy periodically and become aware of modifications.</p>
-
-		<h3>YOUR ACCEPTANCE OF THESE TERMS</h3>
-		<p>By using this Site, you signify your acceptance of this policy and terms of service. If you do not agree to this policy, please do not use our Site. Your continued use of the Site following the posting of changes to this policy will be deemed your acceptance of those changes.</p>
-
-		<h3>CONTACTING US</h3>
-		<p>If you have any questions about this Privacy Policy, the practices of this site, or your dealings with this site, please contact at:</p>
-
-		<div class="w3-container">
-			<p>
-				<i>webname.ga</i> <br>
-				https://<i>webname.ga</i>
-			</p>
-
-			<p>
-				Vinod Nagar West,<br>
-				Mandawali,<br>
-				New Delhi-92
-			</p> 
-
-			<p>sumitkarn123@yahoo.com</p>
+		<br>
+		
+		<div class="flex-center bg">
+			<img src="/icons/icon.png" class="w3-image w3-opacity-max" alt="">
 		</div>
-	</div>
 
-	<div class="w3-theme w3-row">
-		<div class="w3-padding w3-center w3-col s6 w3-tiny">
-			<a href="/terms-and-conditions">Terms and Conditions</a>
+		<div class="w3-card w3-container w3-white card">
+			<h3>PRIVACY POLICY</h3>
+			<p><i>webname.ga</i> collects and uses Users personal information to deliver the personilised user experience.</p>
+
+			<h3>HOW <i>webname.ga</i> PROTECT YOUR INFORMATION</h3>
+			<p><i>webname.ga</i> adopt appropriate data collection, storage and processing practices and security measures to protect against unauthorized access, alteration, disclosure or destruction of your personal information, username, password, transaction information and data stored on our Site.</p>
+
+			<h3>THIRD PARTY WEBSITES</h3>
+			<p>Users may find advertising or other content on our Site that link to the sites and services of our partners, suppliers, advertisers, sponsors, licensors and other third parties. <i>webname.ga</i> do not control the content or links that appear on these sites and are not responsible for the practices employed by websites linked to or from our Site. In addition, these sites or services, including their content and links, may be constantly changing. These sites and services may have their own privacy policies and customer service policies. Browsing and interaction on any other website, including websites which have a link to our Site, is subject to that website's own terms and policies.</p>
+
+			<h3>CHANGES TO THIS PRIVACY POLICY</h3>
+			<p><i>webname.ga</i> has the discretion to update this privacy policy at any time. When <i>webname.ga</i> do, post a notification on the main page of our Site,revise the updated date at the bottom of this page,. <i>webname.ga</i> encourage Users to frequently check this page for any changes to stay informed about how <i>webname.ga</i> are helping to protect the personal information <i>webname.ga</i> collect. You acknowledge and agree that it is your responsibility to review this privacy policy periodically and become aware of modifications.</p>
+
+			<h3>YOUR ACCEPTANCE OF THESE TERMS</h3>
+			<p>By using this Site, you signify your acceptance of this policy and terms of service. If you do not agree to this policy, please do not use our Site. Your continued use of the Site following the posting of changes to this policy will be deemed your acceptance of those changes.</p>
+
+			<h3>CONTACTING US</h3>
+			<p>If you have any questions about this Privacy Policy, the practices of this site, or your dealings with this site, please contact at:</p>
+
+			<div class="w3-container">
+				<p>
+					<i>webname.ga</i> <br>
+					https://<i>webname.ga</i>
+				</p>
+
+				<p>
+					Vinod Nagar West,<br>
+					Mandawali,<br>
+					New Delhi-92
+				</p> 
+
+				<p>sumitkarn123@yahoo.com</p>
+			</div>
 		</div>
-		<div class="w3-padding w3-center w3-col s6 w3-tiny">
-			<a href="/faq">FAQs</a>
-		</div>
-	</div>
-</body>
+
+	</body>
 </html>
 

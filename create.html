@@ -1,266 +1,243 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>webname | My presence on web</title>
-	<meta name="viewport" content="width=device-width,initial-scale=1.0">
-	<meta name="description" content="Tell your followers about all your profile links." />
+	<head>
+		<title>webname | My presence on web</title>
 
-	<link rel="manifest" href="/manifest.json" />
-	<meta name="application-name" content="webname" />
-	<meta name="theme-color" content="#2196f3" />
-	<link rel="shortcut icon" href="/favicon.ico" />
+		<meta name="description" content="Creator area where you can manage all your sharable links"/>
+		<meta property="og:description" content="Creator area where you can manage all your sharable links"/>
 
-	<!-- og tags -->
-	<meta property="og:image" content="https://webname.ga/icons/icon-512x512.png"/>
-	<meta property="og:title" content="webname | My presence on web"/>
-	<meta property="og:description" content="Preparing for board exam? We're here to help you"/>
-	<meta property="og:site_name" content="webname.ga"/>
-	<meta property="og:type" content="website"/>
-	<meta property="og:url" content="https://webname.ga"/>
+		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
+		<link rel="stylesheet" id="app-theme-link" href="https://www.w3schools.com/lib/w3-theme-blue.css">
+		<link href="https://fonts.googleapis.com/css?family=Raleway:100,200,300,400" rel="stylesheet">
+		<link rel="stylesheet" href="/css/style.css">
+		<link rel="stylesheet" href="/css/croppie.css">
 
-	<script type="application/ld+json">
-		{
-			"@context": "http://schema.org",
-			"@type": "Organization",
-			"url": "https://webname.ga",
-			"logo": "https://webname.ga//icons/android-chrome-512x512.png"
-		}
-	</script>
-
-	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
-	<link rel="stylesheet" id="app-theme-link" href="https://www.w3schools.com/lib/w3-theme-blue.css">
-	<link href="https://fonts.googleapis.com/css?family=Raleway:100,200,300,400" rel="stylesheet">
-	<link rel="stylesheet" href="/css/style.css">
-	<link rel="stylesheet" href="/css/croppie.css">
-
-	<script defer src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
-	<script defer src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.11&appId=1778142652491392&autoLogAppEvents=1"></script>
-
-	<script src="https://npmcdn.com/parse@1.11.0/dist/parse.min.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js"></script>
-	<script src="/js/croppie.js"></script>
-</head>
-<body>
-	<div id="fb-root"></div>
-	<div class="flex-center bg">
-		<img src="/icons/icon.png" class="w3-image w3-opacity-max" alt="">
-	</div>
-
-	<div id="auth" class="page w3-card create">
-		<div style="width: 300px;">
-			<button class="login-btn w3-button w3-round w3-card-4"><i class="fab fa-facebook fa-3x"></i><div>Continue with Facebook</div></button>
+		<script defer src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
+		<script defer src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.11&appId=1778142652491392&autoLogAppEvents=1"></script>
+		<script src="https://npmcdn.com/parse@1.11.0/dist/parse.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js"></script>
+		<script src="/js/croppie.js"></script>
+	</head>
+	<body>
+		<div id="fb-root"></div>
+		<div class="flex-center bg">
+			<img src="/icons/icon.png" class="w3-image w3-opacity-max" alt="">
 		</div>
-	</div>
 
-	<div class="w3-row page main-page create">
-		<div class="w3-col s12">
-			<div class="w3-card-4 w3-theme w3-top" id="topbar">
-				<div class="w3-xlarge w3-theme">
-					<img src="/icons/icon.png" style="width: 52px; margin-left: 16px;" alt=""/>
-					<button class="w3-button w3-theme w3-right signout"><i class="fas fa-sign-out-alt"></i></button>
-					<a href="#" target="_blank" class="w3-button w3-theme w3-right preview"><i class="fas fa-eye"></i></a>
-					<button class="w3-button w3-theme w3-right save">Save</button>
-				</div>
+		<div id="auth" class="page w3-card create">
+			<div style="width: 300px;">
+				<button class="login-btn w3-button w3-round w3-card-4"><i class="fab fa-facebook fa-3x"></i><div>Continue with Facebook</div></button>
 			</div>
 		</div>
-		<div class="w3-col s12 spacer"></div>
-		<div class="w3-col s12 m6 l3">
-			<div id="username" class="w3-container w3-padding-16">
-				<div class="w3-card w3-white">
-					<div class="w3-large w3-theme w3-padding">Username</div>
-					<div class="w3-container w3-padding-16">
-						<form>
-							<div class="w3-row">
-								<div class="w3-col s12">
-									<div class="w3-large share-link">https://webname.ga/</div>
+
+		<div class="w3-row page main-page create">
+			<div class="w3-col s12">
+				<div class="w3-card-4 w3-theme w3-top" id="topbar">
+					<div class="w3-xlarge w3-theme">
+						<img src="/icons/icon.png" style="width: 52px; margin-left: 16px;" alt=""/>
+						<button class="w3-button w3-theme w3-right signout"><i class="fas fa-sign-out-alt"></i></button>
+						<a href="#" target="_blank" class="w3-button w3-theme w3-right preview"><i class="fas fa-eye"></i></a>
+						<button class="w3-button w3-theme w3-right save">Save</button>
+					</div>
+				</div>
+			</div>
+			<div class="w3-col s12 spacer"></div>
+			<div class="w3-col s12 m6 l3">
+				<div id="username" class="w3-container w3-padding-16">
+					<div class="w3-card w3-white">
+						<div class="w3-large w3-theme w3-padding">Username</div>
+						<div class="w3-container w3-padding-16">
+							<form>
+								<div class="w3-row">
+									<div class="w3-col s12">
+										<div class="w3-large share-link">https://webname.ga/</div>
+									</div>
+									<div class="w3-col s12 w3-display-container">
+										<input type="text" class="w3-input w3-border" autocomplete="username" required="" pattern="[0-9A-Za-z\.\-_]{3,15}" />
+										<button class="w3-button w3-border-left w3-theme w3-display-right"><i class="fas fa-check"></i></button>
+									</div>
+									<div class="w3-col s2">
+									</div>
 								</div>
-								<div class="w3-col s12 w3-display-container">
-									<input type="text" class="w3-input w3-border" autocomplete="username" required="" pattern="[0-9A-Za-z\.\-_]{3,15}" />
-									<button class="w3-button w3-border-left w3-theme w3-display-right"><i class="fas fa-check"></i></button>
-								</div>
-								<div class="w3-col s2">
-								</div>
+							</form>
+						</div>
+						<div id="sharer" class="w3-theme flex-center" style="justify-content: space-between;">
+							<a href="#" target="_blank" class="w3-button facebook"><i class="fab fa-facebook"></i></a>
+							<a href="#" target="_blank" class="w3-button messenger"><i class="fab fa-facebook-messenger"></i></a>
+							<a href="#" target="_blank" class="w3-button twitter"><i class="fab fa-twitter"></i></a>
+							<button class="w3-button copy-share-link"><i class="fas fa-copy"></i></button>
+						</div>
+					</div>
+				</div>
+				<div id="info" class="w3-container w3-padding-16">
+					<div class="w3-card w3-white">
+						<div class="w3-padding w3-large w3-theme">Personal info</div>
+						<div class="w3-container w3-padding-16">
+							<div class="w3-tiny">
+								<label>Name</label>
+								<input type="text" name="name" id="name" class="w3-input" required="" pattern="[A-Za-z ]{3,32}" autocomplete="name" placeholder="John Doe" />
+								<label>About</label>
+								<input type="text" class="w3-input" id="about" name="about" autocomplete="about" placeholder="I'm excited to share links here"/>
+								<label>Mobile</label>
+								<input type="tel" class="w3-input" id="mobile" name="mobile" pattern="^\+\d+" autocomplete="tel"  placeholder="+91 965 012 3456"/>
+								<label>Email</label>
+								<input type="email" class="w3-input" id="email" name="email" autocomplete="email"  placeholder="john.doe@xyz.com"/>
 							</div>
-						</form>
-					</div>
-					<div id="sharer" class="w3-theme flex-center" style="justify-content: space-between;">
-						<a href="#" target="_blank" class="w3-button facebook"><i class="fab fa-facebook"></i></a>
-						<a href="#" target="_blank" class="w3-button messenger"><i class="fab fa-facebook-messenger"></i></a>
-						<a href="#" target="_blank" class="w3-button twitter"><i class="fab fa-twitter"></i></a>
-						<button class="w3-button copy-share-link"><i class="fas fa-copy"></i></button>
+						</div>
 					</div>
 				</div>
-			</div>
-			<div id="info" class="w3-container w3-padding-16">
-				<div class="w3-card w3-white">
-					<div class="w3-padding w3-large w3-theme">Personal info</div>
-					<div class="w3-container w3-padding-16">
-						<div class="w3-tiny">
-							<label>Name</label>
-							<input type="text" name="name" id="name" class="w3-input" required="" pattern="[A-Za-z ]{3,32}" autocomplete="name" placeholder="John Doe" />
-							<label>About</label>
-							<input type="text" class="w3-input" id="about" name="about" autocomplete="about" placeholder="I'm excited to share links here"/>
-							<label>Mobile</label>
-							<input type="tel" class="w3-input" id="mobile" name="mobile" pattern="^\+\d+" autocomplete="tel"  placeholder="+91 965 012 3456"/>
-							<label>Email</label>
-							<input type="email" class="w3-input" id="email" name="email" autocomplete="email"  placeholder="john.doe@xyz.com"/>
+				<div id="dp" class="w3-container w3-padding-16">
+					<div class="w3-card w3-white">
+						<div id="picture-wrap" style="height: 320px;">
+							<img src="" id="picture" alt="Profile Picture" />
+						</div>
+						<br><br>
+						<!-- <button class="w3-button w3-theme from-facebook" style="width: 100%;">Get from <i class="fab fa-facebook"></i></button> -->
+						<div class="w3-display-container">
+							<input type="file" accept="image/*" class="w3-input w3-border picture-selector" />
+							<div class="w3-display-right w3-border-left">
+								<!-- <button class="w3-button remove"><i class="fas fa-times"></i></button> -->
+								<button class="w3-button change" ><i class="fas fa-check"></i></button>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div id="dp" class="w3-container w3-padding-16">
-				<div class="w3-card w3-white">
-					<div id="picture-wrap" style="height: 320px;">
-						<img src="" id="picture" alt="Profile Picture" />
-					</div>
-					<br><br>
-					<!-- <button class="w3-button w3-theme from-facebook" style="width: 100%;">Get from <i class="fab fa-facebook"></i></button> -->
-					<div class="w3-display-container">
-						<input type="file" accept="image/*" class="w3-input w3-border picture-selector" />
-						<div class="w3-display-right w3-border-left">
-							<!-- <button class="w3-button remove"><i class="fas fa-times"></i></button> -->
-							<button class="w3-button change" ><i class="fas fa-check"></i></button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="w3-col s12 m6 l3">
-			<div id="quickie" class="w3-container w3-padding-16">
-				<script type="text/x-template" id="q-tmpl">
-					<li class="link w3-display-container sortable-dragging" data-uid="<%= uid %>" data-type="<%= type %>">
-						<div class="username w3-large"><%= uid %></div>
-						<div class="w3-display-left sitename w3-padding-16 w3-container"><i class="fab fa-<%= type %> fa-2x"></i></div>
-						<div class="w3-display-right">
-							<button class="w3-button count" data-url="<%= short_url %>"><i class="fas fa-hand-pointer"></i></button>
-							<button class="w3-button remove"><i class="fas fa-times"></i></button>
-						</div>
-					</li>
-				</script>
-				<div class="w3-card w3-white">
-					<div class="w3-padding w3-large w3-theme">Quick links</div>
-					<ul class="links w3-ul w3-border-bottom"></ul>
-					<div class="w3-container w3-padding-16">
-						<form class="w3-row">
-							<select name="type" class="w3-col s4 w3-select sitename">
-								<option value="facebook">Facebook</option>
-								<option value="facebook-messenger">Messenger</option>
-								<option value="twitter">Twitter</option>
-								<option value="instagram">Instagram</option>
-								<option value="whatsapp">WhatsApp</option>
-								<option value="google-plus">Google Plus</option>
-								<option value="youtube">Youtube</option>
-								<option value="github">GitHub</option>
-								<option value="linkedin">LinkedIn</option>
-							</select>
-							<input type="text" name="uid" class="w3-input w3-col s6 username" placeholder="username" required="" pattern="[0-9A-Za-z\.\-_]{3,32}">
-							<button class="w3-button w3-theme w3-col s2"><i class="fas fa-search"></i></button>
-							<div class="w3-col s12 w3-small w3-text-gray info"></div>
-						</form>
-					</div>
-				</div>
-			</div>
-			<div id="app-theme" class="w3-container w3-padding-16">
-				<div class="w3-card w3-white">
-					<div class="w3-large w3-theme">
-						<div class="w3-padding" style="display: inline-block;">App theme</div>
-					</div>
-					<div class="w3-container w3-padding-16">
-						<select class="w3-select theme-selector">
-							<option value="https://www.w3schools.com/lib/w3-theme-red.css">Red</option>
-							<option value="https://www.w3schools.com/lib/w3-theme-pink.css">Pink</option>
-							<option value="https://www.w3schools.com/lib/w3-theme-purple.css">Purple</option>
-							<option value="https://www.w3schools.com/lib/w3-theme-deep-purple.css">Deep Purple</option>
-							<option value="https://www.w3schools.com/lib/w3-theme-indigo.css">Indigo</option>
-							<option value="https://www.w3schools.com/lib/w3-theme-blue.css">Blue</option>
-							<option value="https://www.w3schools.com/lib/w3-theme-light-blue.css">Light Blue</option>
-							<option value="https://www.w3schools.com/lib/w3-theme-cyan.css">Cyan</option>
-							<option value="https://www.w3schools.com/lib/w3-theme-teal.css">Teal</option>
-							<option value="https://www.w3schools.com/lib/w3-theme-green.css">Green</option>
-							<option value="https://www.w3schools.com/lib/w3-theme-light-green.css">Light Green</option>
-							<option value="https://www.w3schools.com/lib/w3-theme-lime.css">Lime</option>
-							<option value="https://www.w3schools.com/lib/w3-theme-khaki.css">Khaki</option>
-							<option value="https://www.w3schools.com/lib/w3-theme-yellow.css">Yellow</option>
-							<option value="https://www.w3schools.com/lib/w3-theme-amber.css">Amber</option>
-							<option value="https://www.w3schools.com/lib/w3-theme-orange.css">Orange</option>
-							<option value="https://www.w3schools.com/lib/w3-theme-deep-orange.css">Deep Orange</option>
-							<option value="https://www.w3schools.com/lib/w3-theme-blue-grey.css">Blue Grey</option>
-							<option value="https://www.w3schools.com/lib/w3-theme-brown.css">Brown</option>
-							<option value="https://www.w3schools.com/lib/w3-theme-grey.css">Grey</option>
-							<option value="https://www.w3schools.com/lib/w3-theme-dark-grey.css">Dark Grey</option>
-							<option value="https://www.w3schools.com/lib/w3-theme-black.css">Black</option>		
-						</select>
-					</div>
-				</div>
-				<div class="w3-modal" id="sharer">
-					<div class="w3-modal-content w3-animate-zoom w3-card-4">
-						<div class="w3-theme w3-display-container">
-							<div class="w3-padding">Share your link</div>
-							<button class="w3-display-right close w3-button w3-theme"><i class="fas fa-times"></i></button>
-						</div>
-						<div class="content w3-center w3-padding w3-container">
-							<a href="#" target="_blank" class="w3-button w3-theme w3-round share-on-facebook"><i class="fab fa-facebook fa-3x"></i></a>
-							<a href="#" target="_blank" class="w3-button w3-theme w3-round share-on-twitter"><i class="fab fa-twitter fa-3x"></i></a>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="w3-col s12 l6">
-			<div id="bookmark" class="w3-container w3-padding-16">
-				<script type="text/x-template" id="b-tmpl">
-					<li class="w3-display-container link">
-						<div class="">
-							<div class="w3-large"><%= title %></div>
-							<div class="page-url"><%= page_url %></div>
-						</div>
-						<div class="w3-display-right">
-							<button class="w3-button count	" data-url="<%=short_page_url%>"><i class="fas fa-hand-pointer"></i></button>
-							<button class="w3-button remove"><i class="fas fa-times"></i></button>
-						</div>
-					</li>
-				</script>
-
-				<div class="w3-card w3-white">
-					<div class="w3-padding w3-large w3-theme">My bookmarks</div>
-					<div>
+			<div class="w3-col s12 m6 l3">
+				<div id="quickie" class="w3-container w3-padding-16">
+					<script type="text/x-template" id="q-tmpl">
+						<li class="link w3-display-container sortable-dragging" data-uid="<%= uid %>" data-type="<%= type %>">
+							<div class="username w3-large"><%= uid %></div>
+							<div class="w3-display-left sitename w3-padding-16 w3-container"><i class="fab fa-<%= type %> fa-2x"></i></div>
+							<div class="w3-display-right">
+								<button class="w3-button count" data-url="<%= short_url %>"><i class="fas fa-hand-pointer"></i></button>
+								<button class="w3-button remove"><i class="fas fa-times"></i></button>
+							</div>
+						</li>
+					</script>
+					<div class="w3-card w3-white">
+						<div class="w3-padding w3-large w3-theme">Quick links</div>
 						<ul class="links w3-ul w3-border-bottom"></ul>
 						<div class="w3-container w3-padding-16">
-							<form class="w3-display-container">
-								<input type="text" name="page_url" placeholder="https://www.instagram.com/windows" class="w3-input w3-border" required="" pattern="^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$">
-								<button class="w3-button w3-theme w3-border-left w3-display-right" ><i class="fas fa-search"></i></button>
+							<form class="w3-row">
+								<select name="type" class="w3-col s4 w3-select sitename">
+									<option value="facebook">Facebook</option>
+									<option value="facebook-messenger">Messenger</option>
+									<option value="twitter">Twitter</option>
+									<option value="instagram">Instagram</option>
+									<option value="whatsapp">WhatsApp</option>
+									<option value="google-plus">Google Plus</option>
+									<option value="youtube">Youtube</option>
+									<option value="github">GitHub</option>
+									<option value="linkedin">LinkedIn</option>
+								</select>
+								<input type="text" name="uid" class="w3-input w3-col s6 username" placeholder="username" required="" pattern="[0-9A-Za-z\.\-_]{3,32}">
+								<button class="w3-button w3-theme w3-col s2"><i class="fas fa-search"></i></button>
+								<div class="w3-col s12 w3-small w3-text-gray info"></div>
 							</form>
 						</div>
 					</div>
 				</div>
+				<div id="app-theme" class="w3-container w3-padding-16">
+					<div class="w3-card w3-white">
+						<div class="w3-large w3-theme">
+							<div class="w3-padding" style="display: inline-block;">App theme</div>
+						</div>
+						<div class="w3-container w3-padding-16">
+							<select class="w3-select theme-selector">
+								<option value="https://www.w3schools.com/lib/w3-theme-red.css">Red</option>
+								<option value="https://www.w3schools.com/lib/w3-theme-pink.css">Pink</option>
+								<option value="https://www.w3schools.com/lib/w3-theme-purple.css">Purple</option>
+								<option value="https://www.w3schools.com/lib/w3-theme-deep-purple.css">Deep Purple</option>
+								<option value="https://www.w3schools.com/lib/w3-theme-indigo.css">Indigo</option>
+								<option value="https://www.w3schools.com/lib/w3-theme-blue.css">Blue</option>
+								<option value="https://www.w3schools.com/lib/w3-theme-light-blue.css">Light Blue</option>
+								<option value="https://www.w3schools.com/lib/w3-theme-cyan.css">Cyan</option>
+								<option value="https://www.w3schools.com/lib/w3-theme-teal.css">Teal</option>
+								<option value="https://www.w3schools.com/lib/w3-theme-green.css">Green</option>
+								<option value="https://www.w3schools.com/lib/w3-theme-light-green.css">Light Green</option>
+								<option value="https://www.w3schools.com/lib/w3-theme-lime.css">Lime</option>
+								<option value="https://www.w3schools.com/lib/w3-theme-khaki.css">Khaki</option>
+								<option value="https://www.w3schools.com/lib/w3-theme-yellow.css">Yellow</option>
+								<option value="https://www.w3schools.com/lib/w3-theme-amber.css">Amber</option>
+								<option value="https://www.w3schools.com/lib/w3-theme-orange.css">Orange</option>
+								<option value="https://www.w3schools.com/lib/w3-theme-deep-orange.css">Deep Orange</option>
+								<option value="https://www.w3schools.com/lib/w3-theme-blue-grey.css">Blue Grey</option>
+								<option value="https://www.w3schools.com/lib/w3-theme-brown.css">Brown</option>
+								<option value="https://www.w3schools.com/lib/w3-theme-grey.css">Grey</option>
+								<option value="https://www.w3schools.com/lib/w3-theme-dark-grey.css">Dark Grey</option>
+								<option value="https://www.w3schools.com/lib/w3-theme-black.css">Black</option>		
+							</select>
+						</div>
+					</div>
+					<div class="w3-modal" id="sharer">
+						<div class="w3-modal-content w3-animate-zoom w3-card-4">
+							<div class="w3-theme w3-display-container">
+								<div class="w3-padding">Share your link</div>
+								<button class="w3-display-right close w3-button w3-theme"><i class="fas fa-times"></i></button>
+							</div>
+							<div class="content w3-center w3-padding w3-container">
+								<a href="#" target="_blank" class="w3-button w3-theme w3-round share-on-facebook"><i class="fab fa-facebook fa-3x"></i></a>
+								<a href="#" target="_blank" class="w3-button w3-theme w3-round share-on-twitter"><i class="fab fa-twitter fa-3x"></i></a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="w3-col s12 l6">
+				<div id="bookmark" class="w3-container w3-padding-16">
+					<script type="text/x-template" id="b-tmpl">
+						<li class="w3-display-container link">
+							<div class="">
+								<div class="w3-large"><%= title %></div>
+								<div class="page-url"><%= page_url %></div>
+							</div>
+							<div class="w3-display-right">
+								<button class="w3-button count	" data-url="<%=short_page_url%>"><i class="fas fa-hand-pointer"></i></button>
+								<button class="w3-button remove"><i class="fas fa-times"></i></button>
+							</div>
+						</li>
+					</script>
+
+					<div class="w3-card w3-white">
+						<div class="w3-padding w3-large w3-theme">My bookmarks</div>
+						<div>
+							<ul class="links w3-ul w3-border-bottom"></ul>
+							<div class="w3-container w3-padding-16">
+								<form class="w3-display-container">
+									<input type="text" name="page_url" placeholder="https://www.instagram.com/windows" class="w3-input w3-border" required="" pattern="^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$">
+									<button class="w3-button w3-theme w3-border-left w3-display-right" ><i class="fas fa-search"></i></button>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
-	</div>
 
-	<div class="spinner-wrapper w3-theme flex-center">
-		<div class="spinner type"></div>
-		<div class="success type">
-			<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="-263.5 236.5 26 26">
-				<g class="svg-success">
-					<path d="M-256.46 249.65l3.9 3.74 8.02-7.8"/>
-				</g>
-			</svg>
+		<div class="spinner-wrapper w3-theme flex-center">
+			<div class="spinner type"></div>
+			<div class="success type">
+				<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="-263.5 236.5 26 26">
+					<g class="svg-success">
+						<path d="M-256.46 249.65l3.9 3.74 8.02-7.8"/>
+					</g>
+				</svg>
+			</div>
+			<div class="error type">
+				<svg width="64" version="1.1" xmlns="http://www.w3.org/2000/svg" height="64" viewBox="0 0 64 64" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 64 64">
+					<g class="svg-error">
+						<path fill="#1D1D1B" d="M28.941,31.786L0.613,60.114c-0.787,0.787-0.787,2.062,0,2.849c0.393,0.394,0.909,0.59,1.424,0.59   c0.516,0,1.031-0.196,1.424-0.59l28.541-28.541l28.541,28.541c0.394,0.394,0.909,0.59,1.424,0.59c0.515,0,1.031-0.196,1.424-0.59   c0.787-0.787,0.787-2.062,0-2.849L35.064,31.786L63.41,3.438c0.787-0.787,0.787-2.062,0-2.849c-0.787-0.786-2.062-0.786-2.848,0   L32.003,29.15L3.441,0.59c-0.787-0.786-2.061-0.786-2.848,0c-0.787,0.787-0.787,2.062,0,2.849L28.941,31.786z"/>
+					</g>
+				</svg>
+			</div>
+			<div class="msg w3-padding"></div>
 		</div>
-		<div class="error type">
-			<svg width="64" version="1.1" xmlns="http://www.w3.org/2000/svg" height="64" viewBox="0 0 64 64" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 64 64">
-				<g class="svg-error">
-					<path fill="#1D1D1B" d="M28.941,31.786L0.613,60.114c-0.787,0.787-0.787,2.062,0,2.849c0.393,0.394,0.909,0.59,1.424,0.59   c0.516,0,1.031-0.196,1.424-0.59l28.541-28.541l28.541,28.541c0.394,0.394,0.909,0.59,1.424,0.59c0.515,0,1.031-0.196,1.424-0.59   c0.787-0.787,0.787-2.062,0-2.849L35.064,31.786L63.41,3.438c0.787-0.787,0.787-2.062,0-2.849c-0.787-0.786-2.062-0.786-2.848,0   L32.003,29.15L3.441,0.59c-0.787-0.786-2.061-0.786-2.848,0c-0.787,0.787-0.787,2.062,0,2.849L28.941,31.786z"/>
-				</g>
-			</svg>
-		</div>
-		<div class="msg w3-padding"></div>
-	</div>
 
-	<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-	<script src="/js/common.js"></script>
-	<script src="/js/create.js"></script>
-</body>
+		<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+		<script src="/js/common.js"></script>
+		<script src="/js/create.js"></script>
+	</body>
 </html>
