@@ -36,8 +36,8 @@ const Mdl = Backbone.View.extend({
 		this.$el.find(".type").hide();
 		this.$el.find(".msg").html( o.body );
 		this.tym = setTimeout( ()=> this.hide(), o.timeout );
-		this.$el.show();
 		this.$el.find("."+o.type).show();
+		this.$el.show();
 	},
 	hide: function() {
 		clearTimeout( this.tym );

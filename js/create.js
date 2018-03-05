@@ -3,12 +3,7 @@
 let auth, creator, username, dp, info, quickie, bookmark, topbar, theme;
 let model, fbProfile = null;
 
-let GOOGLE_API_KEY = "AIzaSyDypHKQ7C0LtLgv9fkd0VJcEdAvJjrdNEQ";
-
 const Model = Backbone.Model.extend();
-const Goog = Backbone.Model.extend({
-	urlRoot: `https://www.googleapis.com/urlshortener/v1/url?key=${GOOGLE_API_KEY}`
-});
 
 window.fbAsyncInit = function() {
 	Parse.FacebookUtils.init({
@@ -349,14 +344,10 @@ const Quickie = Backbone.View.extend({
 			return false;
 		}
 		mdl.render({body:"Getting count"})
-		$.get(`https://www.googleapis.com/urlshortener/v1/url`,{
-			shortUrl: ev.currentTarget.dataset.url,
-			projection: "FULL",
-			key: GOOGLE_API_KEY
-		}).done(r=>{
+		Parse.Cloud.run("expand", { url: ev.currentTarget.dataset.url }).then(r=>{
 			mdl.hide();
 			ev.currentTarget.innerHTML = r.analytics.allTime.shortUrlClicks
-		}).fail(()=>{
+		}).catch((error)=>{
 			mdl.render({ type: "error", body:"Couldn't get click count.", timeout: 4*1000})			
 		});
 	},
@@ -388,11 +379,13 @@ const Quickie = Backbone.View.extend({
 		let quickie = $( ev.currentTarget ).serializeObject();
 		$( ev.currentTarget ).find('input').val("");
 		quickie.url = this.toUrl( quickie );
-		mdl.render({body:"Adding link"})
-		self.shortenUrl( quickie.url ).then(r=>{
+		mdl.render({body:"Adding link"});
+		Parse.Cloud.run("shorten", { url: quickie.url }).then(r=>{
 			quickie.short_url = r.id;
 			self.renderQuickie( quickie );
 			mdl.render({ type: "success", body: "Do not forget to save your changes", timeout: 3*1000 });
+		}).catch(error=>{
+			mdl.render({ type: "error", body: "Couldn't optimize for click count", timeout: 3*1000 });
 		});
 	},
 	shortenUrl: async function( long_url ) {
@@ -441,16 +434,16 @@ const Bookmark = Backbone.View.extend({
 	},
 	clickCount: function( ev ) {
 		ev.preventDefault();
+		if($.trim(ev.currentTarget.dataset.url)=="") {
+			mdl.render({ type: "error", body:"Click count is only available for newly added links", timeout:4*1000})
+			return false;
+		}
 		mdl.render({body:"Getting count"})
-		$.get(`https://www.googleapis.com/urlshortener/v1/url`,{
-			shortUrl: ev.currentTarget.dataset.url,
-			projection: "FULL",
-			key: GOOGLE_API_KEY
-		}).done(r=>{
+		Parse.Cloud.run("expand", { url: ev.currentTarget.dataset.url }).then(r=>{
 			mdl.hide();
 			ev.currentTarget.innerHTML = r.analytics.allTime.shortUrlClicks
-		}).fail(()=>{
-			mdl.render({ type: "error", body:"Couldn't get count", timeout: 4*1000})
+		}).catch((error)=>{
+			mdl.render({ type: "error", body:"Couldn't get click count.", timeout: 4*1000})			
 		});
 	},
 	renderBookmark: function( bm ) {
@@ -469,38 +462,10 @@ const Bookmark = Backbone.View.extend({
 		ev.preventDefault();
 		$( ev.currentTarget ).closest('.link').remove();
 	},
-	shortenUrl: async function( long_url ) {
-		let g = new Goog();
-		g.set( "longUrl", long_url );
-		return g.save();
-	},
-	openGraph: function( url ) {
-		return new Promise(( resolve, reject ) => {
-			Parse.Cloud.run("opengraph", { url :url }).then( resolve ).catch( reject );
-		});
-	},
-	updateView: function( dummy ) {
-		let self = this;
-		console.log( dummy );
-		if( !dummy.page_url.startsWith("http") ) dummy.page_url = "http://"+dummy.page_url;
-		mdl.render({body:"Optimizing link for click count"})
-		this.shortenUrl( dummy.page_url ).then(r=>{
-			dummy.short_page_url = r.id;
-			console.log( "After shortening: ", dummy );
-			self.renderBookmark( dummy );
-			mdl.render({ type: "success", body: "Do not forget to save your changes", timeout: 3*1000 });
-		}).catch(()=>{
-			mdl.render({ type: "error", body: "Sorry! URL couldn't be optimized for click count. <br><br>Do not forget to save your changes", timeout: 3*1000 });
-			dummy.short_page_url = dummy.page_url;
-			console.log( "After shortening: ", dummy );
-			self.renderBookmark( dummy );
-		});
-	},
 	addBookmark: function( ev ) {
 		let self = this;
 		ev.preventDefault();
 		let bookmark = $( ev.currentTarget ).serializeObject();
-		console.log( bookmark );
 		mdl.render({body:"Getting url details"});
 		let dummy = {
 			description: "",
@@ -508,18 +473,17 @@ const Bookmark = Backbone.View.extend({
 			page_url:bookmark.page_url,
 			title:bookmark.page_url,
 		}
-		this.openGraph( bookmark.page_url ).then( result => {
-			console.log( result);
-			if( result.success ) {
-				dummy.title = result.data.ogTitle;
-				dummy.description = result.data.ogDescription;
-				dummy.image_url = result.data.ogImage.url;
-				self.updateView( dummy );
-			}
+		Parse.Cloud.run("og", { url: bookmark.page_url }).then( result => {
+			console.log( result );
+			dummy.title = result.data.ogTitle;
+			dummy.description = result.data.ogDescription;
+			dummy.image_url = result.data.ogImage.url;
+			dummy.short_page_url = result.short_url;
+			self.renderBookmark( dummy );
+			mdl.render({ type:"success", body: "Do not forget to save your changes", timeout: 3*1000 });
 		}).catch( error => {
+			mdl.render({ type:"error", body: "Couldn't add this url", timeout: 3*1000 });
 			console.log( error );
-			mdl.render({ type: "error", body:"Couldn't get url details", timeout: 5*1000})
-			self.updateView( dummy );
 		});
 		$( ev.currentTarget ).find('input').val("");
 	}
