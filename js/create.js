@@ -19,25 +19,32 @@ window.fbAsyncInit = function() {
 		auth.afterLogin();
 	} else {
 		auth.render();
+		FB.getLoginStatus(function( response ) {
+			auth.onLogin( response );
+		});
 	}
 };
-
 const Auth = Backbone.View.extend({
 	el: "#auth",
 	events: { "click .login-btn": "openLogin" },
-	openLogin: function( ev ) {
-		ev.preventDefault();
-		let self = this;
-		mdl.render({ body: "Waiting for auth confirmation" });
-		Parse.FacebookUtils.logIn("email,public_profile", {
-			success: function(user) {
-				self.getProfile().then(r=>self.afterLogin())
-			},
-			error: function(user, error) {
-				mdl.hide();
-				mdl.render({ type: "error", body: "User cancelled the Facebook login or did not fully authorize.", timeout:3000 });
+	onLogin: function( response ) {
+		console.log( response );
+		if( response.status == "connected" ) {
+			mdl.render({ body: "Signing in.." });
+			console.log( response );
+			var authData = {
+				id: response.authResponse.userID,
+				access_token: response.authResponse.accessToken,
+				expiration_date: new Date(response.authResponse.expiresIn * 1000 + (new Date()).getTime()).toJSON()
 			}
-		});
+			Parse.FacebookUtils.logIn( authData, {
+				success: auth.afterLogin,
+				error: function(err) {
+					console.log( err );
+					mdl.render({ type: "error", body: "Couldn't logged in. Please try clearing your browser cookies."});
+				}
+			});
+		}
 	},
 	getProfile: function() {
 		let self = this;

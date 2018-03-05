@@ -28,9 +28,18 @@
 			<img src="/icons/icon.png" class="w3-image w3-opacity-max" alt="">
 		</div>
 
-		<div id="auth" class="page w3-card create">
-			<div style="width: 300px;">
-				<button class="login-btn w3-button w3-round w3-card-4"><i class="fab fa-facebook fa-3x"></i><div>Continue with Facebook</div></button>
+		<div id="auth" class="page create">
+			<div class="container">
+				<div class="fb-login-button"
+					onlogin="auth.onLogin()"
+					data-width="300"
+					data-max-rows="1"
+					data-size="large"
+					data-scope="email,public_profile"
+					data-button-type="login_with"
+					data-show-faces="false"
+					data-auto-logout-link="true"
+					data-use-continue-as="true" style="display: block; width: 300px;"></div>
 			</div>
 		</div>
 

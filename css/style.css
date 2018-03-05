@@ -20,20 +20,8 @@ a { text-decoration: none;}
 .details .w3-animate-bottom { position: relative; animation:animatebottom 2s;  }
 .details .first-image-animate { will-change: z-index left; animation: firstimageanimate 6s infinite alternate; }
 .details .last-image-animate { will-change: transform z-index right; animation: lastimageanimate 6s infinite alternate; }
-@keyframes firstimageanimate {
-	0% { left:0px; z-index: -1; }
-	25%{left:0px; z-index: -1; }
-	50%{ left:-210px; z-index: 1; }
-	75%{left:0px; z-index: 1;}
-	100%{left:0px; z-index: 1;}
-}
-@keyframes lastimageanimate{
-	0%{right:0px; z-index: 1; transform: scale(1,1); }
-	25%{right:0px; z-index: 1; transform: scale(1,1); }
-	50%{ right:-210px; z-index: -1; transform: scale(1.1,1.1); }
-	75%{right:0px; z-index: -1;  transform: scale(1,1); }
-	100%{right:0px; z-index: -1;  transform: scale(1,1); }
-}
+@keyframes firstimageanimate { 0% { left:0px; z-index: -1; } 25%{left:0px; z-index: -1; } 50%{ left:-210px; z-index: 1; } 75%{left:0px; z-index: 1;} 100%{left:0px; z-index: 1;} }
+@keyframes lastimageanimate{ 0%{right:0px; z-index: 1; transform: scale(1,1); } 25%{right:0px; z-index: 1; transform: scale(1,1); } 50%{ right:-210px; z-index: -1; transform: scale(1.1,1.1); } 75%{right:0px; z-index: -1;  transform: scale(1,1); } 100%{right:0px; z-index: -1;  transform: scale(1,1); } }
 
 .card { max-width: 540px; margin:64px auto; }
 .card li { font-family: sans-serif; font-weight: bold; }
@@ -84,8 +72,9 @@ a { text-decoration: none;}
 @keyframes rotatemark { 0% { transform: rotate(360deg); } 10% { transform: rotate(0deg); } 100% { transform: rotate(0deg); } }
 
 /*create style*/
-#auth { background: #8b9dc3; background-image: url(/icons/icon.png); background-repeat: no-repeat; background-position: center; background-size: contain; height: 100vh; display: flex; justify-content: center; align-items: center; }
-#auth .login-btn { background: #3b5998; color: #fff; width: 100%; display: flex; justify-content: space-evenly; align-items: center; }
+.fb-login-button { margin: auto;  }
+#auth { position: absolute; background: #8b9dc3; background-image: url(/icons/icon.png); background-repeat: no-repeat; background-position: center; background-size: contain; height: 100%; width: 100%; }
+#auth .container { position: absolute; bottom: 42px; min-width: 100%; }
 
 .create .spacer { height: 72px; }
 .create #quickie .link { height: 52px; overflow: hidden; cursor: ns-resize; }
