@@ -1,6 +1,6 @@
 // Fri Mar  2 20:29:40 2018
 
-let auth, creator, username, dp, info, quickie, bookmark, topbar, theme;
+let auth, creator, username, dp, info, quickie, bookmark, otherlinks, topbar, theme;
 let model, fbProfile = null;
 
 const Model = Backbone.Model.extend();
@@ -83,6 +83,7 @@ const Auth = Backbone.View.extend({
 		info = new Info();
 		quickie = new Quickie();
 		bookmark = new Bookmark();
+		otherlinks = new OtherLinks();
 		topbar = new Topbar();
 		theme = new Theme();
 
@@ -124,10 +125,18 @@ const Topbar = Backbone.View.extend({
 		quickie.$el.find('.links .link').each(function(index, el) {
 			favbtns.push( $( el ).data("raw") );
 		});
+		if (favbtns.length > 22 ) {
+			mdl.render({ type: "error", body: "Social media links can't be more than 22", timeout: 5*1000 });
+			return false;
+		}
 		bookmark.$el.find('.links .link').each(function(index, el) {
 			let els = $( el );
 			bookmarks.push(els.data("raw"));
 		});
+		if (bookmarks.length > 8 ) {
+			mdl.render({ type: "error", body: "Featured links can't be more than 8", timeout: 5*1000 });
+			return false;
+		}
 		console.log( bookmarks );
 		let user = Parse.User.current();
 		user.set( "image", model.get("image") );
@@ -403,6 +412,8 @@ const Quickie = Backbone.View.extend({
 			case "google-plus" : return `https://plus.google.com/+${o.uid}`;
 			case "linkedin" : return `https://www.linkedin.com/in/${o.uid}`;
 			case "github" : return `https://www.github.com/${o.uid}`;
+			case "snapchat" : return `https://www.snapchat.com/add/${o.uid}`;
+			case "telegram" : return `https://t.me/${o.uid}`;
 			case "whatsapp" : return `https://api.whatsapp.com/send?phone=${o.uid}&text=${encodeURIComponent(location.href)}`;
 			default: return o.uid;
 		}
@@ -446,11 +457,12 @@ const Bookmark = Backbone.View.extend({
 			mdl.render({ type: "error", body:"Couldn't get click count.", timeout: 4*1000})			
 		});
 	},
-	renderBookmark: function( bm ) {
+	renderBookmark: function( bm, pre ) {
 		try {
 			bm = $.extend({ title: "", description: "", short_page_url: "" }, bm);
 			let temp = $(this.template( bm ));
-			this.$el.find('.links').append( temp );
+			if( pre ) this.$el.find('.links').prepend( temp );
+			else this.$el.find('.links').append( temp );
 			temp.data("raw", bm);
 			return temp;
 		} catch ( e ) {
@@ -489,3 +501,91 @@ const Bookmark = Backbone.View.extend({
 	}
 });
 
+const OtherLinks = Bookmark.extend({
+	el: "#otherlinks",
+	Model: Parse.Object.extend("LINKS"),
+	collection: [],
+	skip: 0,
+	limit: 12,
+	initialize: function() {
+		let self = this;
+		this.template = _.template( this.$el.find("#b-tmpl").html() );
+		let io = new IntersectionObserver( entries => {
+			if( entries.filter( en => en.target.id == "load-next" )[0].isIntersecting ) {
+				self.render();
+			}
+		});
+		io.observe( this.$el.find("#load-next")[0] );		
+		return this;
+	},
+	render: function() {
+		let self = this;
+		if( this.skip < 0 ) return this;
+		let parseQuery = new Parse.Query( this.Model );
+		parseQuery.equalTo( "createdBy", Parse.User.current().id );
+		parseQuery.limit( this.limit );
+		parseQuery.skip( this.skip );
+		parseQuery.descending( "createdAt" );
+		parseQuery.find(results => {
+			results.forEach(result=>{
+				self.collection.push( result );
+				self.renderBookmark( result.toJSON() );
+			});
+			self.skip = self.skip+self.limit;
+			if( results.length == 0 ) self.skip = -1;
+		});
+		return this;
+	},
+	events: {
+		"click .link .count": "clickCount",
+		"click .link .remove": "removeBookmark",
+		"submit form": "addBookmark"
+	},
+	removeBookmark: function( ev ) {
+		ev.preventDefault();
+		let self = this;
+		let jqObject = $( ev.currentTarget );
+		let id = jqObject.data("id");
+		let linkObject = this.collection.filter( index => index.id == id )[0];
+		mdl.render({ body: "Removing..." });
+		linkObject.destroy({
+			success: function() {
+				jqObject.closest('.link').remove();
+				mdl.render({ type: "success", body: "Removed", timeout: 3*1000 });
+				self.collection = self.collection.filter( index => index.id != id );
+			},
+			error: function() {
+				mdl.render({ type: "error", body: "Couldn't remove", timeout: 3*1000 });
+			}
+		});
+	},
+	addBookmark: function( ev ) {
+		let self = this;
+		ev.preventDefault();
+		let bookmark = $( ev.currentTarget ).serializeObject();
+		mdl.render({body:"Getting url details"});
+		let link = new this.Model();
+		link.set( "description", "" );
+		link.set( "image_url", "https://webname.ga/icons/cover.png?i=0" );
+		link.set( "page_url", bookmark.page_url );
+		link.set( "title", bookmark.page_url );
+		Parse.Cloud.run("og", { url: bookmark.page_url }).then( result => {
+			link.set("title", result.data.ogTitle )
+			link.set("description", result.data.ogDescription )
+			if( result.data.ogImage )
+				link.set("image_url", result.data.ogImage.url )
+			link.set("short_page_url", result.short_url )
+			link.save().then( o=>{
+				self.collection.push( o );
+				self.renderBookmark( o.toJSON(), true );
+				mdl.render({ type:"success", body: "Saved", timeout: 3*1000 });
+			}).catch(e=>{
+				mdl.render({ type:"error", body: "Couldn't save", timeout: 3*1000 });
+			});
+		}).catch( error => {
+			mdl.render({ type:"error", body: "Couldn't add this url", timeout: 3*1000 });
+			console.log( error );
+		});
+		$( ev.currentTarget ).find('input').val("");
+	}
+});

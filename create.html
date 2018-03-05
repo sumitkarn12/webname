@@ -3,6 +3,8 @@
 	<head>
 		<title>webname | My presence on web</title>
 
+		<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
 		<meta name="description" content="Creator area where you can manage all your sharable links"/>
 		<meta property="og:description" content="Creator area where you can manage all your sharable links"/>
 
@@ -116,7 +118,7 @@
 						</li>
 					</script>
 					<div class="w3-card w3-white">
-						<div class="w3-padding w3-large w3-theme">Quick links</div>
+						<div class="w3-padding w3-large w3-theme">Social media</div>
 						<ul class="links w3-ul w3-border-bottom"></ul>
 						<div class="w3-container w3-padding-16">
 							<form class="w3-row">
@@ -130,6 +132,8 @@
 									<option value="youtube">Youtube</option>
 									<option value="github">GitHub</option>
 									<option value="linkedin">LinkedIn</option>
+									<option value="snapchat">Snapchat</option>
+									<option value="telegram">Telegram</option>
 								</select>
 								<input type="text" name="uid" class="w3-input w3-col s6 username" placeholder="username" required="" pattern="[0-9A-Za-z\.\-_]{3,32}">
 								<button class="w3-button w3-theme w3-col s2"><i class="fas fa-search"></i></button>
@@ -200,17 +204,51 @@
 					</script>
 
 					<div class="w3-card w3-white">
-						<div class="w3-padding w3-large w3-theme">My bookmarks</div>
+						<div class="w3-padding w3-theme">
+							<div class="w3-large">Featured Links</div>
+							<div class="w3-small">These links will always shown on top &amp; can be arranged in any order. Here you can add upto 8 links.</div>
+						</div>
 						<div>
-							<ul class="links w3-ul w3-border-bottom"></ul>
 							<div class="w3-container w3-padding-16">
 								<form class="w3-display-container">
 									<input type="text" name="page_url" placeholder="https://www.instagram.com/windows" class="w3-input w3-border" required="" pattern="^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$">
 									<button class="w3-button w3-theme w3-border-left w3-display-right" ><i class="fas fa-search"></i></button>
 								</form>
 							</div>
+							<ul class="links w3-ul w3-border-top"></ul>
 						</div>
 					</div>
+				</div>
+				<div id="otherlinks" class="w3-container w3-padding-16">
+					<script type="text/x-template" id="b-tmpl">
+						<li class="w3-display-container link">
+							<div class="">
+								<div class="w3-large"><%= title %></div>
+								<div class="page-url"><%= page_url %></div>
+							</div>
+							<div class="w3-display-right">
+								<button class="w3-button count	" data-url="<%=short_page_url%>"><i class="fas fa-hand-pointer"></i></button>
+								<button class="w3-button remove" data-id="<%= objectId %>"><i class="fas fa-times"></i></button>
+							</div>
+						</li>
+					</script>
+
+					<div class="w3-card w3-white">
+						<div class="w3-padding w3-theme">
+							<div class="w3-large">Other Links</div>
+							<div class="w3-small">Here you can add unlimited links.</div>
+						</div>
+						<div>
+							<div class="w3-container w3-padding-16">
+								<form class="w3-display-container">
+									<input type="text" name="page_url" placeholder="https://www.instagram.com/windows" class="w3-input w3-border" required="" pattern="^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$">
+									<button class="w3-button w3-theme w3-border-left w3-display-right" ><i class="fas fa-check"></i></button>
+								</form>
+							</div>
+							<ul class="links w3-ul w3-border-top"></ul>
+						</div>
+					</div>
+					<div id="load-next" style="height:55px;"></div>
 				</div>
 			</div>
 		</div>

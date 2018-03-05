@@ -54,6 +54,13 @@ a { text-decoration: none;}
 /*.profile #bookmark .card .title, .profile #bookmark .card .description, .profile #bookmark .card .url { text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }*/
 .profile #bookmark .card .title { text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
 .profile #bookmark .card .description { font-size: 12px; }
+
+.profile #otherlinks .card { max-height: 240px; margin: 0px; overflow: hidden; }
+.profile #otherlinks .card .image { overflow: hidden; min-height: 150px; height:auto; min-width: 150px; background-size: cover; background-position: center; }
+.profile #otherlinks .card .info { height: 240px; overflow: hidden; background-size: cover; background-position: center; }
+.profile #otherlinks .card .title { text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+.profile #otherlinks .card .description { font-size: 12px; }
+
 .profile #shares .btns { flex-direction: column; }
 .profile #shares .btns .w3-button { display: block; width: 100%; margin: 4px; }
 
@@ -87,4 +94,7 @@ a { text-decoration: none;}
 .create #bookmark .link { cursor: ns-resize; }
 .create #bookmark .page-url { overflow: hidden; text-overflow: ellipsis; width: 100%; height: 22px; }
 .create #bookmark .remove>button { width: 36px; height: 36px;background: #ff00006b; }
+
+.create #otherlinks .page-url { overflow: hidden; text-overflow: ellipsis; width: 100%; height: 22px; }
+.create #otherlinks .remove>button { width: 36px; height: 36px;background: #ff00006b; }
 

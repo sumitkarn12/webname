@@ -97,6 +97,23 @@
 						</div>
 					</div>
 				</div>
+				<div id="otherlinks">
+					<script type="q-tmpl" id="template">
+						<div class="w3-col s12 m6 w3-container w3-padding-16 link w3-animate-zoom">
+							<a href="<%= short_page_url %>" target="_blank">
+								<div class="card w3-round-large w3-border w3-theme">
+									<div class="image" style="background-image:url(<%= image_url %>);"></div>
+									<div class="info w3-padding">
+										<div class="title w3-large"><%= title %></div>
+										<div class="description"><%= description %></div>
+									</div>
+								</div>
+							</a>
+						</div>
+					</script>
+					<div class="links w3-row w3-border-top"></div>
+					<div id="load-next" style="height:55px;"></div>
+				</div>
 			</div>
 		</div>
 
