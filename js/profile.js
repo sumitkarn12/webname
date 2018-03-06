@@ -200,6 +200,7 @@ q.first().then(( u )=>{
 		model.set( "favbtns", u.get( "favbtns" ) );
 		model.set( "bookmarks", u.get( "links" ) );
 		$("#app-theme-link").attr("href", u.get("theme"))
+		
 		let w3 = u.get("theme");
 		$("meta[name=theme-color]").attr( "content", w3.substring( w3.lastIndexOf( "-" )+1, w3.lastIndexOf(".") ) )
 		mdl.hide();
