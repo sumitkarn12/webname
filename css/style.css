@@ -17,7 +17,7 @@ a { text-decoration: none;}
 .details { margin-bottom: 60px;  }
 .details .w3-animate-left { position: relative; animation:animateleft 1s;  }
 .details .w3-animate-right { position: relative; animation:animateright 1s;  }
-.details .w3-animate-bottom { position: relative; animation:animatebottom 2s;  }
+.details .w3-animate-bottom { will-change: bottom; position: relative; animation:animatebottom 2s;  }
 .details .first-image-animate { will-change: z-index left; animation: firstimageanimate 6s infinite alternate; }
 .details .last-image-animate { will-change: transform z-index right; animation: lastimageanimate 6s infinite alternate; }
 @keyframes firstimageanimate { 0% { left:0px; z-index: -1; } 25%{left:0px; z-index: -1; } 50%{ left:-210px; z-index: 1; } 75%{left:0px; z-index: 1;} 100%{left:0px; z-index: 1;} }
