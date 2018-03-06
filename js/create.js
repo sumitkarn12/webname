@@ -231,6 +231,9 @@ const Theme = Backbone.View.extend({
 	render: function() {
 		this.$el.find('.theme-selector').val( model.get("theme") );
 		$("#app-theme-link").attr( "href", model.get("theme") );
+		let w3 = model.get("theme");
+		$("meta[name=theme-color]").attr( "content", w3.substring( w3.lastIndexOf( "-" )+1, w3.lastIndexOf(".") ) )
+		console.log( model.get("theme") );
 		return this;
 	},
 	events: {
