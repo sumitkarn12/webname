@@ -1,6 +1,6 @@
 // Fri Mar  2 20:29:40 2018
 
-let auth, creator, username, dp, info, quickie, bookmark, otherlinks, topbar, theme;
+let auth, creator, username, dp, info, quickie, bookmark, otherlinks, topbar, theme, imageEditor;
 let model, fbProfile = null;
 
 const Model = Backbone.Model.extend();
@@ -24,6 +24,7 @@ window.fbAsyncInit = function() {
 		});
 	}
 };
+
 const Auth = Backbone.View.extend({
 	el: "#auth",
 	events: { "click .login-btn": "openLogin" },
@@ -58,10 +59,7 @@ const Auth = Backbone.View.extend({
 						u.set("location", location );
 						if( u.getEmail() != fbProfile.email ) {
 							u.setEmail( fbProfile.email );
-							u.save().then(()=>{
-								console.log( "User private email updated" );
-								console.log( u.toJSON() );
-							}).catch(console.warn);
+							u.save();
 						}
 						resolve(response)
 					});
@@ -94,6 +92,10 @@ const Auth = Backbone.View.extend({
 		topbar = new Topbar();
 		theme = new Theme();
 
+		this.update();
+		this.getProfile().then(()=> this.update())
+	},
+	update: function() {
 		let profile = { name: "Excited user", email: "", about: "Excited to see this", mobile: "" }
 		profile = $.extend( profile, fbProfile, Parse.User.current().get( "profile" ) );
 		delete profile.cover;
@@ -108,7 +110,6 @@ const Auth = Backbone.View.extend({
 		} else {
 			model.set( "image", fbProfile.picture.data.url );
 		}
-		this.getProfile();
 	},
 	render: function() {
 		mdl.hide();
@@ -184,6 +185,7 @@ const Username = Backbone.View.extend({
 	updateUsername: function( ev ) {
 		ev.preventDefault();
 		var self = this;
+		let originalUsername = Parse.User.current().get("username");
 		let username = this.$el.find('input').val().toLowerCase();
 		let user = Parse.User.current();
 		if( user.get("username").toLowerCase() != username ) {
@@ -192,9 +194,10 @@ const Username = Backbone.View.extend({
 			user.save().then(function( user ) {
 				mdl.hide();
 				self.updateShareLink( username );
-			}, function( user, error ) {
-				mdl.render({ type: "error", body: error.message, timeout: 4000 });
-				console.log( user, error );
+			}).catch(er=>{
+				mdl.render({ type: "error", body: er.message, timeout: 4000 });
+				self.updateShareLink( originalUsername );
+				self.$el.find('input').val( originalUsername );
 			});
 		} else {
 			mdl.render({ type: "success", body: "No need to change", timeout: 4*1000 });
@@ -241,72 +244,55 @@ const Theme = Backbone.View.extend({
 const DP = Backbone.View.extend({
 	el: "#dp",
 	initialize: function() {
-		this.croppie = new Croppie(this.$el.find("#picture")[0], {
-			viewport: {
-				width: 240,
-				height: 240,
-				type: 'circle'
-			}
+		this.croppie = new Croppie(this.$el.find('#picture')[0], {
+			viewport: { width: 200, height: 200, type: 'circle' },
+			mouseWheelZoom: false
 		});
+		return this;
 	},
-	render: function() {
-		console.log( model.get("image") );
-		let u = null;
-		if( model.get("image").type == "file" ) {
-			u = model.get("image").data.url()
-		} else {
-			u = model.get("image").data
+	render: function( url ) {
+		if( !url ) {
+			if( model.get("image").type == "file" ) url = model.get("image").data.url();
+			else url = model.get("image").data;
 		}
-		this.croppie.bind({ url: u, points: [ 0,0,320,320 ] });
+		this.croppie.bind({ "url": url, points: [0,0, 320, 320] }).then(()=>{
+			this.croppie.setZoom(0.1);
+		});
 		return this;
 	},
 	events: {
+		"click .ok": "uploadPicture",
 		"click .remove": "removeProfilePicture",
-		"click .change": "updateProfilePicture",
-		"click .from-facebook": "fromFacebook",
-		"click .profile-image": "removeProfilePicture",
+		"click .facebook": "fromFacebook",
 		"change .picture-selector": "changePicture"
 	},
 	changePicture: function( ev ) {
 		let self = this;
 		let fr = new FileReader();
 		fr.onload = ( r ) => {
-			self.croppie.bind({
-				url: r.target.result
-			})
+			self.render( r.target.result );
 		}
 		fr.readAsDataURL( ev.target.files[0] );
 	},
 	removeProfilePicture: function( ev ) {
 		ev.preventDefault();
-		model.set("image", {type: "url", url: "https://source.unsplash.com/random/320x320"})
-		this.croppie.bind({ url: model.get("image").url, points: [ 0,0,320,320 ] });
-		mdl.render({ type: "success", body: 'Click <i class="fas fa-check"></i> to reset image', timeout: 2000 });
+		this.render("/icons/icon-rect.png");
 	},
 	fromFacebook: function( ev ) {
 		ev.preventDefault();
-		model.set( "image", fbProfile.picture.data.url );
-		this.croppie.bind({ url: model.get("image").url, points: [ 0,0,320,320 ] });
-		mdl.render({ type: "success", body: 'Click <i class="fas fa-check"></i> to reset image', timeout: 2000 });
+		this.render(fbProfile.picture.data.url);
 	},
-	updateProfilePicture: function( ev ) {
+	uploadPicture: function( ev ) {
 		let self = this;
-		ev.preventDefault();
-		this.croppie.result({
-			type:"base64",
-			quality: 0.5,
-			size: { width:320, height: 320 },
-			format: "png"
-		}).then(r=>{
-			let parseProfilePicFile = new Parse.File(fbProfile.id+".jpg", { base64: r });
+		this.croppie.result({ type:"base64", quality: 0.5, size: { width:320, height: 320 }, format: "png" }).then(r=>{
+			let parseProfilePicFile = new Parse.File(fbProfile.id+".png", { base64: r });
 			mdl.render({ body: "Uploading porfile picture" });
 			parseProfilePicFile.save().then((file)=>{
-				model.set("image", {
-					type: "file",
-					data: file
-				});
+				Parse.User.current().set("image", { type: "file", data: file });
+				Parse.User.current().save();
 				mdl.hide();
-			}, () => mdl.render({ type: "error", body: "Profile picture couldn't uploaded", timeout: 3*1000 }) )
+				self.render( file.url() )
+			}).catch(() => mdl.render({ type: "error", body: "Profile picture couldn't uploaded", timeout: 3*1000 }) )
 		});
 	}
 });
