@@ -21,17 +21,12 @@ const Profile = Backbone.View.extend({
 	},
 	renderDP: function( image ) {
 		let u = null;
-		if( image.type == "file" ) {
-			u = image.data.url();
-		} else {
-			u = image.data;
-		}
+		if( image.type == "file" ) { u = image.data.url();
+		} else { u = image.data; }
 		this.$el.find(".cover").css( "background-image", `url(${u})` );
 		this.$el.find(".dp").attr( "src", u );
 		$("link[rel]").each((i,m)=> {
-			if(m.rel.search("icon") != -1) {
-				m.href = u
-			}
+			if(m.rel.search("icon") != -1) { m.href = u }
 		});
 		$("meta[property]").each((i,m)=> {
 			if($(m).attr("property").search("image") != -1) {
@@ -201,8 +196,10 @@ q.first().then(( u )=>{
 		model.set( "bookmarks", u.get( "links" ) );
 		$("#app-theme-link").attr("href", u.get("theme"))
 		
-		let w3 = u.get("theme");
-		$("meta[name=theme-color]").attr( "content", w3.substring( w3.lastIndexOf( "-" )+1, w3.lastIndexOf(".") ) )
+		try {
+			let w3 = u.get("theme");
+			$("meta[name=theme-color]").attr( "content", w3.substring( w3.lastIndexOf( "-" )+1, w3.lastIndexOf(".") ) )
+		} catch( e ) {}
 		mdl.hide();
 		if( Parse.User.current() == null ) {
 			$(".edit-profile").text( "Create your profile" );
