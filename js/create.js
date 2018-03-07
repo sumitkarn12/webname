@@ -223,6 +223,13 @@ const Username = Backbone.View.extend({
 			mdl.render({ type: "error", body: "Something went wrong", timeout: 2*1000 });
 		}
 		ta.remove();
+		if (navigator.share) {
+			navigator.share({
+				title: 'Check out my profile webname to share links with you all!',
+				text: 'Check out my profile webname to share links with you all!',
+				url: this.$el.find('.share-link').text().trim()
+			});
+		}
 	}
 });
 

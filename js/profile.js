@@ -17,6 +17,13 @@ const Profile = Backbone.View.extend({
 				mdl.render({ type: "success", body: "Copied", timeout: 2000 });
 			else
 				mdl.render({ type: "error", body: "Something went wrong", timeout: 2000 });
+			if (navigator.share) {
+				navigator.share({
+					title: 'Check out my profile webname to share links with you all!',
+					text: 'Check out my profile webname to share links with you all!',
+					url: this.$el.find('.share-link').text().trim()
+				});
+			}
 		});
 	},
 	renderDP: function( image ) {
