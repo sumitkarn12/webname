@@ -207,4 +207,6 @@ q.first().then(( u )=>{
 			$(".edit-profile").text( `Hey ${Parse.User.current().get("profile").name}, Update your profile` );
 		}
 	}
-}, console.error );
+}, (error) => {
+	console.log( error );
+});
