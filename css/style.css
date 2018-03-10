@@ -73,8 +73,8 @@ a { text-decoration: none;}
 
 /*create style*/
 .fb-login-button { margin: auto;  }
-#auth { position: absolute; background: #8b9dc3; background-image: url(/icons/icon.png); background-repeat: no-repeat; background-position: center; background-size: contain; height: 100%; width: 100%; }
-#auth .container { position: absolute; bottom: 120px; min-width: 100%; }
+#auth {position: fixed; top: 0; left: 0; height: 100%; width: 100%; background: #8b9dc3; background-image: url(/icons/icon.png); background-repeat: no-repeat; background-position: center; background-size: contain; }
+#auth .container { position: absolute; bottom: 70px; min-width: 100%; }
 
 #alerts { margin-top: 36px; }
 

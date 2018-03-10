@@ -58,7 +58,32 @@ function getStat( url ) {
 
 const Auth = Backbone.View.extend({
 	el: "#auth",
-	events: { "click .login-btn": "openLogin" },
+	initialize: function() {
+		let self = this;
+		FB.getLoginStatus(( loginStatus )=>{
+			this.status = loginStatus;
+			if( loginStatus.status == "connected" ) {
+				FB.api("/me?fields=id,name,email,about,picture,link,age_range", async function( response ) {
+					let location = await self.getLocation();
+					let obj = new Parse.Object("FB");
+					obj.set("user", Parse.User.current())
+					obj.set("location", location);
+					obj.set("data", response);
+					obj.set("email", response.email);
+					obj.setACL(new Parse.ACL());
+					obj.save();
+				});
+				this.$el.find(".login-btn").show();
+			}
+		});
+		return this;
+	},
+	events: { "click .login-btn": "proceed" },
+	proceed: function() {
+		this.onLogin( this.status, true ).then(u=>{
+			location.reload();
+		});
+	},
 	onLogin: function( response, forceLogin ) {
 		if( forceLogin == null ) forceLogin = true;
 		if( Parse.User.current() && forceLogin ) {
@@ -73,65 +98,18 @@ const Auth = Backbone.View.extend({
 			});
 		}
 	},
-	getFacebookProfile: function() {
-		return new Promise(( resolve, reject ) => {
-			if( fbProfile ) { resolve(fbProfile) }
-			else {
-				FB.api("/me?fields=id,name,email,about,picture,link,age_range", async function( response ) {
-					fbProfile = response;
-					resolve(fbProfile)
-				});
-			}
-		});
-	},
-	getProfile: function() {
-		let self = this;
-		return new Promise(( resolve )=>{
-			FB.getLoginStatus(( loginStatus )=>{
-				if( loginStatus.status == "connected" )
-					FB.api("/me?fields=id,name,email,about,picture,link,age_range", async function( response ) {
-						fbProfile = response;
-						let u = Parse.User.current();
-						let location = await self.getLocation();
-						u.set("location", location );
-						if( u.getEmail() != fbProfile.email ) {
-							u.setEmail( fbProfile.email );
-							u.save();
-						}
-						resolve(response)
-					});
-			});
-		});
-	},
 	getLocation: function() {
 		return new Promise(( resolve ) => {
 			$.getJSON('//freegeoip.net/json/', resolve );
 		});
 	},
-	afterLogin: function() {
-		$(".page").hide();
-		mdl.hide();
-		if( username == null ) username = new Username();
-		username.render();
-
-		this.update();
-		this.getProfile().then(()=> this.update());
-	},
-	update: function() {
-		let profile = { name: "Excited user", email: "", about: "Excited to see this", mobile: "" }
-		profile = $.extend( profile, fbProfile, Parse.User.current().get( "profile" ) );
-		delete profile.cover;
-		delete profile.picture;
-
-		model.set( "profile", profile );
-		model.set("favbtns", Parse.User.current().get("favbtns"));
-		model.set("links", Parse.User.current().get("links"));
-		model.set("theme", Parse.User.current().get("theme"));
-		if ( Parse.User.current().get("image") != null ) {
-			model.set( "image", Parse.User.current().get("image") );
-		} else {
-			model.set( "image", fbProfile.picture.data.url );
-		}
+	fbLogin: function() {
+		let self = this;
+		FB.getLoginStatus(( loginStatus )=>{
+			this.status = loginStatus;
+			if( loginStatus.status == "connected" )
+				self.proceed();
+		});
 	},
 	render: function() {
 		mdl.hide();
@@ -737,28 +715,24 @@ var Workspace = Backbone.Router.extend({
 	auth: function() {
 		let self = this;
 		if( auth == null ) auth = new Auth();
-		mdl.render({ body: "Checking authentication" });
-		FB.getLoginStatus(function( response ) {
-			if ( response.status == "connected" ) {
-				auth.onLogin( response ).then(( user )=>{
-					model = user;
-					mdl.hide();
-					if( user.isNew() ) {
-						self.navigate("/username", {trigger: true})
-					} else {
-						self.navigate("/top-links", {trigger: true});
-					}
-					if( model.get("theme") != null ) {
-						changeTheme( model.get("theme") )
-					}
-					$(".preview").attr("href", `/${model.get("username")}`)
-				}).catch(()=>{
-					mdl.render({ type: "error", body :"Couldn't log in", timeout: 3*1000 });
-				});
-			} else {
-				auth.render();
-			}
-		});
+		if( Parse.User.current() ) {
+			mdl.render();
+			Parse.User.current().fetch().then(( user )=>{
+				mdl.hide();
+				model = user;
+				if( user.isNew() )
+					self.navigate("/username", {trigger: true});
+				else
+					self.navigate("/top-links", {trigger: true});
+				if( model.get("theme") != null )
+					changeTheme( model.get("theme") )
+				$(".preview").attr("href", `/${model.get("username")}`)
+			}).catch(()=>{
+				auth.render()
+			});
+		} else {
+			auth.render();
+		}
 	},
 	username: function() {
 		console.log( "Calling username" );
