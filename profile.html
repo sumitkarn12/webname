@@ -53,7 +53,7 @@
 				<div id="quickie" class="w3-container">
 					<div class="btns flex-center"></div>
 					<script type="q-tmpl" id="template">
-						<a href="<%= url %>" target="_blank" class="flex-center w3-button w3-theme w3-circle w3-card w3-animate-zoom"><i class="fab fa-<%= type %> fa-2x"></i></a>
+						<a href="<%= url %>" target="_blank" class="flex-center w3-button w3-theme w3-circle w3-card"><i class="fab fa-<%= type %> fa-2x"></i></a>
 					</script>
 				</div>
 				<div id="shares" class="w3-padding" style="margin-top:16px;">
@@ -62,16 +62,15 @@
 						<button class="w3-button w3-display-right w3-border-left">Copy</button>
 					</form>
 					<div class="btns flex-center">
-						<a target="_blank" class="w3-button w3-round w3-tiny w3-theme fb-share">Share on facebook</a>
-						<!-- <a target="_blank" class="w3-button w3-round w3-tiny w3-theme send">Send via Messenger</a> -->
-						<a target="_blank" class="w3-button w3-round w3-tiny w3-theme tweet">Tweet to twitter</a>
+						<a target="_blank" class="w3-button w3-round w3-tiny w3-theme fb-share h-block">Share on facebook</a>
+						<a target="_blank" class="w3-button w3-round w3-tiny w3-theme tweet  h-block">Tweet to twitter</a>
 					</div>
 				</div>
 			</div>
 			<div class="w3-col s12 l8">
 				<div id="bookmark">
 					<script type="q-tmpl" id="template">
-						<div class="w3-col s12 m6 w3-container w3-padding-16 link w3-animate-zoom">
+						<div class="w3-col s12 m6 w3-container w3-padding-16 link">
 							<a href="<%= short_page_url %>" target="_blank">
 								<div class="card w3-round-large w3-border w3-theme">
 									<div class="image" style="background-image:url(<%= image_url %>);"></div>
@@ -84,7 +83,7 @@
 						</div>
 					</script>
 					<div class="links w3-row">
-						<div class="w3-col s12 w3-container w3-padding-16 w3-animate-right w3-opacity">
+						<div class="w3-col s12 w3-container w3-padding-16 w3-opacity">
 							<a href="/" style="text-decoration: none; display: block;">
 								<div style="min-height:110px;" class="dummy-image">
 									<img src="icons/cover.png" class="w3-opacity" style="width: 100%;" alt="webname template image">
@@ -99,7 +98,7 @@
 				</div>
 				<div id="otherlinks">
 					<script type="q-tmpl" id="template">
-						<div class="w3-col s12 m6 w3-container w3-padding-16 link w3-animate-zoom">
+						<div class="w3-col s12 m6 w3-container w3-padding-16 link">
 							<a href="<%= short_page_url %>" target="_blank">
 								<div class="card w3-round-large w3-border w3-theme">
 									<div class="image" style="background-image:url(<%= image_url %>);"></div>

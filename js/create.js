@@ -1,9 +1,6 @@
-// Fri Mar  2 20:29:40 2018
 
-let auth, creator, username, dp, info, quickie, bookmark, otherlinks, topbar, theme, imageEditor;
+let auth, creator, username, dp, info, quickie, bookmark, otherlinks, topbar, theme, imageEditor, sidebar, app;
 let model, fbProfile = null;
-
-const Model = Backbone.Model.extend();
 
 window.fbAsyncInit = function() {
 	Parse.FacebookUtils.init({
@@ -13,39 +10,79 @@ window.fbAsyncInit = function() {
 		xfbml 	: true,				// initialize Facebook social plugins on the page
 		version 	: "v2.11"				// point to the latest Facebook Graph API version
 	});
-	if( auth == null ) auth = new Auth();
-	mdl.render({ body: "Checking authentication" });
-	if( Parse.User.current() ) {
-		auth.afterLogin();
-	} else {
-		auth.render();
-		FB.getLoginStatus(function( response ) {
-			auth.onLogin( response );
-		});
-	}
+	app = new Workspace();
+	Backbone.history.start(); 
 };
+function saveModel() {
+	return new Promise(( resolve, reject )=>{
+		mdl.render();
+		if( model ) {
+			model.save().then(r=>{
+				model = r;
+				mdl.hide();
+				resolve( r );
+			}).catch(err=>{
+				mdl.hide();
+				$.dialog({ content: err.message, type: "red" });
+				reject(err);
+			});
+		} else {
+			mdl.hide();
+			$.dialog({ content: "User not found", type: "red" });
+			reject();
+		}
+	});
+}
+function getStat( url ) {
+	let jconf = $.dialog({title: "Url", content: "", type: "green"});
+	setTimeout(()=>{jconf.showLoading()}, 100);
+	Parse.Cloud.run("expand", { url: url }).then(r=>{
+		jconf.setBoxWidth("75%");
+		jconf.setTitle( "Stats" );
+		jconf.setContent( `<p>${r.longUrl}</p>` );
+		jconf.setContentAppend( `<p><b>All time</b>: ${r.analytics.allTime.shortUrlClicks}</p>` );
+		jconf.setContentAppend( `<p><b>Month</b>: ${r.analytics.month.shortUrlClicks}</p>` );
+		jconf.setContentAppend( `<p><b>Week</b>: ${r.analytics.week.shortUrlClicks}</p>` );
+		jconf.setContentAppend( `<p><b>Day</b>: ${r.analytics.day.shortUrlClicks}</p>` );
+		jconf.setContentAppend( `<p><b>Two hours</b>: ${r.analytics.twoHours.shortUrlClicks}</p>` );
+		jconf.hideLoading();
+	}).catch((error)=>{
+		jconf.setTitle( "Error" );
+		jconf.setContent( "Couldn't get click count." );
+		jconf.setType("red");
+		jconf.hideLoading();
+	});
+	return jconf;
+}
+
 
 const Auth = Backbone.View.extend({
 	el: "#auth",
 	events: { "click .login-btn": "openLogin" },
-	onLogin: function( response ) {
-		console.log( response );
-		if( response.status == "connected" ) {
-			mdl.render({ body: "Signing in.." });
-			console.log( response );
-			var authData = {
+	onLogin: function( response, forceLogin ) {
+		if( forceLogin == null ) forceLogin = true;
+		if( Parse.User.current() && forceLogin ) {
+			return new Promise(( resolve ) => {
+				resolve( Parse.User.current() );
+			});
+		} else {
+			return Parse.FacebookUtils.logIn({
 				id: response.authResponse.userID,
 				access_token: response.authResponse.accessToken,
 				expiration_date: new Date(response.authResponse.expiresIn * 1000 + (new Date()).getTime()).toJSON()
-			}
-			Parse.FacebookUtils.logIn( authData, {
-				success: auth.afterLogin,
-				error: function(err) {
-					console.log( err );
-					mdl.render({ type: "error", body: "Couldn't logged in. Please try clearing your browser cookies."});
-				}
 			});
 		}
+	},
+	getFacebookProfile: function() {
+		return new Promise(( resolve, reject ) => {
+			if( fbProfile ) { resolve(fbProfile) }
+			else {
+				FB.api("/me?fields=id,name,email,about,picture,link,age_range", async function( response ) {
+					fbProfile = response;
+					resolve(fbProfile)
+				});
+			}
+		});
 	},
 	getProfile: function() {
 		let self = this;
@@ -73,27 +110,12 @@ const Auth = Backbone.View.extend({
 	},
 	afterLogin: function() {
 		$(".page").hide();
-		$(".main-page").fadeIn();
 		mdl.hide();
 		if( username == null ) username = new Username();
 		username.render();
-		model = new Model();
-		model.on("change:profile", ( model, profile )=>{ info.render(); });
-		model.on("change:image", ( model, image )=>{ dp.render(); });
-		model.on("change:favbtns", ( model, favbtns )=>{ quickie.render(); });
-		model.on("change:links", ( model, links )=> bookmark.render() );
-		model.on("change:theme", ( model )=> theme.render() );
-
-		dp = new DP();
-		info = new Info();
-		quickie = new Quickie();
-		bookmark = new Bookmark();
-		otherlinks = new OtherLinks();
-		topbar = new Topbar();
-		theme = new Theme();
 
 		this.update();
-		this.getProfile().then(()=> this.update())
+		this.getProfile().then(()=> this.update());
 	},
 	update: function() {
 		let profile = { name: "Excited user", email: "", about: "Excited to see this", mobile: "" }
@@ -118,63 +140,223 @@ const Auth = Backbone.View.extend({
 		return this;
 	}
 });
-
 const Topbar = Backbone.View.extend({
 	el: "#topbar",
+	initialize: function() {
+		this.show();
+		return this;
+	},
+	hide: function() {
+		this.$el.hide();
+	},
+	show: function() {
+		this.$el.show();
+	},
 	events: {
+		"click .sidebar": "sidebar",
 		"click .signout": "signOut",
 		"click .save": "save"
 	},
-	save: function( ev ) {
-		let self = this;
-		ev.preventDefault();
-		let favbtns = [];
-		let bookmarks = [];
-		quickie.$el.find('.links .link').each(function(index, el) {
-			favbtns.push( $( el ).data("raw") );
-		});
-		if (favbtns.length > 22 ) {
-			mdl.render({ type: "error", body: "Social media links can't be more than 22", timeout: 5*1000 });
-			return false;
+	sidebar: function() {
+		if( !sidebar ) {
+			let model = Parse.User.current();
+			let image = "";
+			if( model.get("image") && model.get("image").type == "file" ) image = model.get("image").data.url();
+			else if( model.get("image") && model.get("image").type == "url" ) image = model.get("image").data;
+			else image = "https://avatars.io/facebook";
+			sidebar = new Sidebar({
+				username: Parse.User.current().get("username"),
+				url: image
+			});
 		}
-		bookmark.$el.find('.links .link').each(function(index, el) {
-			let els = $( el );
-			bookmarks.push(els.data("raw"));
-		});
-		if (bookmarks.length > 8 ) {
-			mdl.render({ type: "error", body: "Featured links can't be more than 8", timeout: 5*1000 });
-			return false;
-		}
-		console.log( bookmarks );
-		let user = Parse.User.current();
-		user.set( "image", model.get("image") );
-		user.set( "profile", model.get("profile") );
-		user.set( "favbtns", favbtns );
-		user.set( "links", bookmarks );
-		user.set( "theme", model.get("theme") );
-		console.log( user.toJSON() );
-		mdl.render({ body: "Saving..." });
-		user.save().then(()=>{
-			mdl.hide();
-		}, ()=>{
-			mdl.render({ type: "error", body: "Couldn't save", timeout: 4*1000 });
-		});
+		sidebar.show();
+	}
+});
+const Sidebar = Backbone.View.extend({
+	el: "#sidebar",
+	initialize: function(model) {
+		if( !model ) throw new Error( "User data not found" );
+		this.model = model;
+		return this.render();
 	},
-	signOut: function( ev ) {
-		ev.preventDefault();
-		let self = this;
-		Parse.User.logOut().then(()=> auth.render() );
+	events: {
+		"click a": "hide"
+	},
+	hide: function() {
+		$(".w3-overlay").hide()
+		this.$el.hide();
+	},
+	show: function() {
+		$(".w3-overlay").show()
+		this.$el.show();
+	},
+	render: function() {
+		this.$el.find("#profile-picture img").remove();
+		this.$el.find("#username").text(this.model.username);
+		lazyLoad(this.model.url).then((elm)=>{
+			elm.classList.add("w3-circle"); 
+			elm.classList.add("w3-animate-opacity"); 
+			elm.style.width = "120px";
+			this.$el.find("#profile-picture").html( elm );
+		});
+		return this;
 	}
 });
 
+const ImageEditor = Backbone.View.extend({
+	el: "#image-editor",
+	initialize: function() {
+		_.extend(this, Backbone.Events);
+		this.croppie = new Croppie( document.getElementById("picture"), {
+			viewport: { width: 200, height: 200, type: 'circle' },
+			mouseWheelZoom: false
+		});
+		return this;
+	},
+	render: function( url ) {
+		this.$el.show();
+		this.croppie.bind({ "url": url }).then(()=>{ this.croppie.setZoom(0.1); });
+		return this;
+	},
+	events: {
+		"click .ok": "uploadPicture",
+		"click .remove": "hide",
+		"click .facebook": "fromFacebook"
+	},
+	hide: function( ev ) {
+		this.$el.hide();
+	},
+	fromFacebook: function( ev ) {
+		ev.preventDefault();
+		auth.getFacebookProfile().then(data=>{
+			this.render(data.picture.data.url);
+		});
+	},
+	uploadPicture: function( ev ) {
+		let self = this;
+		this.croppie.result({ type:"blob", quality: 0.5, size: { width:320, height: 320 }, format: "png" }).then(r=>{
+			this.hide();
+			let file = new File( [r], "picture.png" );
+			var formData = new FormData();
+			formData.append("file", file, "picture.png");
+			self.trigger( "uploadstart", r );
+			$.ajax({
+				type: "POST",
+				url: "https://vgy.me/upload",
+				success: function(data) { self.trigger( "uploadsuccess", { error: false, data: data });},
+				error: function(error) { self.trigger( "uploadsuccess", { error: true, data: error });},
+				async: true,
+				data: formData,
+				cache: false,
+				contentType: false,
+				processData: false,
+				timeout: 60000
+			});
+		});
+	}
+});
+const Info = Backbone.View.extend({
+	el: "#info",
+	theme: ["red","pink","purple","deep-purple","indigo","blue","light-blue","cyan","teal","green","light-green","lime","khaki","yellow","amber","orange","deep-orange","blue-grey","brown","grey","dark-grey","black"],
+	initialize: function() {
+		this.theme.forEach(o=>{
+			this.$el.find("#theme").append(`<option value="https://www.w3schools.com/lib/w3-theme-${o}.css">${o.toUpperCase().replace(/\-/g, " ")}</option>`);
+		});
+		this.populate( this.getImage() );
+	},
+	render: function() {
+		this.$el.show();
+		return this;
+	},
+	populate: function( image ) {
+		lazyLoad( image ).then(elm => {
+			elm.classList.add("w3-animate-opacity")
+			elm.classList.add("w3-circle")
+			elm.style.width = "120px"
+			this.$el.find("#profile-picture").html( elm );
+		});
+		this.$el.find("#name").val( model.get("profile").name );
+		this.$el.find("#about").val( model.get("profile").about );
+		this.$el.find("#mobile").val( model.get("profile").mobile );
+		this.$el.find("#email").val( model.get("profile").email );
+		this.$el.find("#theme").val( model.get("theme") );
+	},
+	getImage: function() {
+		let image = model.get("image");
+		if( image && image.type == "file" ) return image.data.url();
+		else if( image && image.type == "url" ) return image.data;
+		else return "https://avatars.io/facebook/";
+	},
+	events: {
+		"submit form": "updateInfo",
+		"click .change-picture": "openFileSelector",
+		"click .logout": "logout",
+		"change #theme": "changeTheme",
+		"change #picture-selector": "updatePicture"
+	},
+	changeTheme: function( ev ) {
+		changeTheme( ev.currentTarget.value );
+	},
+	logout: function() {
+		FB.logout();
+		Parse.User.logOut();
+		auth.render();
+	},
+	openFileSelector: function() {
+		this.$el.find("#picture-selector").click();
+	},
+	updatePicture: function( ev ) {
+		let self = this;
+		let fr = new FileReader();
+		fr.onload = ( r ) => {
+			if( !imageEditor ) {
+				imageEditor = new ImageEditor();
+				imageEditor.on( "uploadstart", (d)=> { mdl.render(); });
+				imageEditor.on("uploadsuccess", ( imageData ) => {
+					if( !imageData.error && !imageData.data.error ) {
+						model.set("image", { type: "url", data: imageData.data.image, size: imageData.data.size });
+						saveModel().then(()=>{
+							self.populate( self.getImage() );
+							sidebar.model.url = self.getImage()
+							sidebar.render();
+						});
+					} else {
+						mdl.hide();
+						$.dialog({ title: "Error", content: "Something thing went wrong", type: "red" });
+					}
+				});
+			}
+			imageEditor.render( r.target.result );
+		}
+		fr.readAsDataURL( ev.target.files[0] );
+	},
+	updateInfo: function( ev ) {
+		ev.preventDefault();
+		let data = $( ev.currentTarget ).serializeObject();
+		data = $.extend( model.get("profile"), data );
+		let theme = data.theme;
+		delete data.theme;
+		model.set("profile", data);
+		model.set("theme", theme);
+		mdl.render();
+		model.save().then(r=>{
+			mdl.hide();
+		}).catch((err)=>{
+			$.alert( {title: "Error", type: "red", content: err.message} );
+		});
+	}
+});
 const Username = Backbone.View.extend({
 	el: "#username",
-	sendUrl : "http://www.facebook.com/dialog/send?app_id=1778142652491392&link={href}&redirect_uri={href}",
 	fbShareUrl : "https://www.facebook.com/dialog/share?app_id=1778142652491392&display=page&href={href}&redirect_uri={href}",
 	tweetUrl : "https://twitter.com/intent/tweet?text={href}",
+	initialize: function() {
+		this.$el.find('input').val( model.get("username") );
+		this.updateShareLink( model.get("username") );
+		return this;
+	},
 	render: function() {
-		this.$el.find('input').val( Parse.User.current().get("username") );
-		this.updateShareLink( Parse.User.current().get("username") );
+		this.$el.show();
 		return this;
 	},
 	events: {
@@ -185,28 +367,26 @@ const Username = Backbone.View.extend({
 	updateUsername: function( ev ) {
 		ev.preventDefault();
 		var self = this;
-		let originalUsername = Parse.User.current().get("username");
+		let originalUsername = model.get("username");
 		let username = this.$el.find('input').val().toLowerCase();
-		let user = Parse.User.current();
-		if( user.get("username").toLowerCase() != username ) {
-			user.set("username", username);
-			mdl.render({ body: "Updating username" });
-			user.save().then(function( user ) {
-				mdl.hide();
+		if( model.get("username").toLowerCase() != username ) {
+			model.set("username", username);
+			saveModel().then(u=>{
 				self.updateShareLink( username );
-			}).catch(er=>{
-				mdl.render({ type: "error", body: er.message, timeout: 4000 });
+				sidebar.model.username = username
+				sidebar.render();
+			}).catch(e=>{
+				model.set("username", originalUsername);
 				self.updateShareLink( originalUsername );
 				self.$el.find('input').val( originalUsername );
 			});
 		} else {
-			mdl.render({ type: "success", body: "No need to change", timeout: 4*1000 });
+			$.alert({ title: "Success", content: "No need to change", type: "green" });
 		}
 	},
 	updateShareLink: function( username ) {
 		this.$el.find('.share-link').text( `${location.origin}/${username}` );
 		this.$el.find('#sharer .facebook').attr("href", this.fbShareUrl.replace(/{href}/g, encodeURIComponent(`${location.origin}/${username}`)));
-		this.$el.find('#sharer .messenger').attr("href",  this.sendUrl.replace(/{href}/g, encodeURIComponent(`${location.origin}/${username}`)));
 		this.$el.find('#sharer .twitter').attr("href",  this.tweetUrl.replace(/{href}/g, encodeURIComponent(`${location.origin}/${username}`)));
 		$('.preview').attr({ href: `${location.origin}/${username}` });
 	},
@@ -220,7 +400,7 @@ const Username = Backbone.View.extend({
 		if( fa ) {
 			mdl.render({ type: "success", body: "Link copied", timeout: 1*1000 });
 		} else {
-			mdl.render({ type: "error", body: "Something went wrong", timeout: 2*1000 });
+			$.alert({ title: "Error", body: "Something went wrong", type: "red" });
 		}
 		ta.remove();
 		if (navigator.share) {
@@ -232,136 +412,56 @@ const Username = Backbone.View.extend({
 		}
 	}
 });
-
-const Theme = Backbone.View.extend({
-	el: "#app-theme",
-	render: function() {
-		this.$el.find('.theme-selector').val( model.get("theme") );
-		$("#app-theme-link").attr( "href", model.get("theme") );
-		let w3 = model.get("theme");
-		$("meta[name=theme-color]").attr( "content", w3.substring( w3.lastIndexOf( "-" )+1, w3.lastIndexOf(".") ) )
-		console.log( model.get("theme") );
-		return this;
-	},
-	events: {
-		"change .theme-selector": "changeTheme"
-	},
-	changeTheme: function( ev ) {
-		model.set("theme", ev.currentTarget.value );
-	}
-});
-
-const DP = Backbone.View.extend({
-	el: "#dp",
-	initialize: function() {
-		this.croppie = new Croppie(this.$el.find('#picture')[0], {
-			viewport: { width: 200, height: 200, type: 'circle' },
-			mouseWheelZoom: false
-		});
-		return this;
-	},
-	render: function( url ) {
-		if( !url ) {
-			if( model.get("image").type == "file" ) url = model.get("image").data.url();
-			else url = model.get("image").data;
-		}
-		this.croppie.bind({ "url": url, points: [0,0, 320, 320] }).then(()=>{
-			this.croppie.setZoom(0.1);
-		});
-		return this;
-	},
-	events: {
-		"click .ok": "uploadPicture",
-		"click .remove": "removeProfilePicture",
-		"click .facebook": "fromFacebook",
-		"change .picture-selector": "changePicture"
-	},
-	changePicture: function( ev ) {
-		let self = this;
-		let fr = new FileReader();
-		fr.onload = ( r ) => {
-			self.render( r.target.result );
-		}
-		fr.readAsDataURL( ev.target.files[0] );
-	},
-	removeProfilePicture: function( ev ) {
-		ev.preventDefault();
-		this.render("/icons/icon-rect.png");
-	},
-	fromFacebook: function( ev ) {
-		ev.preventDefault();
-		this.render(fbProfile.picture.data.url);
-	},
-	uploadPicture: function( ev ) {
-		let self = this;
-		this.croppie.result({ type:"base64", quality: 0.5, size: { width:320, height: 320 }, format: "png" }).then(r=>{
-			let parseProfilePicFile = new Parse.File(fbProfile.id+".png", { base64: r });
-			mdl.render({ body: "Uploading porfile picture" });
-			parseProfilePicFile.save().then((file)=>{
-				Parse.User.current().set("image", { type: "file", data: file });
-				Parse.User.current().save();
-				mdl.hide();
-				self.render( file.url() )
-			}).catch(() => mdl.render({ type: "error", body: "Profile picture couldn't uploaded", timeout: 3*1000 }) )
-		});
-	}
-});
-
-const Info = Backbone.View.extend({
-	el: "#info",
-	render: function() {
-		this.$el.find("#name").val( model.get("profile").name );
-		this.$el.find("#about").val( model.get("profile").about );
-		this.$el.find("#mobile").val( model.get("profile").mobile );
-		this.$el.find("#email").val( model.get("profile").email );
-		return this;
-	},
-	events: {
-		"keyup input" : "updateInfo"
-	},
-	updateInfo: function( ev ) {
-		ev.preventDefault();
-		let prof = model.get("profile");
-		prof[ev.currentTarget.id] = ev.currentTarget.value;
-		model.set("profile", prof);
-	}
-});
-
 const Quickie = Backbone.View.extend({
 	el: "#quickie",
 	initialize: function() {
-		this.template = _.template( this.$el.find("#q-tmpl").html() );
-		Sortable.create( document.querySelector('#quickie .links') );
-		return this;
-	},
-	render: function() {
 		let self = this;
-		this.model = Parse.User.current().get("favbtns");
-		if ( model.get("favbtns") ) {
+		this.template = _.template( this.$el.find("#q-tmpl").html() );
+		this.sortable = Sortable.create( document.querySelector('#quickie .links'), {
+			handle: ".drag-handle",
+			onEnd: console.log
+		});
+		let favbtns = Parse.User.current().get("favbtns");
+		if ( favbtns ) {
 			this.$el.find(".links").empty();
-			model.get("favbtns").forEach((e,i)=> self.renderQuickie( e ) );
+			favbtns.forEach((e,i)=> self.renderQuickie( e ) );
 		}
 		return this;
 	},
+	render: function() {
+		this.$el.show();
+		return this;
+	},
 	events: {
+		"click .save": "save",
 		"click .count": "countClick",
 		"click .remove": "removeQuickie",
 		"change .sitename": "changeTypeInfo",
 		"submit form": "addQuickie"
 	},
+	save: function() {
+		let favbtns = [];
+		this.$el.find('.links .link').each(function(index, el) {
+			favbtns.push( $( el ).data("raw") );
+		});
+		if (favbtns.length > 22 ) {
+			$.dialog({
+				title: "Error",
+				content: "Social media links can't be more than 22",
+				type: "red"
+			});
+			return false;
+		}
+		model.set( "favbtns", favbtns );
+		saveModel();
+	},
 	countClick: function( ev ) {
 		ev.preventDefault();
 		if($.trim(ev.currentTarget.dataset.url)=="") {
-			mdl.render({ type: "error", body:"Click count is only available for newly added links", timeout:4*1000})
+			$.alert({ title: "Error", content: "Click count is only available for newly added links" });
 			return false;
 		}
-		mdl.render({body:"Getting count"})
-		Parse.Cloud.run("expand", { url: ev.currentTarget.dataset.url }).then(r=>{
-			mdl.hide();
-			ev.currentTarget.innerHTML = r.analytics.allTime.shortUrlClicks
-		}).catch((error)=>{
-			mdl.render({ type: "error", body:"Couldn't get click count.", timeout: 4*1000})			
-		});
+		getStat(ev.currentTarget.dataset.url);
 	},
 	renderQuickie: function( d ) {
 		let self = this;
@@ -395,15 +495,11 @@ const Quickie = Backbone.View.extend({
 		Parse.Cloud.run("shorten", { url: quickie.url }).then(r=>{
 			quickie.short_url = r.id;
 			self.renderQuickie( quickie );
-			mdl.render({ type: "success", body: "Do not forget to save your changes", timeout: 3*1000 });
+			mdl.hide();
+			$.alert({ title: "Success", content: "Do not forget to save your changes", type: "green" });
 		}).catch(error=>{
-			mdl.render({ type: "error", body: "Couldn't optimize for click count", timeout: 3*1000 });
+			$.alert({ title: "Error", content: "Couldn't add link", type: "red" });
 		});
-	},
-	shortenUrl: async function( long_url ) {
-		let g = new Goog();
-		g.set( "longUrl", long_url );
-		return g.save();
 	},
 	toUrl: function( o ) {
 		switch( o.type ) {
@@ -422,29 +518,46 @@ const Quickie = Backbone.View.extend({
 		}
 	}
 });
-
 const Bookmark = Backbone.View.extend({
 	el: "#bookmark",
 	initialize: function() {
 		this.template = _.template( this.$el.find("#b-tmpl").html() );
-		Sortable.create( document.querySelector('#bookmark .links') );
-		return this;
-	},
-	render: function() {
+		this.sortable = Sortable.create( document.querySelector('#bookmark .links'), {
+			handle: ".drag-handle",
+			onEnd:  console.log
+		});
 		let self = this;
-		this.model = Parse.User.current().get("links");
-		if ( model.get("links") ) {
+		let links = Parse.User.current().get("links");
+		if ( links ) {
 			this.$el.find(".links").empty();
-			model.get("links").forEach((e,i)=> {
+			links.forEach((e,i)=> {
 				self.renderBookmark( e );
 			});
 		}
 		return this;
 	},
+	render: function() {
+		this.$el.show();
+		return this;
+	},
 	events: {
+		"click .save": "save",
 		"click .link .count": "clickCount",
 		"click .link .remove": "removeBookmark",
 		"submit form": "addBookmark"
+	},
+	save: function() {
+		let bookmarks = [];
+		bookmark.$el.find('.links .link').each(function(index, el) {
+			let els = $( el );
+			bookmarks.push(els.data("raw"));
+		});
+		if (bookmarks.length > 8 ) {
+			$.dialog({ title: "Error", content: "Featured links can't be more than 8", type: "red" });
+			return false;
+		}
+		model.set("links", bookmarks);
+		saveModel();
 	},
 	clickCount: function( ev ) {
 		ev.preventDefault();
@@ -452,17 +565,15 @@ const Bookmark = Backbone.View.extend({
 			mdl.render({ type: "error", body:"Click count is only available for newly added links", timeout:4*1000})
 			return false;
 		}
-		mdl.render({body:"Getting count"})
-		Parse.Cloud.run("expand", { url: ev.currentTarget.dataset.url }).then(r=>{
-			mdl.hide();
-			ev.currentTarget.innerHTML = r.analytics.allTime.shortUrlClicks
-		}).catch((error)=>{
-			mdl.render({ type: "error", body:"Couldn't get click count.", timeout: 4*1000})			
-		});
+		getStat(ev.currentTarget.dataset.url);
+
 	},
 	renderBookmark: function( bm, pre ) {
 		try {
 			bm = $.extend({ title: "", description: "", short_page_url: "" }, bm);
+			bm.short_page_url_id = bm.short_page_url.substring(bm.short_page_url.lastIndexOf("/")+1)
+			if( this.$el.find(`.links #${bm.short_page_url_id}`).length > 0 )
+				return false;
 			let temp = $(this.template( bm ));
 			if( pre ) this.$el.find('.links').prepend( temp );
 			else this.$el.find('.links').append( temp );
@@ -495,15 +606,15 @@ const Bookmark = Backbone.View.extend({
 			dummy.image_url = result.data.ogImage.url;
 			dummy.short_page_url = result.short_url;
 			self.renderBookmark( dummy );
-			mdl.render({ type:"success", body: "Do not forget to save your changes", timeout: 3*1000 });
+			mdl.hide();
 		}).catch( error => {
-			mdl.render({ type:"error", body: "Couldn't add this url", timeout: 3*1000 });
+			mdl.hide();
+			$.dialog({ title: "Error", content: "Couldn't add this url", type: "red" });
 			console.log( error );
 		});
 		$( ev.currentTarget ).find('input').val("");
 	}
 });
-
 const OtherLinks = Bookmark.extend({
 	el: "#otherlinks",
 	Model: Parse.Object.extend("LINKS"),
@@ -523,13 +634,16 @@ const OtherLinks = Bookmark.extend({
 	},
 	render: function() {
 		let self = this;
+		this.$el.show();
 		if( this.skip < 0 ) return this;
 		let parseQuery = new Parse.Query( this.Model );
 		parseQuery.equalTo( "createdBy", Parse.User.current().id );
 		parseQuery.limit( this.limit );
 		parseQuery.skip( this.skip );
 		parseQuery.descending( "createdAt" );
+		mdl.render();
 		parseQuery.find(results => {
+			mdl.hide();
 			results.forEach(result=>{
 				self.collection.push( result );
 				self.renderBookmark( result.toJSON() );
@@ -550,15 +664,15 @@ const OtherLinks = Bookmark.extend({
 		let jqObject = $( ev.currentTarget );
 		let id = jqObject.data("id");
 		let linkObject = this.collection.filter( index => index.id == id )[0];
-		mdl.render({ body: "Removing..." });
+		jqObject.closest('.link').addClass("w3-opacity");
 		linkObject.destroy({
 			success: function() {
 				jqObject.closest('.link').remove();
-				mdl.render({ type: "success", body: "Removed", timeout: 3*1000 });
 				self.collection = self.collection.filter( index => index.id != id );
 			},
 			error: function() {
-				mdl.render({ type: "error", body: "Couldn't remove", timeout: 3*1000 });
+				jqObject.closest('.link').removeClass("w3-opacity");
+				$.alert({ title: "Error", content: "Couldn't save", type: "red" });
 			}
 		});
 	},
@@ -580,10 +694,10 @@ const OtherLinks = Bookmark.extend({
 			link.set("short_page_url", result.short_url )
 			link.save().then( o=>{
 				self.collection.push( o );
+				mdl.hide();
 				self.renderBookmark( o.toJSON(), true );
-				mdl.render({ type:"success", body: "Saved", timeout: 3*1000 });
 			}).catch(e=>{
-				mdl.render({ type:"error", body: "Couldn't save", timeout: 3*1000 });
+				$.alert({ title: "Error", content: "Couldn't save", type: "red" });
 			});
 		}).catch( error => {
 			mdl.render({ type:"error", body: "Couldn't add this url", timeout: 3*1000 });
@@ -592,3 +706,79 @@ const OtherLinks = Bookmark.extend({
 		$( ev.currentTarget ).find('input').val("");
 	}
 });
+
+
+var Workspace = Backbone.Router.extend({
+	routes: {
+		"": "auth",
+		"auth": "auth",
+		"username": "username",
+		"quickie": "quickie",
+		"top-links": "topLinks",
+		"links": "links",
+		"profile": "profile"
+	},
+	execute: function(callback, args, name) {
+		$(".page, #topbar").hide();
+		if( name != "auth" && !Parse.User.current() ) {
+			console.log( "User not signed in" );
+			this.navigate("/auth");
+			return false;
+		}
+		if( !topbar ) topbar = new Topbar();
+		topbar.show();
+		if (callback) callback.apply(this, args);
+	},
+	profile: function() {
+		console.log( "Calling profile" );
+		if( !info ) info = new Info();
+		info.render();
+	},
+	auth: function() {
+		let self = this;
+		if( auth == null ) auth = new Auth();
+		mdl.render({ body: "Checking authentication" });
+		FB.getLoginStatus(function( response ) {
+			if ( response.status == "connected" ) {
+				auth.onLogin( response ).then(( user )=>{
+					model = user;
+					mdl.hide();
+					if( user.isNew() ) {
+						self.navigate("/username", {trigger: true})
+					} else {
+						self.navigate("/top-links", {trigger: true});
+					}
+					if( model.get("theme") != null ) {
+						changeTheme( model.get("theme") )
+					}
+					$(".preview").attr("href", `/${model.get("username")}`)
+				}).catch(()=>{
+					mdl.render({ type: "error", body :"Couldn't log in", timeout: 3*1000 });
+				});
+			} else {
+				auth.render();
+			}
+		});
+	},
+	username: function() {
+		console.log( "Calling username" );
+		if( !username ) username = new Username();
+		username.render();
+	},
+	quickie: function() {
+		console.log( "Calling quickie" );
+		if( !quickie ) quickie = new Quickie();
+		quickie.render();
+	},
+	topLinks: function() {
+		console.log( "Calling top links" );
+		if( !bookmark ) bookmark = new Bookmark();
+		bookmark.render();
+	},
+	links: function() {
+		console.log( "Calling links" );
+		if( !otherlinks ) otherlinks = new OtherLinks();
+		otherlinks.render();
+	}
+});
+location.hash = "";

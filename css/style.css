@@ -5,9 +5,10 @@ a { text-decoration: none;}
 .flex-center { display: flex; justify-content: center; align-items: center;  }
 .page { display: none; }
 
-#topbar { z-index: 9; }
+#topbar { z-index: 1; }
 #topbar .brand-icon {width: 52px; margin-left: 16px;}
-.bg { position: fixed; top: 0; left: 0; height: 100vh; width: 100%; z-index: -1; }
+.bg { position: fixed; top: 0; left: 0; height: 100%; width: 100%; z-index: -1; }
+
 .details .container { width: 354px;margin-top: 36px; }
 .details h5 { margin: 0; line-height: 1; }
 .details h1 { margin: 0; line-height: 1; font-weight: 100; }
@@ -23,7 +24,7 @@ a { text-decoration: none;}
 @keyframes firstimageanimate { 0% { left:0px; z-index: -1; } 25%{left:0px; z-index: -1; } 50%{ left:-210px; z-index: 1; } 75%{left:0px; z-index: 1;} 100%{left:0px; z-index: 1;} }
 @keyframes lastimageanimate{ 0%{right:0px; z-index: 1; transform: scale(1,1); } 25%{right:0px; z-index: 1; transform: scale(1,1); } 50%{ right:-210px; z-index: -1; transform: scale(1.1,1.1); } 75%{right:0px; z-index: -1;  transform: scale(1,1); } 100%{right:0px; z-index: -1;  transform: scale(1,1); } }
 
-.card { max-width: 540px; margin:64px auto; }
+.page.create, .card { max-width: 540px; margin:64px auto; }
 .card li { font-family: sans-serif; font-weight: bold; }
 .card li.w3-small { font-family: "Raleway"; font-weight: 400; }
 
@@ -39,7 +40,6 @@ a { text-decoration: none;}
 .profile #bookmark .card { max-height: 240px; margin: 0px; overflow: hidden; }
 .profile #bookmark .card .image { overflow: hidden; min-height: 150px; height:auto; min-width: 150px; background-size: cover; background-position: center; }
 .profile #bookmark .card .info { height: 240px; overflow: hidden; background-size: cover; background-position: center; }
-/*.profile #bookmark .card .title, .profile #bookmark .card .description, .profile #bookmark .card .url { text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }*/
 .profile #bookmark .card .title { text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
 .profile #bookmark .card .description { font-size: 12px; }
 
@@ -49,8 +49,8 @@ a { text-decoration: none;}
 .profile #otherlinks .card .title { text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
 .profile #otherlinks .card .description { font-size: 12px; }
 
-.profile #shares .btns { flex-direction: column; }
-.profile #shares .btns .w3-button { display: block; width: 100%; margin: 4px; }
+.profile #shares .btns .w3-button:first-child { margin-right: 4px; }
+.profile #shares .btns .w3-button:last-child { margin-left: 4px; }
 
 .spinner-wrapper .type { display: none; }
 /*spinner styles*/
@@ -77,8 +77,20 @@ a { text-decoration: none;}
 #auth .container { position: absolute; bottom: 120px; min-width: 100%; }
 
 #alerts { margin-top: 36px; }
-.create #quickie .link { padding: 0; height: 52px; overflow: hidden; cursor: ns-resize; }
-.create #quickie .link .username, .create #quickie .link .sitename, .create #quickie .link .count, .create #quickie .link .remove { height: 100%; }
+
+.create#info .picture-container { height: 120px; width: 120px; margin: 0 auto; }
+.create#info .change-picture { width: 36px; height: 36px; }
+.create#info #picture-selector { display: none; }
+.create .header { display: flex;justify-content: space-between;overflow: hidden; }
+.create .header button { width: 120px; }
+
+.create .link { padding: 0; height: 52px; overflow: hidden; }
+.create .link>.content-area { display: flex; }
+.create .link .content { flex-direction: column; align-items: flex-start; }
+.create .link .content div { height: 20px; overflow: hidden; text-overflow: ellipsis; }
+.create .link .content div:first-child { font-weight: bold; }
+.create .link .content div:last-child { font-size: 12px; }
+.create .drag-handle { width: 22px; cursor: ns-resize; }
 
 .create .w3-row.link { cursor: ns-resize; padding: 0; height: 62px; }
 .create .w3-row.link .page-url, .create .w3-row.link .page-title { overflow: hidden; text-overflow: ellipsis; width: 100%; height: 22px; }

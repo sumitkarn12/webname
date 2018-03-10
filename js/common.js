@@ -1,11 +1,21 @@
 Parse.initialize( "1e3bc14f-0975-4cb6-9872-bff78542f22b" );
 Parse.serverURL = "https://parse.buddy.com/parse";
 
-if( Parse.User.current() != null ) { Parse.User.current().fetch(); }
+// if( Parse.User.current() != null ) { Parse.User.current().fetch(); }
 fetch("/gradients.json").then(res=>res.json()).then(json=>{
 	let index = Math.floor(Math.random()*json.length);
-	$("body").css({ "background": `linear-gradient( -45deg, ${json[index].colors.join(",")})` });
+	$(".bg").css({ "background": `linear-gradient( -45deg, ${json[index].colors.join(",")})` });
 });
+jconfirm.defaults = {
+	typeAnimated: true,
+	useBootstrap: false,
+	bgOpacity: 0.8,
+	backgroundDismiss: true,
+	animation: "scaleY"
+}
+function changeTheme( th ) {
+	$( "#app-theme-link" ).attr("href", th);
+}
 $.fn.serializeObject = function() {
 	var o = {};
 	var a = this.serializeArray();
@@ -45,4 +55,12 @@ const Mdl = Backbone.View.extend({
 	}
 });
 var mdl = new Mdl();
-
+function lazyLoad( url ) {
+	return new Promise(( resolve ) => {
+		let img = new Image();
+		img.onload = ( imgEvent ) => {
+			resolve( imgEvent.path[0] );
+		};
+		img.src = url
+	});
+}

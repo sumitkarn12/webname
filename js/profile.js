@@ -28,8 +28,8 @@ const Profile = Backbone.View.extend({
 	},
 	renderDP: function( image ) {
 		let u = null;
-		if( image.type == "file" ) { u = image.data.url();
-		} else { u = image.data; }
+		if( image.type == "file" ) { u = image.data.url; }
+		else { u = image.data; }
 		this.$el.find(".cover").css( "background-image", `url(${u})` );
 		this.$el.find(".dp").attr( "src", u );
 		$("link[rel]").each((i,m)=> {
@@ -83,10 +83,11 @@ const Quickie = Backbone.View.extend({
 	render: function( links ) {
 		let self = this;
 		this.$el.find(".btns").empty();
-		links.forEach(( e )=>{
+		links.forEach(( e, i )=>{
 			if( e.url == null ) e = $.extend(e, { url: self.toUrl( e ) });
 			else e.url = e.short_url;
-			self.$el.find(".btns").append( self.template( e ) );
+			let tmpl = $(self.template( e ));
+			self.$el.find(".btns").append( tmpl );
 		});
 	},
 	toUrl: function( o ) {
@@ -196,24 +197,36 @@ q.first().then(( u )=>{
 			body: "Sorry to say, but we couldn't find this person. <br/><br/>However you can also create your own by clicking <a href='/create'><b>here</b></a>"
 		});
 	} else {
-		model.set( "image", u.get( "image" ) );
-		model.set( "profile", u.get( "profile" ) );
-		model.set( "objectId", u.id );
-		model.set( "favbtns", u.get( "favbtns" ) );
-		model.set( "bookmarks", u.get( "links" ) );
-		$("#app-theme-link").attr("href", u.get("theme"))
-		
-		try {
-			let w3 = u.get("theme");
-			$("meta[name=theme-color]").attr( "content", w3.substring( w3.lastIndexOf( "-" )+1, w3.lastIndexOf(".") ) )
-		} catch( e ) {}
-		mdl.hide();
-		if( Parse.User.current() == null ) {
-			$(".edit-profile").text( "Create your profile" );
-		} else {
-			$(".edit-profile").text( `Hey ${Parse.User.current().get("profile").name}, Update your profile` );
-		}
+		onProfileLoad( u.toJSON() )
 	}
 }, (error) => {
 	console.log( error );
 });
+
+function onProfileLoad( profile ) {
+	let dummy = {
+		image: { type: "url", data: "https://api.adorable.io/avatars/285/abott@adorable.png" },
+		profile: { name: "Excited user", email: "", description: "", mobile: "" },
+		objectId: "",
+		favbtns: [],
+		bookmarks: []
+	};
+	profile = $.extend( dummy, profile );
+	model.set( "image", profile.image );
+	model.set( "profile", profile.profile );
+	model.set( "objectId", profile.objectId );
+	model.set( "favbtns", profile.favbtns );
+	model.set( "bookmarks", profile.links );
+	$("#app-theme-link").attr("href", profile.theme )
+	
+	try {
+		let w3 = profile.theme;
+		$("meta[name=theme-color]").attr( "content", w3.substring( w3.lastIndexOf( "-" )+1, w3.lastIndexOf(".") ) )
+	} catch( e ) {}
+	mdl.hide();
+	if( Parse.User.current() == null ) {
+		$(".edit-profile").text( "Create your profile" );
+	} else {
+		$(".edit-profile").text( `Hey ${Parse.User.current().get("profile").name}, Update your profile` );
+	}
+}
