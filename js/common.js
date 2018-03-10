@@ -6,12 +6,14 @@ fetch("/gradients.json").then(res=>res.json()).then(json=>{
 	let index = Math.floor(Math.random()*json.length);
 	$(".bg").css({ "background": `linear-gradient( -45deg, ${json[index].colors.join(",")})` });
 });
-jconfirm.defaults = {
-	typeAnimated: true,
-	useBootstrap: false,
-	bgOpacity: 0.8,
-	backgroundDismiss: true,
-	animation: "scaleY"
+if( jconfirm ) {
+	jconfirm.defaults = {
+		typeAnimated: true,
+		useBootstrap: false,
+		bgOpacity: 0.8,
+		backgroundDismiss: true,
+		animation: "scaleY"
+	}
 }
 function changeTheme( th ) {
 	$( "#app-theme-link" ).attr("href", th);
