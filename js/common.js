@@ -6,7 +6,7 @@ fetch("/gradients.json").then(res=>res.json()).then(json=>{
 	let index = Math.floor(Math.random()*json.length);
 	$(".bg").css({ "background": `linear-gradient( -45deg, ${json[index].colors.join(",")})` });
 });
-if( jconfirm ) {
+try {
 	jconfirm.defaults = {
 		typeAnimated: true,
 		useBootstrap: false,
@@ -14,7 +14,7 @@ if( jconfirm ) {
 		backgroundDismiss: true,
 		animation: "scaleY"
 	}
-}
+} catch(e){}
 function changeTheme( th ) {
 	$( "#app-theme-link" ).attr("href", th);
 }
