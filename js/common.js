@@ -66,3 +66,7 @@ function lazyLoad( url ) {
 		img.src = url
 	});
 }
+
+if( location.pathname == "/create" ) {
+	$(".w3-bottom a:first-child").remove();
+}
